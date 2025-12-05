@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FitnessTracker.Domain.Entities;
+﻿namespace FitnessTracker.Domain.Entities;
 
 public class User : BaseEntity
 {
