@@ -1,4 +1,7 @@
+using FitnessTracker.Infra.Config;
+
 var builder = WebApplication.CreateBuilder(args);
+AppConfig.Init(builder.Configuration);
 builder.Services.AddCors(options => options.AddPolicy("Cors", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Correlation-ID", "Content-Disposition")));
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
