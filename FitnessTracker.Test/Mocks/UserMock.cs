@@ -1,0 +1,113 @@
+﻿using FitnessTracker.App.Dtos.Requests.Auth;
+using FitnessTracker.Domain.Entities;
+
+namespace FitnessTracker.Test.Mocks;
+public static class UserMock
+{
+    public static readonly List<User> Users = [new()
+    {
+        Id = Guid.Parse("0a9e546f-38b4-4dbf-a482-24a82169890e"),
+        Name = "John Doe",
+        Email = "john.doe@email.com",
+        PasswordHash = "$2a$11$keNH6EuCs3ZNsWXSyN0dYuOwBgDDVBJ3tkEois5anX1K3bm3xCeFq", // JohnDoePassword0!
+        Phone = "+1202-555-0125",
+        Birthday = new DateOnly(1990, 5, 21),
+        Height = 180.0,
+        Weight = 82.5,
+        Gender = Gender.Male,
+        Role = Role.User,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = null,
+        DeletedAt = null
+    }, new() {
+        Id = Guid.Parse("7eb88892-549b-4cae-90be-c52088354643"),
+        Name = "Jane Smith",
+        Email = "jane.smith@email.com",
+        PasswordHash = "$2a$11$odL3DYVYeOnmMCUzGtVRduW625Zf007zv4E2SP04uiCPmazcrU0he", // JaneSmithPassword0!
+        Phone = "+44-7700-900123",
+        Birthday = new DateOnly(1992, 11, 3),
+        Height = 165.0,
+        Weight = 63.2,
+        Gender = Gender.Female,
+        Role = Role.User,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = null,
+        DeletedAt = null
+    }];
+
+    public static readonly User NewUser = new()
+    {
+        Id = Guid.Parse("36712aa4-77f0-4510-8425-cf53dad54840"),
+        Name = "Michael Johnson",
+        Email = "michael.johnson@email.com",
+        PasswordHash = "$2a$11$j.sHfk5pNbgqfwzFTwZqEeeyD1rbI9XJPcNW9chybMVNNhOjuLfhG", // MichaelJohnsonPassword0!
+        Phone = "+61-402-555-0836",
+        Birthday = new DateOnly(1988, 2, 14),
+        Height = 178.0,
+        Weight = 79.1,
+        Gender = Gender.Male,
+        Role = Role.User,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = null,
+        DeletedAt = null
+    };
+
+    public static readonly RegisterRequest RegisterRequest = new()
+    {
+        Name = "Michael Johnson",
+        Email = "michael.johnson@email.com",
+        Password = "MichaelJohnsonPassword0!",
+        ConfirmedPassword = "MichaelJohnsonPassword0!",
+        Phone = "+61-402-555-0836",
+        Birthday = new DateOnly(1988, 2, 14),
+        Height = 178.0,
+        Weight = 79.1,
+        Gender = Gender.Male
+    };
+
+    public static readonly RegisterRequest RegisterRequestNoName = RegisterRequest with { Name = "" };
+
+    public static readonly RegisterRequest RegisterRequestNoEmail = RegisterRequest with { Email = "" };
+
+    public static readonly RegisterRequest RegisterRequestNoPassword = RegisterRequest with { Password = "" };
+
+    public static readonly RegisterRequest RegisterRequestNoConfirmedPassword = RegisterRequest with { ConfirmedPassword = "" };
+
+    public static readonly RegisterRequest RegisterRequestNoPhone = RegisterRequest with { Phone = "" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidEmail = RegisterRequest with { Email = "michael.johnson" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidPassword = RegisterRequest with { Password = "MichaelJohnsonPassword0", ConfirmedPassword = "MichaelJohnsonPassword0" };
+
+    public static readonly RegisterRequest RegisterRequestNonMatchingPasswords = RegisterRequest with { Password = "MichaelJohnsonPassword0!", ConfirmedPassword = "MichaelJohnsonPassword1!" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidPhone = RegisterRequest with { Phone = "invalid-phone" };
+
+    public static readonly RegisterRequest RegisterRequestDuplicatedName = RegisterRequest with { Name = "John Doe" };
+
+    public static readonly RegisterRequest RegisterRequestDuplicatedEmail = RegisterRequest with { Email = "john.doe@email.com" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidNameTooLong = RegisterRequest with { Name = "Michael Jonathan Alexander Christopher Johnson Senior the Third" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidEmailTooLong = RegisterRequest with { Email = "michael.johnson.very.long.email.address@examplemail.com" };
+
+    public static readonly RegisterRequest RegisterRequestInvalidPhoneTooLong = RegisterRequest with { Phone = "+61-402-555-0836-9999" };
+
+    public static readonly RegisterRequest RegisterRequestNoBirthday = RegisterRequest with { Birthday = default };
+
+    public static readonly RegisterRequest RegisterRequestInvalidBirthdayFuture = RegisterRequest with { Birthday = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)) };
+
+    public static readonly RegisterRequest RegisterRequestNoHeight = RegisterRequest with { Height = 0 };
+
+    public static readonly RegisterRequest RegisterRequestInvalidHeightTooLow = RegisterRequest with { Height = -1 };
+
+    public static readonly RegisterRequest RegisterRequestInvalidHeightTooHigh = RegisterRequest with { Height = 300 };
+
+    public static readonly RegisterRequest RegisterRequestNoWeight = RegisterRequest with { Weight = 0 };
+
+    public static readonly RegisterRequest RegisterRequestInvalidWeightTooLow = RegisterRequest with { Weight = -1 };
+
+    public static readonly RegisterRequest RegisterRequestInvalidWeightTooHigh = RegisterRequest with { Weight = 300 };
+
+    public static readonly RegisterRequest RegisterRequestNoGender = RegisterRequest with { Gender = default };
+}
