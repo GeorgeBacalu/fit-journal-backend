@@ -34,5 +34,6 @@ public class FitnessTrackerContext : DbContext
             table.HasCheckConstraint("CK_Users_Height", "[Height] > 0 AND [Height] < 250");
             table.HasCheckConstraint("CK_Users_Weight", "[Weight] > 0 AND [Weight] < 250");
         });
+        modelBuilder.Entity<User>().HasQueryFilter(user => user.DeletedAt == null);
     }
 }
