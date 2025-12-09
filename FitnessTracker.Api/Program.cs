@@ -1,7 +1,11 @@
 using FitnessTracker.App.Mappers;
+using FitnessTracker.App.Services;
+using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Middlewares;
+using FitnessTracker.Infra.Repositories;
+using FitnessTracker.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -63,7 +67,12 @@ builder.Services.AddSwaggerGen(options =>
   });
 
 builder.Services.AddTransient<LoggingMiddleware>()
-                .AddTransient<ExceptionHandlingMiddleware>();
+                .AddTransient<ExceptionHandlingMiddleware>()
+
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IUserRepository, UserRepository>()
+
+                .AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 app.UseSwagger();

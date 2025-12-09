@@ -18,12 +18,12 @@ namespace FitnessTracker.Infra.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     Height = table.Column<double>(type: "float", nullable: false),
                     Weight = table.Column<double>(type: "float", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     Role = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -32,10 +32,9 @@ namespace FitnessTracker.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.CheckConstraint("CK_User_Email", "[Email] LIKE '%_@__%.__%'");
-                    table.CheckConstraint("CK_Users_Birthday", "[Birthday] <= GETDATE()");
-                    table.CheckConstraint("CK_Users_Height", "[Height] > 0 AND [Height] < 250");
-                    table.CheckConstraint("CK_Users_Weight", "[Weight] > 0 AND [Weight] < 250");
+                    table.CheckConstraint("CK_Users_Birthday", "[Birthday] <= CAST(GETDATE() AS DATE)");
+                    table.CheckConstraint("CK_Users_Height", "[Height] >= 0 AND [Height] <= 250");
+                    table.CheckConstraint("CK_Users_Weight", "[Weight] >= 0 AND [Weight] <= 250");
                 });
 
             migrationBuilder.CreateIndex(

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    [Migration("20251205120025_Users")]
+    [Migration("20251209125917_Users")]
     partial class Users
     {
         /// <inheritdoc />
@@ -58,10 +58,10 @@ namespace FitnessTracker.Infra.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(65)
+                        .HasColumnType("nvarchar(65)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -90,13 +90,11 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Users", t =>
                         {
-                            t.HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@__%.__%'");
+                            t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CAST(GETDATE() AS DATE)");
 
-                            t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= GETDATE()");
+                            t.HasCheckConstraint("CK_Users_Height", "[Height] >= 0 AND [Height] <= 250");
 
-                            t.HasCheckConstraint("CK_Users_Height", "[Height] > 0 AND [Height] < 250");
-
-                            t.HasCheckConstraint("CK_Users_Weight", "[Weight] > 0 AND [Weight] < 250");
+                            t.HasCheckConstraint("CK_Users_Weight", "[Weight] >= 0 AND [Weight] <= 250");
                         });
                 });
 #pragma warning restore 612, 618
