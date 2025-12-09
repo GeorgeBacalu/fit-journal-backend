@@ -1,3 +1,7 @@
 <Solution>
   <Project Path="FitnessTracker.Api/FitnessTracker.Api.csproj" />
+  <Project Path="FitnessTracker.App/FitnessTracker.App.csproj" />
+  <Project Path="FitnessTracker.Domain/FitnessTracker.Domain.csproj" />
+  <Project Path="FitnessTracker.Infra/FitnessTracker.Infra.csproj" />
+  <Project Path="FitnessTracker.Test/FitnessTracker.Test.csproj" />
 </Solution>
