@@ -55,15 +55,15 @@ namespace FitnessTracker.Infra.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(65)
+                        .HasColumnType("nvarchar(65)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -87,13 +87,13 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Users", t =>
                         {
-                            t.HasCheckConstraint("CK_User_Email", "[Email] LIKE '%_@__%.__%'");
+                            t.HasCheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
 
-                            t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= GETDATE()");
+                            t.HasCheckConstraint("CK_Users_Email", "Email LIKE '%_@__%.__%' AND Email NOT LIKE '% %'");
 
-                            t.HasCheckConstraint("CK_Users_Height", "[Height] > 0 AND [Height] < 250");
+                            t.HasCheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
 
-                            t.HasCheckConstraint("CK_Users_Weight", "[Weight] > 0 AND [Weight] < 250");
+                            t.HasCheckConstraint("CK_Users_Weight", "Weight >= 0 AND Weight <= 250");
                         });
                 });
 #pragma warning restore 612, 618
