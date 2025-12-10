@@ -4,7 +4,7 @@ namespace FitnessTracker.App.Attributes;
 
 public class PastAttribute : ValidationAttribute
 {
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+    protected override ValidationResult? IsValid(object? value, ValidationContext _)
     {
         if (value is not DateOnly date) return new("Invalid data value");
 

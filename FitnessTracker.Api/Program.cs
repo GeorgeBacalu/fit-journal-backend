@@ -27,12 +27,13 @@ builder.Services.AddDbContext<FitnessTrackerContext>(
 
 builder.Services.AddAutoMapper(_ => { }, typeof(UserMapper));
 builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new()
     {
         Title = "Fitness Tracker API",
-        Description = "Fitness Tracker",
+        Description = "Health platform offering accessible fitness progress through real-time activity insights",
         Version = "1.0"
     });
     options.AddSecurityDefinition("Bearer", new()
@@ -53,34 +54,42 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
     options.IncludeXmlComments($"{AppContext.BaseDirectory}/{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-}).AddAuthentication("Bearer")
-  .AddJwtBearer(options => options.TokenValidationParameters = new()
-  {
-      ValidateIssuer = true,
-      ValidateAudience = true,
-      ValidateLifetime = true,
-      ValidateIssuerSigningKey = true,
-      ClockSkew = TimeSpan.Zero,
-      ValidIssuer = AppConfig.Auth.Issuer,
-      ValidAudience = AppConfig.Auth.Audience,
-      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))
-  });
+});
 
-builder.Services.AddTransient<LoggingMiddleware>()
-                .AddTransient<ExceptionHandlingMiddleware>()
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(
+    options => options.TokenValidationParameters = new()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidIssuer = AppConfig.Auth.Issuer,
+        ValidAudience = AppConfig.Auth.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))
+    });
 
-                .AddScoped<IUnitOfWork, UnitOfWork>()
-                .AddScoped<IUserRepository, UserRepository>()
+builder.Services.AddTransient<LoggingMiddleware>();
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
-                .AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
+
 app.UseSwagger();
 app.UseSwaggerUI();
+
 app.UseCors("Cors");
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.MapControllers();
 app.Run();

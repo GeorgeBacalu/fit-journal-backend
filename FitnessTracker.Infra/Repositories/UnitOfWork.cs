@@ -2,6 +2,7 @@
 using FitnessTracker.Infra.Repositories.Interfaces;
 
 namespace FitnessTracker.Infra.Repositories;
+
 public class UnitOfWork(FitnessTrackerContext context, IUserRepository userRepository) : IUnitOfWork
 {
     public IUserRepository UserRepository => userRepository;

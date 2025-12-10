@@ -26,21 +26,21 @@ public record RegisterRequest
 
     [Required(ErrorMessage = ValidationConstants.PhoneRequired)]
     [Phone(ErrorMessage = ValidationConstants.InvalidPhone)]
-    [MaxLength(15, ErrorMessage = ValidationConstants.InvalidPhoneLength)]
+    [MaxLength(20, ErrorMessage = ValidationConstants.InvalidPhoneLength)]
     public required string Phone { get; init; }
 
     [Required(ErrorMessage = ValidationConstants.BirthdayRequired)]
     [Past(ErrorMessage = ValidationConstants.InvalidBirthday)]
-    public DateOnly Birthday { get; init; }
+    public DateOnly? Birthday { get; init; }
 
     [Required(ErrorMessage = ValidationConstants.HeightRequired)]
     [Range(0, 250, ErrorMessage = ValidationConstants.InvalidHeight)]
-    public double Height { get; init; }
+    public double? Height { get; init; }
 
     [Required(ErrorMessage = ValidationConstants.WeightRequired)]
     [Range(0, 250, ErrorMessage = ValidationConstants.InvalidWeight)]
-    public double Weight { get; init; }
+    public double? Weight { get; init; }
 
     [Required(ErrorMessage = ValidationConstants.GenderRequired)]
-    public Gender Gender { get; init; }
+    public Gender? Gender { get; init; }
 }

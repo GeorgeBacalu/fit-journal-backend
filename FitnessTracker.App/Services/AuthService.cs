@@ -7,11 +7,12 @@ using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
 
 namespace FitnessTracker.App.Services;
+
 public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 {
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
-        if (DateTime.UtcNow.Year - request.Birthday.Year < 13)
+        if (request.Birthday is DateOnly birthday && DateOnly.FromDateTime(DateTime.UtcNow) < birthday.AddYears(13))
             throw new BadRequestException(ErrorMessageConstants.AgeRestriction);
 
         var user = mapper.Map<User>(request);

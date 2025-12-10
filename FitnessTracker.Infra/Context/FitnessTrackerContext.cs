@@ -20,7 +20,7 @@ public class FitnessTrackerContext : DbContext
             entity.Property(user => user.Name).IsRequired().HasMaxLength(50);
             entity.Property(user => user.Email).IsRequired().HasMaxLength(50);
             entity.Property(user => user.PasswordHash).IsRequired().HasMaxLength(65);
-            entity.Property(user => user.Phone).IsRequired().HasMaxLength(15);
+            entity.Property(user => user.Phone).IsRequired().HasMaxLength(20);
 
             entity.Property(user => user.Gender).IsRequired().HasConversion<string>().HasMaxLength(8);
             entity.Property(user => user.Role).IsRequired().HasConversion<string>().HasMaxLength(6);
@@ -30,9 +30,9 @@ public class FitnessTrackerContext : DbContext
         });
         modelBuilder.Entity<User>().ToTable(table =>
         {
-            table.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CAST(GETDATE() AS DATE)");
-            table.HasCheckConstraint("CK_Users_Height", "[Height] >= 0 AND [Height] <= 250");
-            table.HasCheckConstraint("CK_Users_Weight", "[Weight] >= 0 AND [Weight] <= 250");
+            table.HasCheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
+            table.HasCheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
+            table.HasCheckConstraint("CK_Users_Weight", "Weight >= 0 AND Weight <= 250");
         });
     }
 }

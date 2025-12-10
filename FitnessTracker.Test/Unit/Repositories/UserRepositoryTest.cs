@@ -18,10 +18,10 @@ public class UserRepositoryTest
     }
 
     [Fact]
-    public async Task AddAsync_Test()
+    public async Task AddAsync_ShouldAddUserToContext()
     {
-        await userRepository.AddAsync(UserMock.NewUser, default);
+        await userRepository.AddAsync(UserMock.NewUser);
 
-        contextMock.Verify(mock => mock.Users.AddAsync(UserMock.NewUser, default));
+        contextMock.Verify(mock => mock.Users.AddAsync(UserMock.NewUser));
     }
 }

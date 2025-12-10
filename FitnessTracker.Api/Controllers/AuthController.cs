@@ -1,9 +1,10 @@
-﻿using FitnessTracker.App.Services.Interfaces;
-using FitnessTracker.App.Dtos.Requests.Auth;
+﻿using FitnessTracker.App.Dtos.Requests.Auth;
+using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
+
 [Route(ApiConstants.ApiAuth)]
 public class AuthController(IAuthService authService) : BaseController
 {

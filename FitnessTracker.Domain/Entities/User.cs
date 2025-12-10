@@ -16,4 +16,4 @@ public class User : BaseEntity
 }
 
 public enum Role { User, Admin }
-public enum Gender { Invalid, Male, Female }
+public enum Gender { Male, Female }

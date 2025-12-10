@@ -2,6 +2,7 @@
 using System.Security.Claims;
 
 namespace FitnessTracker.Api.Controllers;
+
 [ApiController]
 public class BaseController : ControllerBase
 {

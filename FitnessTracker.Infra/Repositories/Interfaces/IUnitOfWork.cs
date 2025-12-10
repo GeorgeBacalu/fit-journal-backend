@@ -1,4 +1,5 @@
 ﻿namespace FitnessTracker.Infra.Repositories.Interfaces;
+
 public interface IUnitOfWork
 {
     IUserRepository UserRepository { get; }

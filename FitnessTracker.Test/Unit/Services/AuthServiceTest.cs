@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using FitnessTracker.App.Services;
+using FitnessTracker.Domain.Constants;
 using FitnessTracker.Domain.Entities;
+using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
 using FitnessTracker.Test.Mocks;
+using FluentAssertions;
 using Moq;
 
 namespace FitnessTracker.Test.Unit.Services;
@@ -21,13 +24,20 @@ public class AuthServiceTest
     }
 
     [Fact]
-    public async Task RegisterAsync_Test()
+    public async Task RegisterAsync_ShouldAddUser_WhenRequestIsValid()
     {
         mapperMock.Setup(mock => mock.Map<User>(UserMock.RegisterRequest)).Returns(UserMock.NewUser);
 
-        await authService.RegisterAsync(UserMock.RegisterRequest, default);
+        await authService.RegisterAsync(UserMock.RegisterRequest);
 
-        userRepositoryMock.Verify(mock => mock.AddAsync(UserMock.NewUser, default));
+        userRepositoryMock.Verify(mock => mock.AddAsync(UserMock.NewUser));
         unitOfWorkMock.Verify(mock => mock.CommitAsync());
+    }
+
+    [Fact]
+    public async Task RegisterAsync_ShouldThrowBadRequest_WhenUserIsUnder13()
+    {
+        await FluentActions.Awaiting(() => authService.RegisterAsync(UserMock.RegisterRequestUnder13))
+            .Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
     }
 }

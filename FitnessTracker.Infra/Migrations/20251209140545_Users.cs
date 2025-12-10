@@ -32,9 +32,9 @@ namespace FitnessTracker.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                    table.CheckConstraint("CK_Users_Birthday", "[Birthday] <= CAST(GETDATE() AS DATE)");
-                    table.CheckConstraint("CK_Users_Height", "[Height] >= 0 AND [Height] <= 250");
-                    table.CheckConstraint("CK_Users_Weight", "[Weight] >= 0 AND [Weight] <= 250");
+                    table.CheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
+                    table.CheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
+                    table.CheckConstraint("CK_Users_Weight", "Weight >= 0 AND Weight <= 250");
                 });
 
             migrationBuilder.CreateIndex(
