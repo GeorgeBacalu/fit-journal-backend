@@ -14,20 +14,29 @@ public class UserRepositoryTest(DbFixture fixture)
     private async Task RunAsync(Func<UserRepository, FitnessTrackerContext, Task> run)
     {
         await using var context = new FitnessTrackerContext(dbOptions);
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync(default);
 
-        await context.Users.AddRangeAsync(UserMock.Users);
-        await context.SaveChangesAsync();
+        await context.Users.AddRangeAsync(UserMock.Users, default);
+        await context.SaveChangesAsync(default);
+        
         await run(new(context), context);
-        await transaction.RollbackAsync();
+        
+        await transaction.RollbackAsync(default);
     }
 
     [Fact]
-    public Task AddAsync_Test() => RunAsync(async (userRepository, context) =>
-    {
-        await userRepository.AddAsync(UserMock.NewUser);
-        await context.SaveChangesAsync();
+    public Task AddAsync_Test()
+        => RunAsync(async (userRepository, context) =>
+        {
+            // Arrange
 
-        (await context.Users.AsNoTracking().SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name)).Should().NotBeNull();
-    });
+            // Act
+            await userRepository.AddAsync(UserMock.NewUser, default);
+            await context.SaveChangesAsync(default);
+
+            // Assert
+            var user = await context.Users.AsNoTracking()
+                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+            user.Should().NotBeNull();
+        });
 }

@@ -26,18 +26,29 @@ public class AuthServiceTest
     [Fact]
     public async Task RegisterAsync_ShouldAddUser_WhenRequestIsValid()
     {
+        // Arrange
         mapperMock.Setup(mock => mock.Map<User>(UserMock.RegisterRequest)).Returns(UserMock.NewUser);
 
-        await authService.RegisterAsync(UserMock.RegisterRequest);
+        // Act
+        await authService.RegisterAsync(UserMock.RegisterRequest, default);
 
-        userRepositoryMock.Verify(mock => mock.AddAsync(UserMock.NewUser));
-        unitOfWorkMock.Verify(mock => mock.CommitAsync());
+        // Assert
+        userRepositoryMock.Verify(mock => mock.AddAsync(UserMock.NewUser, default));
+        unitOfWorkMock.Verify(mock => mock.CommitAsync(default));
     }
 
     [Fact]
     public async Task RegisterAsync_ShouldThrowBadRequest_WhenUserIsUnder13()
     {
-        await FluentActions.Awaiting(() => authService.RegisterAsync(UserMock.RegisterRequestUnder13))
-            .Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
+        // Arrange
+
+        // Act
+        var action = () => authService.RegisterAsync(UserMock.RegisterRequestUnder13, default);
+
+        // Assert
+        await action.Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
+
+        userRepositoryMock.Verify(mock => mock.AddAsync(UserMock.NewUser, default), Times.Never);
+        unitOfWorkMock.Verify(mock => mock.CommitAsync(default), Times.Never);
     }
 }

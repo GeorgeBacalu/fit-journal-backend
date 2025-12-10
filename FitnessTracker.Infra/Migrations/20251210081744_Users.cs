@@ -19,7 +19,7 @@ namespace FitnessTracker.Infra.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: false),
                     Height = table.Column<double>(type: "float", nullable: false),
                     Weight = table.Column<double>(type: "float", nullable: false),
@@ -33,6 +33,7 @@ namespace FitnessTracker.Infra.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.CheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
+                    table.CheckConstraint("CK_Users_Email", "Email LIKE '%_@__%.__%' AND Email NOT LIKE '% %'");
                     table.CheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
                     table.CheckConstraint("CK_Users_Weight", "Weight >= 0 AND Weight <= 250");
                 });

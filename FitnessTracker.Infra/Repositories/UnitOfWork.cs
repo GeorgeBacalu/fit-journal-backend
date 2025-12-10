@@ -7,5 +7,6 @@ public class UnitOfWork(FitnessTrackerContext context, IUserRepository userRepos
 {
     public IUserRepository UserRepository => userRepository;
 
-    public Task CommitAsync(CancellationToken token = default) => context.SaveChangesAsync(token);
+    public Task CommitAsync(CancellationToken token = default)
+        => context.SaveChangesAsync(token);
 }

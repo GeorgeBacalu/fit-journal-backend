@@ -30,6 +30,7 @@ public class FitnessTrackerContext : DbContext
         });
         modelBuilder.Entity<User>().ToTable(table =>
         {
+            table.HasCheckConstraint("CK_Users_Email", "Email LIKE '%_@__%.__%' AND Email NOT LIKE '% %'");
             table.HasCheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
             table.HasCheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
             table.HasCheckConstraint("CK_Users_Weight", "Weight >= 0 AND Weight <= 250");

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    [Migration("20251209140545_Users")]
+    [Migration("20251210081744_Users")]
     partial class Users
     {
         /// <inheritdoc />
@@ -65,8 +65,8 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -91,6 +91,8 @@ namespace FitnessTracker.Infra.Migrations
                     b.ToTable("Users", t =>
                         {
                             t.HasCheckConstraint("CK_Users_Birthday", "Birthday <= CURRENT_TIMESTAMP");
+
+                            t.HasCheckConstraint("CK_Users_Email", "Email LIKE '%_@__%.__%' AND Email NOT LIKE '% %'");
 
                             t.HasCheckConstraint("CK_Users_Height", "Height >= 0 AND Height <= 250");
 

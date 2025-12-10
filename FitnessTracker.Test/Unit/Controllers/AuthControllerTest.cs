@@ -20,8 +20,12 @@ public class AuthControllerTest
     [Fact]
     public async Task RegisterAsync_ShouldAddUser_WhenRequestIsValid()
     {
-        var result = (await authController.RegisterAsync(UserMock.RegisterRequest)).Result as ObjectResult;
+        // Arrange
 
+        // Act
+        var result = (await authController.RegisterAsync(UserMock.RegisterRequest, default)).Result as ObjectResult;
+
+        // Assert
         result.Should().NotBeNull();
         result.StatusCode.Should().Be(StatusCodes.Status201Created);
         result.Value.Should().BeEquivalentTo(new { Message = SuccessMessageConstants.UserRegistered });
@@ -30,9 +34,14 @@ public class AuthControllerTest
     [Fact]
     public async Task RegisterAsync_ShouldThrowBadRequest_WhenUserIsUnder13()
     {
-        authServiceMock.Setup(mock => mock.RegisterAsync(UserMock.RegisterRequestUnder13)).ThrowsAsync(new BadRequestException(ErrorMessageConstants.AgeRestriction));
+        // Arrange
+        authServiceMock.Setup(mock => mock.RegisterAsync(UserMock.RegisterRequestUnder13, default))
+            .ThrowsAsync(new BadRequestException(ErrorMessageConstants.AgeRestriction));
 
-        await FluentActions.Awaiting(() => authController.RegisterAsync(UserMock.RegisterRequestUnder13))
-            .Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
+        // Act
+        var action = () => authController.RegisterAsync(UserMock.RegisterRequestUnder13, default);
+
+        // Assert
+        await action.Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
     }
 }
