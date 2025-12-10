@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Domain.Constants;
 
-public static class ErrorMessageConstants
+public static class ErrorMessages
 {
     public const string DuplicatedName = "Duplicated name";
     public const string DuplicatedEmail = "Duplicated email";

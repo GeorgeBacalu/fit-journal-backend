@@ -5,11 +5,11 @@ namespace FitnessTracker.App.Dtos.Requests.Auth;
 
 public record LoginRequest
 {
-    [Required(ErrorMessage = ValidationConstants.EmailRequired)]
-    [EmailAddress(ErrorMessage = ValidationConstants.InvalidEmail)]
-    [MaxLength(50, ErrorMessage = ValidationConstants.InvalidEmailLength)]
+    [Required(ErrorMessage = ValidationErrors.EmailRequired)]
+    [EmailAddress(ErrorMessage = ValidationErrors.InvalidEmail)]
+    [MaxLength(50, ErrorMessage = ValidationErrors.InvalidEmailLength)]
     public required string Email { get; init; }
 
-    [Required(ErrorMessage = ValidationConstants.PasswordRequired)]
+    [Required(ErrorMessage = ValidationErrors.PasswordRequired)]
     public required string Password { get; init; }
 }

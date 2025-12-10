@@ -16,7 +16,7 @@ public class UserRepositoryTest(DbFixture fixture)
         await using var context = new FitnessTrackerContext(dbOptions);
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
-        await context.Users.AddRangeAsync(UserMock.Users, default);
+        await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
         
         await run(new(context), context);
@@ -31,12 +31,12 @@ public class UserRepositoryTest(DbFixture fixture)
             // Arrange
 
             // Act
-            await userRepository.AddAsync(UserMock.NewUser, default);
+            await userRepository.AddAsync(UserMocks.NewUser, default);
             await context.SaveChangesAsync(default);
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == UserMocks.NewUser.Name, default);
             user.Should().NotBeNull();
         });
 }

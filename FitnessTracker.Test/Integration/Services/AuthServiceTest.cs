@@ -25,7 +25,7 @@ public class AuthServiceTest(DbFixture fixture)
         await using var context = new FitnessTrackerContext(dbOptions);
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
-        await context.Users.AddRangeAsync(UserMock.Users, default);
+        await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
         
         await run(new(new UnitOfWork(context, new UserRepository(context)), mapper), context);
@@ -40,11 +40,11 @@ public class AuthServiceTest(DbFixture fixture)
             // Arrange
 
             // Act
-            await authService.RegisterAsync(UserMock.RegisterRequest, default);
+            await authService.RegisterAsync(RegisterRequests.Valid, default);
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == UserMocks.NewUser.Name, default);
             user.Should().NotBeNull();
         });
 
@@ -55,13 +55,13 @@ public class AuthServiceTest(DbFixture fixture)
             // Arrange
 
             // Act
-            var action = () => authService.RegisterAsync(UserMock.RegisterRequestUnder13, default);
+            var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
+            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
         });
 
-    [Theory, MemberData(nameof(UserMock.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserMock))]
+    [Theory, MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string message)
         => RunAsync(async (authService, context) =>
         {
@@ -74,7 +74,7 @@ public class AuthServiceTest(DbFixture fixture)
             await action.Should().ThrowAsync<DbUpdateException>(message);
 
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == UserMocks.NewUser.Name, default);
             user.Should().BeNull();
         });
 }

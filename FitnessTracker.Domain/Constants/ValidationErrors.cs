@@ -1,9 +1,7 @@
 ﻿namespace FitnessTracker.Domain.Constants;
 
-public class ValidationConstants
+public static class ValidationErrors
 {
-    public const string PasswordRegex = @"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_])\S{6,}$";
-
     public const string NameRequired = "Name is required";
     public const string EmailRequired = "Email is required";
     public const string PasswordRequired = "Password is required";

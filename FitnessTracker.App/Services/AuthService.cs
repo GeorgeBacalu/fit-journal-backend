@@ -21,7 +21,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         if (request.Birthday is DateOnly birthday && DateOnly.FromDateTime(DateTime.UtcNow) < birthday.AddYears(13))
-            throw new BadRequestException(ErrorMessageConstants.AgeRestriction);
+            throw new BadRequestException(ErrorMessages.AgeRestriction);
 
         var user = mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -32,11 +32,11 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetByEmailAsync(request.Email)
-            ?? throw new NotFoundException(string.Format(ErrorMessageConstants.UserEmailNotFound, request.Email));
+        var user = await unitOfWork.UserRepository.GetByEmailAsync(request.Email, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.UserEmailNotFound, request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new BadRequestException(ErrorMessageConstants.InvalidCredentials);
+            throw new BadRequestException(ErrorMessages.InvalidCredentials);
 
         return new()
         {
@@ -56,8 +56,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
                     new("role", $"{user.Role}")
                 ]),
             SigningCredentials = new(secret, SecurityAlgorithms.HmacSha256),
-            Expires = isAccessToken
-                ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
-                : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
+            Expires = isAccessToken ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
+                                    : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
         }));
 }

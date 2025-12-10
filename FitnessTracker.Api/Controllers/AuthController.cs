@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
-[Route(ApiConstants.ApiAuth)]
+[Route(ApiRoutes.Auth)]
 public class AuthController(IAuthService authService) : BaseController
 {
     /// <summary>Register new user</summary>
@@ -17,7 +17,7 @@ public class AuthController(IAuthService authService) : BaseController
     {
         await authService.RegisterAsync(request, token);
         
-        return Created("", new { Message = SuccessMessageConstants.UserRegistered });
+        return Created("", new { Message = SuccessMessages.UserRegistered });
     }
 
     /// <summary>Login existing user</summary>
