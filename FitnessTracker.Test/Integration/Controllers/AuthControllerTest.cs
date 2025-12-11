@@ -24,7 +24,7 @@ public class AuthControllerTest
         await using var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<FitnessTrackerContext>();
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
-        await context.Users.AddRangeAsync(UserMock.Users, default);
+        await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
         
         await run();
@@ -39,12 +39,12 @@ public class AuthControllerTest
             // Arrange
 
             // Act
-            var response = await http.PostAsJsonAsync($"{ApiConstants.ApiAuth}/register", UserMock.RegisterRequest, default);
+            var response = await http.PostAsJsonAsync($"{ApiRoutes.Auth}/register", RegisterRequests.Valid, default);
             var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>(default);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
-            responseBody.Should().ContainKey("message").WhoseValue.Should().Be(SuccessMessageConstants.UserRegistered);
+            responseBody.Should().ContainKey("message").WhoseValue.Should().Be(SuccessMessages.UserRegistered);
         });
 
     [Fact]
@@ -54,7 +54,7 @@ public class AuthControllerTest
             // Arrange
 
             // Act
-            var response = await http.PostAsJsonAsync($"{ApiConstants.ApiAuth}/register", UserMock.RegisterRequestUnder13, default);
+            var response = await http.PostAsJsonAsync($"{ApiRoutes.Auth}/register", RegisterRequests.Under13, default);
             var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
 
             // Assert
@@ -62,19 +62,19 @@ public class AuthControllerTest
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
                 Title = "Bad request",
-                Detail = ErrorMessageConstants.AgeRestriction,
+                Detail = ErrorMessages.AgeRestriction,
                 Status = StatusCodes.Status400BadRequest
             });
         });
 
-    [Theory, MemberData(nameof(UserMock.InvalidRegisterRequests), MemberType = typeof(UserMock))]
+    [Theory, MemberData(nameof(UserTestData.InvalidRegisterRequests), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenRequestIsInvalid(RegisterRequest request, string field, string[] messages)
         => RunAsync(async () =>
         {
             // Arrange
 
             // Act
-            var response = await http.PostAsJsonAsync($"{ApiConstants.ApiAuth}/register", request, default);
+            var response = await http.PostAsJsonAsync($"{ApiRoutes.Auth}/register", request, default);
             var responseBody = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(default);
 
             // Assert
@@ -85,14 +85,14 @@ public class AuthControllerTest
             responseBody.Errors[field].Should().BeEquivalentTo(messages);
         });
 
-    [Theory, MemberData(nameof(UserMock.DuplicatedFieldRegisterRequests), MemberType = typeof(UserMock))]
+    [Theory, MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string title, string detail)
         => RunAsync(async () =>
         {
             // Arrange
 
             // Act
-            var response = await http.PostAsJsonAsync($"{ApiConstants.ApiAuth}/register", request, default);
+            var response = await http.PostAsJsonAsync($"{ApiRoutes.Auth}/register", request, default);
             var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
 
             // Assert

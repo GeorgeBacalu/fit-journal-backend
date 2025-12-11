@@ -5,4 +5,5 @@ namespace FitnessTracker.Infra.Repositories.Interfaces;
 public interface IUserRepository
 {
     Task AddAsync(User user, CancellationToken token = default);
+    Task<User?> GetByEmailAsync(string email, CancellationToken token = default);
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using FitnessTracker.App.Dtos.Requests.Auth;
 using FitnessTracker.App.Mappers;
 using FitnessTracker.App.Services;
@@ -8,8 +9,10 @@ using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories;
 using FitnessTracker.Test.Mocks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Net;
 
 namespace FitnessTracker.Test.Integration.Services;
 
@@ -25,7 +28,7 @@ public class AuthServiceTest(DbFixture fixture)
         await using var context = new FitnessTrackerContext(dbOptions);
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
-        await context.Users.AddRangeAsync(UserMock.Users, default);
+        await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
         
         await run(new(new UnitOfWork(context, new UserRepository(context)), mapper), context);
@@ -40,11 +43,11 @@ public class AuthServiceTest(DbFixture fixture)
             // Arrange
 
             // Act
-            await authService.RegisterAsync(UserMock.RegisterRequest, default);
+            await authService.RegisterAsync(RegisterRequests.Valid, default);
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
             user.Should().NotBeNull();
         });
 
@@ -55,13 +58,32 @@ public class AuthServiceTest(DbFixture fixture)
             // Arrange
 
             // Act
-            var action = () => authService.RegisterAsync(UserMock.RegisterRequestUnder13, default);
+            var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ErrorMessageConstants.AgeRestriction);
+            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
         });
 
-    [Theory, MemberData(nameof(UserMock.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserMock))]
+    [Theory]
+    [MemberData(nameof(UserTestData.InvalidRegisterRequests), MemberType = typeof(UserTestData))]
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenRequestIsInvalid(RegisterRequest request, string field, string messages)
+        => RunAsync(async (authService, context) =>
+        {
+            // Arrange
+
+            // Act
+            var action = () => authService.RegisterAsync(request, default);
+
+            // Assert
+            var exception = await action.Should().ThrowAsync<BadRequestException>(messages);
+
+            var user = await context.Users.AsNoTracking()
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
+            user.Should().BeNull();
+        });
+
+    [Theory]
+    [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string message)
         => RunAsync(async (authService, context) =>
         {
@@ -74,7 +96,7 @@ public class AuthServiceTest(DbFixture fixture)
             await action.Should().ThrowAsync<DbUpdateException>(message);
 
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMock.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
             user.Should().BeNull();
         });
 }
