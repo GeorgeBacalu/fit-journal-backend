@@ -3,7 +3,7 @@ using FitnessTracker.Domain.Entities;
 
 namespace FitnessTracker.Test.Mocks;
 
-public class RegisterRequests
+public static class RegisterRequests
 {
     public static readonly RegisterRequest Valid = new()
     {

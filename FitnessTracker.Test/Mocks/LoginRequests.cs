@@ -3,7 +3,7 @@ using FitnessTracker.Test.Constants;
 
 namespace FitnessTracker.Test.Mocks;
 
-public class LoginRequests
+public static class LoginRequests
 {
     public static readonly LoginRequest Valid = new()
     {

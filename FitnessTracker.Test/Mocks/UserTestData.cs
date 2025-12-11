@@ -3,7 +3,7 @@ using FitnessTracker.Domain.Constants;
 
 namespace FitnessTracker.Test.Mocks;
 
-public class UserTestData
+public static class UserTestData
 {
     public static IEnumerable<object[]> InvalidRegisterRequests() =>
     [
@@ -59,6 +59,16 @@ public class UserTestData
         [LoginRequests.EmailTooLong, nameof(LoginRequest.Email), new[] { ValidationErrors.InvalidEmailLength }],
 
         [LoginRequests.NoPassword, nameof(LoginRequest.Password), new[] { ValidationErrors.PasswordRequired }]
+    ];
+
+    public static IEnumerable<object[]> InvalidAddUsers() =>
+    [
+        [AddUsers.UserInvalidEmail(), ConstraintMessages.CheckUsersEmail],
+        [AddUsers.UserFutureBirthday(), ConstraintMessages.CheckUsersBirthday],
+        [AddUsers.UserInvalidHeight(), ConstraintMessages.CheckUsersHeight],
+        [AddUsers.UserInvalidWeight(), ConstraintMessages.CheckUsersWeight],
+        [AddUsers.UserDuplicatedName("John Doe"), ConstraintMessages.DuplicatedName],
+        [AddUsers.UserDuplicatedEmail("john.doe@email.com"), ConstraintMessages.DuplicatedEmail]
     ];
 
     public static IEnumerable<object[]> DuplicatedFieldRegisterRequests() =>

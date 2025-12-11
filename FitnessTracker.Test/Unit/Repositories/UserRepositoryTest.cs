@@ -24,12 +24,13 @@ public class UserRepositoryTest
     public async Task AddAsync_ShouldAddUserToContext()
     {
         // Arrange
+        var newUser = AddUsers.NewUser();
 
         // Act
-        await userRepository.AddAsync(UserMocks.NewUser);
+        await userRepository.AddAsync(newUser);
 
         // Assert
-        contextMock.Verify(mock => mock.Users.AddAsync(UserMocks.NewUser, default));
+        contextMock.Verify(mock => mock.Users.AddAsync(newUser, default));
     }
 
     [Fact]

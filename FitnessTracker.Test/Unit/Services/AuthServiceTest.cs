@@ -41,13 +41,14 @@ public class AuthServiceTest
     public async Task RegisterAsync_ShouldAddUser_WhenRequestIsValid()
     {
         // Arrange
-        mapperMock.Setup(mock => mock.Map<User>(RegisterRequests.Valid)).Returns(UserMocks.NewUser);
+        var newUser = AddUsers.NewUser();
+        mapperMock.Setup(mock => mock.Map<User>(RegisterRequests.Valid)).Returns(newUser);
 
         // Act
         await authService.RegisterAsync(RegisterRequests.Valid, default);
 
         // Assert
-        userRepositoryMock.Verify(mock => mock.AddAsync(UserMocks.NewUser, default));
+        userRepositoryMock.Verify(mock => mock.AddAsync(newUser, default));
         unitOfWorkMock.Verify(mock => mock.CommitAsync(default));
     }
 
@@ -62,7 +63,7 @@ public class AuthServiceTest
         // Assert
         await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
 
-        userRepositoryMock.Verify(mock => mock.AddAsync(UserMocks.NewUser, default), Times.Never);
+        userRepositoryMock.Verify(mock => mock.AddAsync(AddUsers.NewUser(), default), Times.Never);
         unitOfWorkMock.Verify(mock => mock.CommitAsync(default), Times.Never);
     }
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using FitnessTracker.App.Dtos.Requests.Auth;
 using FitnessTracker.App.Mappers;
 using FitnessTracker.App.Services;
@@ -8,8 +9,10 @@ using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories;
 using FitnessTracker.Test.Mocks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Net;
 
 namespace FitnessTracker.Test.Integration.Services;
 
@@ -44,7 +47,7 @@ public class AuthServiceTest(DbFixture fixture)
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMocks.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
             user.Should().NotBeNull();
         });
 
@@ -61,7 +64,26 @@ public class AuthServiceTest(DbFixture fixture)
             await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
         });
 
-    [Theory, MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserTestData))]
+    [Theory]
+    [MemberData(nameof(UserTestData.InvalidRegisterRequests), MemberType = typeof(UserTestData))]
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenRequestIsInvalid(RegisterRequest request, string field, string messages)
+        => RunAsync(async (authService, context) =>
+        {
+            // Arrange
+
+            // Act
+            var action = () => authService.RegisterAsync(request, default);
+
+            // Assert
+            var exception = await action.Should().ThrowAsync<BadRequestException>(messages);
+
+            var user = await context.Users.AsNoTracking()
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
+            user.Should().BeNull();
+        });
+
+    [Theory]
+    [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string message)
         => RunAsync(async (authService, context) =>
         {
@@ -74,7 +96,7 @@ public class AuthServiceTest(DbFixture fixture)
             await action.Should().ThrowAsync<DbUpdateException>(message);
 
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == UserMocks.NewUser.Name, default);
+                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
             user.Should().BeNull();
         });
 }
