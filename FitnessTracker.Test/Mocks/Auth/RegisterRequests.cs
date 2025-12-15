@@ -1,7 +1,7 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.Domain.Entities;
+using FitnessTracker.Domain.Enums;
 
-namespace FitnessTracker.Test.Mocks;
+namespace FitnessTracker.Test.Mocks.Auth;
 
 public static class RegisterRequests
 {

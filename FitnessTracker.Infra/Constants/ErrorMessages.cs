@@ -1,4 +1,4 @@
-﻿namespace FitnessTracker.Domain.Constants;
+﻿namespace FitnessTracker.Infra.Constants;
 
 public static class ErrorMessages
 {
@@ -9,6 +9,8 @@ public static class ErrorMessages
 
     public const string AgeRestriction = "You must be at least 13 years old";
 
+    public const string UserIdNotFound = "User with ID {0} not found";
     public const string UserEmailNotFound = "User with email {0} not found";
+
     public const string InvalidCredentials = "Invalid credentials";
 }

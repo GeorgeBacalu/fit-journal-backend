@@ -1,5 +1,5 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Dtos.Responses;
+using FitnessTracker.App.Dtos.Responses.Auth;
 
 namespace FitnessTracker.App.Services.Interfaces;
 

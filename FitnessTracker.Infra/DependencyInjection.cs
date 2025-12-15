@@ -2,11 +2,11 @@
 using FitnessTracker.Infra.Repositories.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FitnessTracker.Infra.DI;
+namespace FitnessTracker.Infra;
 
-public static class ServiceCollectionExtensions
+public static class DependencyInjection
 {
-    public static IServiceCollection AddInfraRepositories(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();

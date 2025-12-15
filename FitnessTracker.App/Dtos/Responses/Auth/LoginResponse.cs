@@ -1,4 +1,4 @@
-﻿namespace FitnessTracker.App.Dtos.Responses;
+﻿namespace FitnessTracker.App.Dtos.Responses.Auth;
 
 public class LoginResponse
 {

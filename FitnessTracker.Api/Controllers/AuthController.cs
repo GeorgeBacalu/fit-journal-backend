@@ -1,12 +1,12 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Dtos.Responses;
+using FitnessTracker.App.Dtos.Responses.Auth;
 using FitnessTracker.App.Services.Interfaces;
-using FitnessTracker.Domain.Constants;
+using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
-[Route(ApiRoutes.Auth)]
+[Route("/api/[controller]")]
 public class AuthController(IAuthService authService) : BaseController
 {
     /// <summary>Register new user</summary>
@@ -16,7 +16,6 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<object>> RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         await authService.RegisterAsync(request, token);
-        
         return Created("", new { Message = SuccessMessages.UserRegistered });
     }
 
@@ -26,9 +25,5 @@ public class AuthController(IAuthService authService) : BaseController
     /// <returns>Access and refresh tokens</returns>
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default)
-    {
-        var response = await authService.LoginAsync(request, token);
-        
-        return Ok(response);
-    }
+        => Ok(await authService.LoginAsync(request, token));
 }

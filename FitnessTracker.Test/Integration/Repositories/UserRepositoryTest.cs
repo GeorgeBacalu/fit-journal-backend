@@ -2,7 +2,7 @@
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Repositories;
 using FitnessTracker.Test.Constants;
-using FitnessTracker.Test.Mocks;
+using FitnessTracker.Test.Mocks.Users;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +11,9 @@ namespace FitnessTracker.Test.Integration.Repositories;
 [Collection("DbFixture")]
 public class UserRepositoryTest(DbFixture fixture)
 {
-    private readonly DbContextOptions<FitnessTrackerContext> dbOptions = fixture.DbOptions;
-
     private async Task RunAsync(Func<UserRepository, FitnessTrackerContext, Task> run)
     {
-        await using var context = new FitnessTrackerContext(dbOptions);
+        await using var context = new FitnessTrackerContext(fixture.DbOptions);
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
         await context.Users.AddRangeAsync(UserMocks.Users, default);
@@ -31,14 +29,15 @@ public class UserRepositoryTest(DbFixture fixture)
         => RunAsync(async (userRepository, context) =>
         {
             // Arrange
+            var newUser = AddUsers.NewUser();
 
             // Act
-            await userRepository.AddAsync(AddUsers.NewUser(), default);
+            await userRepository.AddAsync(newUser, default);
             await context.SaveChangesAsync(default);
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
+                .SingleOrDefaultAsync(user => user.Name == newUser.Name, default);
             user.Should().NotBeNull();
         });
 
@@ -71,7 +70,7 @@ public class UserRepositoryTest(DbFixture fixture)
             var result = await userRepository.GetByEmailAsync(ValidationSamples.ValidEmail, default);
 
             // Assert
-            result.Should().Be(UserMocks.Users[0]);
+            result.Should().BeEquivalentTo(UserMocks.Users[0]);
         });
 
     [Fact]

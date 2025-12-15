@@ -1,7 +1,7 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Auth;
 using FitnessTracker.Test.Constants;
 
-namespace FitnessTracker.Test.Mocks;
+namespace FitnessTracker.Test.Mocks.Auth;
 
 public static class LoginRequests
 {

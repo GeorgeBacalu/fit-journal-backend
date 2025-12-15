@@ -1,38 +1,36 @@
 ﻿using AutoMapper;
-using Azure;
 using FitnessTracker.App.Dtos.Requests.Auth;
 using FitnessTracker.App.Mappers;
 using FitnessTracker.App.Services;
-using FitnessTracker.Domain.Constants;
+using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories;
-using FitnessTracker.Test.Mocks;
+using FitnessTracker.Test.Constants;
+using FitnessTracker.Test.Mocks.Auth;
+using FitnessTracker.Test.Mocks.Users;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Net;
 
 namespace FitnessTracker.Test.Integration.Services;
 
 [Collection("DbFixture")]
 public class AuthServiceTest(DbFixture fixture)
 {
-    private readonly DbContextOptions<FitnessTrackerContext> dbOptions = fixture.DbOptions;
     private readonly IMapper mapper = new MapperConfiguration(config
         => config.AddProfile<UserMapper>(), NullLoggerFactory.Instance).CreateMapper();
 
     private async Task RunAsync(Func<AuthService, FitnessTrackerContext, Task> run)
     {
-        await using var context = new FitnessTrackerContext(dbOptions);
+        await using var context = new FitnessTrackerContext(fixture.DbOptions);
         await using var transaction = await context.Database.BeginTransactionAsync(default);
 
         await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
-        
+
         await run(new(new UnitOfWork(context, new UserRepository(context)), mapper), context);
-        
+
         await transaction.RollbackAsync(default);
     }
 
@@ -47,7 +45,7 @@ public class AuthServiceTest(DbFixture fixture)
 
             // Assert
             var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
+                .SingleOrDefaultAsync(user => user.Name == RegisterRequests.Valid.Name, default);
             user.Should().NotBeNull();
         });
 
@@ -62,24 +60,6 @@ public class AuthServiceTest(DbFixture fixture)
 
             // Assert
             await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
-        });
-
-    [Theory]
-    [MemberData(nameof(UserTestData.InvalidRegisterRequests), MemberType = typeof(UserTestData))]
-    public Task RegisterAsync_ShouldThrowBadRequest_WhenRequestIsInvalid(RegisterRequest request, string field, string messages)
-        => RunAsync(async (authService, context) =>
-        {
-            // Arrange
-
-            // Act
-            var action = () => authService.RegisterAsync(request, default);
-
-            // Assert
-            var exception = await action.Should().ThrowAsync<BadRequestException>(messages);
-
-            var user = await context.Users.AsNoTracking()
-                .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
-            user.Should().BeNull();
         });
 
     [Theory]
@@ -98,5 +78,46 @@ public class AuthServiceTest(DbFixture fixture)
             var user = await context.Users.AsNoTracking()
                 .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);
             user.Should().BeNull();
+        });
+
+    [Fact]
+    public Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
+        => RunAsync(async (authService, context) =>
+        {
+            // Arrange
+            AuthConfig.EnsureInitialized();
+
+            // Act
+            var result = await authService.LoginAsync(LoginRequests.Valid, default);
+
+            // Assert
+            result.AccessToken.Should().NotBeNullOrWhiteSpace();
+            result.RefreshToken.Should().NotBeNullOrWhiteSpace();
+        });
+
+    [Fact]
+    public Task LoginAsync_ShouldThrowNotFound_WhenEmailDoesNotExist()
+        => RunAsync(async (authService, context) =>
+        {
+            // Arrange
+
+            // Act
+            var action = () => authService.LoginAsync(LoginRequests.NonExistingEmail, default);
+
+            // Assert
+            await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.UserIdNotFound, ValidationSamples.NonExistingEmail));
+        });
+
+    [Fact]
+    public Task LoginAsync_ShouldThrowBadRequest_WhenPasswordIsIncorrect()
+        => RunAsync(async (authService, context) =>
+        {
+            // Arrange
+
+            // Act
+            var action = () => authService.LoginAsync(LoginRequests.WrongPassword, default);
+
+            // Assert
+            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.InvalidCredentials);
         });
 }

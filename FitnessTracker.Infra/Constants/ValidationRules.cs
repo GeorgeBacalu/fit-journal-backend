@@ -1,4 +1,4 @@
-﻿namespace FitnessTracker.Domain.Constants;
+﻿namespace FitnessTracker.Infra.Constants;
 
 public static class ValidationRules
 {

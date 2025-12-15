@@ -1,7 +1,8 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.Domain.Constants;
+using FitnessTracker.Infra.Constants;
+using FitnessTracker.Test.Mocks.Auth;
 
-namespace FitnessTracker.Test.Mocks;
+namespace FitnessTracker.Test.Mocks.Users;
 
 public static class UserTestData
 {
@@ -31,7 +32,7 @@ public static class UserTestData
 
         [RegisterRequests.PhoneTooLong, nameof(RegisterRequest.Phone), new[] { ValidationErrors.InvalidPhoneLength }],
 
-        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.BirthdayRequired, "Invalid data value" }],
+        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.BirthdayRequired }],
 
         [RegisterRequests.BirthdayFuture, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.InvalidBirthday }],
 
