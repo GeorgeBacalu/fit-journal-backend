@@ -1,4 +1,5 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Workouts;
+using FitnessTracker.App.Dtos.Responses.Workouts;
 using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,14 @@ namespace FitnessTracker.Api.Controllers;
 [Route("/api/[controller]")]
 public class WorkoutController(IWorkoutService workoutService) : BaseController
 {
+    /// <summary>Get current user's workouts</summary>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>List current user's workouts</returns>
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<GetWorkoutsResponse>> GetAllAsync(CancellationToken token = default)
+        => Ok(await workoutService.GetAllAsync(UserId, token));
+
     /// <summary>Add new workout for a user</summary>
     /// <param name="request">Added workout details</param>
     /// <param name="token">Cancellation token</param>

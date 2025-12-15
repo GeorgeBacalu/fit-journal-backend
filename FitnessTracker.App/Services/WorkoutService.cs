@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FitnessTracker.App.Dtos.Requests.Workouts;
+using FitnessTracker.App.Dtos.Responses.Workouts;
 using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infra.Constants;
@@ -10,6 +11,13 @@ namespace FitnessTracker.App.Services;
 
 public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutService
 {
+    public async Task<GetWorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token = default)
+    {
+        var workouts = await unitOfWork.WorkoutRepository.GetAllByUserIdAsync(userId, token);
+
+        return new() { Workouts = mapper.Map<IEnumerable<GetWorkoutResponse>>(workouts) };
+    }
+
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
         var user = await unitOfWork.UserRepository.GetByIdAsync(request.UserId, default)

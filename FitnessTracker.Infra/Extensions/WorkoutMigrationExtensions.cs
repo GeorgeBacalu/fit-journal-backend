@@ -19,7 +19,7 @@ public static class WorkoutMigrationExtensions
                 WHERE i.[StartedAt] < u.[CreatedAt]
             )
             BEGIN
-                RAISERROR ('Workout date can''t be before user registration date', 16, 1);
+                RAISERROR ('Workout start date can''t be before user registration date', 16, 1);
                 ROLLBACK TRANSACTION;
                 RETURN;
             END

@@ -30,6 +30,6 @@ public static class ValidationErrors
     public const string InvalidDescriptionLength = "Invalid description length";
     public const string InvalidNotesLength = "Invalid notes length";
     public const string InvalidDuration = "Invalid duration";
-    public const string InvalidWorkoutDate = "Workout date can't be in the future";
+    public const string InvalidWorkoutDate = "Workout start date can't be in the future";
     public const string UserIdRequired = "User ID is required";
 }

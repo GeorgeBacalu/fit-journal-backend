@@ -10,6 +10,11 @@ public class WorkoutRepository(FitnessTrackerContext context) : IWorkoutReposito
     public async Task<IEnumerable<Workout>> GetAllAsync(CancellationToken token = default)
         => await context.Workouts.AsNoTracking().ToListAsync(token);
 
+    public async Task<IEnumerable<Workout>> GetAllByUserIdAsync(Guid userId, CancellationToken token = default)
+        => await context.Workouts.AsNoTracking()
+            .Where(workout => workout.UserId == userId)
+            .ToListAsync(token);
+
     public async Task AddAsync(Workout workout, CancellationToken token = default)
         => await context.Workouts.AddAsync(workout, token);
 }
