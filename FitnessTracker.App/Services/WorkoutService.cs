@@ -58,4 +58,14 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
         await unitOfWork.CommitAsync(default);
     }
+
+    public async Task RemoveRangeAsync(DeleteWorkoutsRequest request, CancellationToken token = default)
+    {
+        var workouts = await unitOfWork.WorkoutRepository.GetAllByIdsAsync(request.Ids, token);
+
+        foreach (var workout in workouts)
+            workout.DeletedAt = DateTime.UtcNow;
+
+        await unitOfWork.CommitAsync(default);
+    }
 }

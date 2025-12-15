@@ -29,7 +29,7 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
         return Created("", new { Message = SuccessMessages.WorkoutAdded });
     }
 
-    /// <summary>Edit workout</summary>
+    /// <summary>Edit existing workout</summary>
     /// <param name="request">Edited workout details</param>
     /// <param name="token">Cancellation token</param>
     [Authorize(Roles = "Admin")]
@@ -38,5 +38,16 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     {
         await workoutService.EditAsync(request, token);
         return Ok(new { Message = SuccessMessages.WorkoutEdited });
+    }
+
+    /// <summary>Delete workouts</summary>
+    /// <param name="request">Workouts IDs to delete</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = "Admin")]
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveAsync(DeleteWorkoutsRequest request, CancellationToken token = default)
+    {
+        await workoutService.RemoveRangeAsync(request, token);
+        return Ok(new { Message = SuccessMessages.WorkoutRemoved });
     }
 }

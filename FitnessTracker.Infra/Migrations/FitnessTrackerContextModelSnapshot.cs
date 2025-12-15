@@ -85,7 +85,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users", t =>
+                    b.ToTable("Users", null, t =>
                         {
                             t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
 
@@ -141,7 +141,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Workouts", t =>
+                    b.ToTable("Workouts", null, t =>
                         {
                             t.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
 
