@@ -2,13 +2,14 @@
 using FitnessTracker.App.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FitnessTracker.App.DI;
+namespace FitnessTracker.App;
 
-public static class ServiceCollectionExtensions
+public static class DependencyInjection
 {
-    public static IServiceCollection AddAppServices(this IServiceCollection services)
+    public static IServiceCollection AddCore(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

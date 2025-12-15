@@ -1,8 +1,8 @@
-﻿using FitnessTracker.App.DI;
+﻿using FitnessTracker.App;
 using FitnessTracker.App.Mappers;
+using FitnessTracker.Infra;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Context;
-using FitnessTracker.Infra.DI;
 using FitnessTracker.Infra.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +14,7 @@ namespace FitnessTracker.Api;
 
 public class Startup
 {
-    private const string CorsPolicyName = "Cors";
+    private const string CorsPolicyName = "AllowAll";
 
     public IConfiguration Configuration { get; }
 
@@ -31,13 +31,13 @@ public class Startup
         ConfigureAutoMapper(services);
         ConfigureControllers(services);
         ConfigureSwagger(services);
-        ConfigureAuthentication(services);
+        ConfigureAuth(services);
 
-        services.AddInfraRepositories();
-        services.AddAppServices();
+        services.AddInfrastructure()
+                .AddCore()
 
-        services.AddTransient<LoggingMiddleware>();
-        services.AddTransient<ExceptionHandlingMiddleware>();
+                .AddTransient<LoggingMiddleware>()
+                .AddTransient<ExceptionHandlingMiddleware>();
     }
 
     public void Configure(WebApplication app)
@@ -59,10 +59,9 @@ public class Startup
 
     private static void ConfigureCors(IServiceCollection services)
         => services.AddCors(options => options.AddPolicy(CorsPolicyName,
-               builder => builder.AllowAnyOrigin()
-                                 .AllowAnyMethod()
-                                 .AllowAnyHeader()
-                                 .WithExposedHeaders("X-Correlation-ID", "Content-Disposition")));
+               policy => policy.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader()));
 
     private static void ConfigureDbContext(IServiceCollection services)
         => services.AddDbContext<FitnessTrackerContext>(
@@ -87,9 +86,9 @@ public class Startup
 
                options.AddSecurityDefinition("Bearer", new()
                {
-                   Name = "Authorization",
-                   In = ParameterLocation.Header,
                    Type = SecuritySchemeType.Http,
+                   In = ParameterLocation.Header,
+                   Name = "Authorization",
                    Scheme = "bearer",
                    BearerFormat = "JWT"
                });
@@ -111,8 +110,9 @@ public class Startup
                options.IncludeXmlComments($"{AppContext.BaseDirectory}/{Assembly.GetExecutingAssembly().GetName().Name}.xml");
            });
 
-    private static void ConfigureAuthentication(IServiceCollection services)
-        => services.AddAuthentication("Bearer").AddJwtBearer(
+    private static void ConfigureAuth(IServiceCollection services)
+    {
+        services.AddAuthentication("Bearer").AddJwtBearer(
                options => options.TokenValidationParameters = new()
                {
                    ValidateIssuer = true,
@@ -124,4 +124,7 @@ public class Startup
                    ValidAudience = AppConfig.Auth.Audience,
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))
                });
+
+        services.AddAuthorization();
+    }
 }

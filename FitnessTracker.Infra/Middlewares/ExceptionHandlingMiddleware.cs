@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
-using System.Text.Json;
 
 namespace FitnessTracker.Infra.Middlewares;
 
@@ -24,25 +23,21 @@ public class ExceptionHandlingMiddleware : IMiddleware
             {
                 BadRequestException => new()
                 {
-                    Title = "Bad request",
                     Detail = message,
                     Status = StatusCodes.Status400BadRequest
                 },
                 UnauthorizedException => new()
                 {
-                    Title = "Unauthorized",
                     Detail = message,
                     Status = StatusCodes.Status401Unauthorized
                 },
                 ForbiddenException => new()
                 {
-                    Title = "Forbidden",
                     Detail = message,
                     Status = StatusCodes.Status403Forbidden
                 },
                 NotFoundException => new()
                 {
-                    Title = "Not found",
                     Detail = message,
                     Status = StatusCodes.Status404NotFound
                 },
@@ -52,9 +47,13 @@ public class ExceptionHandlingMiddleware : IMiddleware
                     Detail = $"{Capitalize(field)} already taken",
                     Status = StatusCodes.Status409Conflict
                 },
+                DbUpdateException => new()
+                {
+                    Detail = message,
+                    Status = StatusCodes.Status409Conflict
+                },
                 _ => new()
                 {
-                    Title = "Internal server error",
                     Detail = message,
                     Status = StatusCodes.Status500InternalServerError
                 }
@@ -62,7 +61,7 @@ public class ExceptionHandlingMiddleware : IMiddleware
 
             context.Response.ContentType = MediaTypeNames.Application.Json;
             context.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
 

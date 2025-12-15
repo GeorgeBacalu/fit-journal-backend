@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.App.Attributes;
-using FitnessTracker.Domain.Constants;
-using FitnessTracker.Domain.Entities;
+using FitnessTracker.Infra.Constants;
+using FitnessTracker.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace FitnessTracker.App.Dtos.Requests.Auth;

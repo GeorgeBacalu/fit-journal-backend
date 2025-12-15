@@ -1,7 +1,7 @@
 ﻿using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Repositories;
 using FitnessTracker.Test.Constants;
-using FitnessTracker.Test.Mocks;
+using FitnessTracker.Test.Mocks.Users;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -27,7 +27,7 @@ public class UserRepositoryTest
         var newUser = AddUsers.NewUser();
 
         // Act
-        await userRepository.AddAsync(newUser);
+        await userRepository.AddAsync(newUser, default);
 
         // Assert
         contextMock.Verify(mock => mock.Users.AddAsync(newUser, default));

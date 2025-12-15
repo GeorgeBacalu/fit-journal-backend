@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 using FitnessTracker.App.Services;
-using FitnessTracker.Domain.Constants;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infra.Config;
+using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
 using FitnessTracker.Test.Constants;
-using FitnessTracker.Test.Mocks;
+using FitnessTracker.Test.Integration;
+using FitnessTracker.Test.Mocks.Auth;
+using FitnessTracker.Test.Mocks.Users;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
 using Moq;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace FitnessTracker.Test.Unit.Services;
 
@@ -25,16 +24,6 @@ public class AuthServiceTest
     {
         unitOfWorkMock.Setup(mock => mock.UserRepository).Returns(userRepositoryMock.Object);
         authService = new(unitOfWorkMock.Object, mapperMock.Object);
-
-        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-        AppConfig.Init(new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            ["Auth:Issuer"] = "https://localhost:5000/",
-            ["Auth:Audience"] = "http://localhost:4200/",
-            ["Auth:Secret"] = "00000000000000000000000000000000",
-            ["Auth:AccessTokenLifetimeMinutes"] = "15",
-            ["Auth:RefreshTokenLifetimeDays"] = "30"
-        }).Build());
     }
 
     [Fact]
@@ -63,7 +52,7 @@ public class AuthServiceTest
         // Assert
         await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
 
-        userRepositoryMock.Verify(mock => mock.AddAsync(AddUsers.NewUser(), default), Times.Never);
+        userRepositoryMock.Verify(mock => mock.AddAsync(It.IsAny<User>(), default), Times.Never);
         unitOfWorkMock.Verify(mock => mock.CommitAsync(default), Times.Never);
     }
 
@@ -71,6 +60,8 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
     {
         // Arrange
+        AuthConfig.EnsureInitialized();
+
         userRepositoryMock.Setup(mock => mock.GetByEmailAsync(ValidationSamples.ValidEmail)).ReturnsAsync(UserMocks.Users[0]);
 
         // Act

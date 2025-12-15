@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Domain.Constants;
+﻿using FitnessTracker.Infra.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace FitnessTracker.App.Dtos.Requests.Auth;

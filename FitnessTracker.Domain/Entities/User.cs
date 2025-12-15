@@ -1,4 +1,6 @@
-﻿namespace FitnessTracker.Domain.Entities;
+﻿using FitnessTracker.Domain.Enums;
+
+namespace FitnessTracker.Domain.Entities;
 
 public class User : BaseEntity
 {
@@ -10,10 +12,6 @@ public class User : BaseEntity
     public DateOnly Birthday { get; set; }
     public double Height { get; set; }
     public double Weight { get; set; }
-
     public Gender Gender { get; set; }
     public Role Role { get; set; }
 }
-
-public enum Role { User, Admin }
-public enum Gender { Male, Female }

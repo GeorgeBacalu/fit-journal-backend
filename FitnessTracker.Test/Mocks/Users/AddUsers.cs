@@ -1,6 +1,7 @@
-﻿using FitnessTracker.Domain.Entities;
+﻿using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Entities;
 
-namespace FitnessTracker.Test.Mocks;
+namespace FitnessTracker.Test.Mocks.Users;
 
 public static class AddUsers
 {

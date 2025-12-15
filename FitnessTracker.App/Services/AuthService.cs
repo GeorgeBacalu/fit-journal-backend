@@ -1,22 +1,23 @@
 ﻿using AutoMapper;
 using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Dtos.Responses;
+using FitnessTracker.App.Dtos.Responses.Auth;
 using FitnessTracker.App.Services.Interfaces;
-using FitnessTracker.Domain.Constants;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infra.Config;
+using FitnessTracker.Domain.Enums;
+using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using FitnessTracker.Infra.Config;
 
 namespace FitnessTracker.App.Services;
 
 public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 {
-    private static readonly JwtSecurityTokenHandler tokenHandler = new();
-    private static readonly SymmetricSecurityKey secret = new(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret));
+    private static readonly JwtSecurityTokenHandler _tokenHandler = new();
+    private static readonly SymmetricSecurityKey _secret = new(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret));
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
@@ -40,13 +41,13 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
         return new()
         {
-            AccessToken = GenerateToken(user),
-            RefreshToken = GenerateToken(user, isAccessToken: false)
+            AccessToken = GenerateToken(user, TokenType.Access),
+            RefreshToken = GenerateToken(user, TokenType.Refresh)
         };
     }
 
-    private string GenerateToken(User user, bool isAccessToken = true)
-        => tokenHandler.WriteToken(tokenHandler.CreateToken(new()
+    private string GenerateToken(User user, TokenType type)
+        => _tokenHandler.WriteToken(_tokenHandler.CreateToken(new()
         {
             Issuer = AppConfig.Auth.Issuer,
             Audience = AppConfig.Auth.Audience,
@@ -55,8 +56,9 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
                     new("userId", $"{user.Id}"),
                     new("role", $"{user.Role}")
                 ]),
-            SigningCredentials = new(secret, SecurityAlgorithms.HmacSha256),
-            Expires = isAccessToken ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
-                                    : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
+            SigningCredentials = new(_secret, SecurityAlgorithms.HmacSha256),
+            Expires = type == TokenType.Access
+                ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
+                : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
         }));
 }
