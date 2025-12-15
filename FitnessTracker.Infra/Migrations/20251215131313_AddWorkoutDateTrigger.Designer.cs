@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    [Migration("20251215084151_Workouts")]
-    partial class Workouts
+    [Migration("20251215131313_AddWorkoutDateTrigger")]
+    partial class AddWorkoutDateTrigger
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,9 +109,6 @@ namespace FitnessTracker.Infra.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -131,6 +128,9 @@ namespace FitnessTracker.Infra.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -146,7 +146,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Workouts", t =>
                         {
-                            t.HasCheckConstraint("CK_Workout_Date", "[Date] <= CURRENT_TIMESTAMP");
+                            t.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
 
                             t.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
                         });

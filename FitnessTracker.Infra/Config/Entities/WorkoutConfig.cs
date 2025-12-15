@@ -19,7 +19,7 @@ public class WorkoutConfig : IEntityTypeConfiguration<Workout>
         builder.ToTable(table =>
         {
             table.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
-            table.HasCheckConstraint("CK_Workout_Date", "[Date] <= CURRENT_TIMESTAMP");
+            table.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
         });
     }
 }

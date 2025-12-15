@@ -1,0 +1,22 @@
+﻿using FitnessTracker.App.Dtos.Requests.Workouts;
+using FitnessTracker.App.Services.Interfaces;
+using FitnessTracker.Infra.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FitnessTracker.Api.Controllers;
+
+[Route("/api/[controller]")]
+public class WorkoutController(IWorkoutService workoutService) : BaseController
+{
+    /// <summary>Add new workout for a user</summary>
+    /// <param name="request">Added workout details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<ActionResult<object>> AddAsync(AddWorkoutRequest request, CancellationToken token = default)
+    {
+        await workoutService.AddAsync(request, token);
+        return Created("", new { Message = SuccessMessages.WorkoutAdded });
+    }
+}

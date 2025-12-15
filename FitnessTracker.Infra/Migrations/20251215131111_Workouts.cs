@@ -47,7 +47,7 @@ namespace FitnessTracker.Infra.Migrations
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -56,7 +56,7 @@ namespace FitnessTracker.Infra.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Workouts", x => x.Id);
-                    table.CheckConstraint("CK_Workout_Date", "[Date] <= CURRENT_TIMESTAMP");
+                    table.CheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
                     table.CheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
                     table.ForeignKey(
                         name: "FK_Workouts_Users_UserId",

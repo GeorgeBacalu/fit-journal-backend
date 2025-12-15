@@ -7,7 +7,8 @@ namespace FitnessTracker.Infra.Context;
 public class FitnessTrackerContext : DbContext
 {
     public FitnessTrackerContext() { }
-    public FitnessTrackerContext(DbContextOptions<FitnessTrackerContext> options) : base(options) { }
+    public FitnessTrackerContext(DbContextOptions<FitnessTrackerContext> options)
+        : base(options) { }
 
     public virtual DbSet<User> Users => Set<User>();
     public virtual DbSet<Workout> Workouts => Set<Workout>();
