@@ -19,7 +19,6 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(user => user.Gender).IsRequired().HasConversion<string>().HasMaxLength(8);
         builder.Property(user => user.Role).IsRequired().HasConversion<string>().HasMaxLength(6);
 
-        builder.Property(user => user.UpdatedAt).ValueGeneratedOnUpdate();
         builder.HasQueryFilter(user => user.DeletedAt == null);
 
         builder.ToTable(table =>

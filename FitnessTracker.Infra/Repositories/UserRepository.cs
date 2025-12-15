@@ -11,7 +11,7 @@ public class UserRepository(FitnessTrackerContext context) : IUserRepository
         => await context.Users.AddAsync(user, token);
 
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken token = default)
-        => await context.Users.AsNoTracking().SingleOrDefaultAsync(user => user.Id == id, token);
+        => await context.Users.SingleOrDefaultAsync(user => user.Id == id, token);
 
     public async Task<User?> GetByEmailAsync(string email, CancellationToken token = default)
         => await context.Users.AsNoTracking().SingleOrDefaultAsync(user => user.Email == email, token);

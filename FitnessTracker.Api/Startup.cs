@@ -81,7 +81,7 @@ public class Startup
                {
                    Title = "Fitness Tracker API",
                    Description = "Health platform offering accessible fitness progress through real-time activity insights",
-                   Version = "1.0"
+                   Version = "v1"
                });
 
                options.AddSecurityDefinition("Bearer", new()
