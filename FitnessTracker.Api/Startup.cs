@@ -69,7 +69,7 @@ public class Startup
                    sqlOptions => sqlOptions.MigrationsAssembly("FitnessTracker.Infra")));
 
     private static void ConfigureAutoMapper(IServiceCollection services)
-        => services.AddAutoMapper(_ => { }, typeof(UserMapper));
+        => services.AddAutoMapper(_ => { }, typeof(UserMapper), typeof(WorkoutMapper));
 
     private static void ConfigureControllers(IServiceCollection services)
         => services.AddControllers();
@@ -81,7 +81,7 @@ public class Startup
                {
                    Title = "Fitness Tracker API",
                    Description = "Health platform offering accessible fitness progress through real-time activity insights",
-                   Version = "1.0"
+                   Version = "v1"
                });
 
                options.AddSecurityDefinition("Bearer", new()
