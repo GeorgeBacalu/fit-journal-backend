@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    [Migration("20251215131313_AddWorkoutDateTrigger")]
+    [Migration("20251215152607_AddWorkoutDateTrigger")]
     partial class AddWorkoutDateTrigger
     {
         /// <inheritdoc />
@@ -150,6 +150,8 @@ namespace FitnessTracker.Infra.Migrations
 
                             t.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
                         });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.Workout", b =>

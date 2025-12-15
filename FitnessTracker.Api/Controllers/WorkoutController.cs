@@ -28,4 +28,15 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
         await workoutService.AddAsync(request, token);
         return Created("", new { Message = SuccessMessages.WorkoutAdded });
     }
+
+    /// <summary>Edit workout</summary>
+    /// <param name="request">Edited workout details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = "Admin")]
+    [HttpPatch]
+    public async Task<ActionResult<object>> EditAsync(EditWorkoutRequest request, CancellationToken token = default)
+    {
+        await workoutService.EditAsync(request, token);
+        return Ok(new { Message = SuccessMessages.WorkoutEdited });
+    }
 }

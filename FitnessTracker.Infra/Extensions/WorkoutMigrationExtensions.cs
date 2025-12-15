@@ -8,7 +8,7 @@ public static class WorkoutMigrationExtensions
 {
     public static OperationBuilder<SqlOperation> AddWorkoutDateTrigger(this MigrationBuilder migrationBuilder)
         => migrationBuilder.Sql(@"
-        CREATE TRIGGER TR_Workouts_BeforeUserRegistration ON [dbo].[Workouts]
+        CREATE TRIGGER TR_Workouts_BeforeUserRegistration ON [Workouts]
         AFTER INSERT, UPDATE
         AS BEGIN
             SET NOCOUNT ON;
@@ -19,9 +19,7 @@ public static class WorkoutMigrationExtensions
                 WHERE i.[StartedAt] < u.[CreatedAt]
             )
             BEGIN
-                RAISERROR ('Workout start date can''t be before user registration date', 16, 1);
-                ROLLBACK TRANSACTION;
-                RETURN;
+                THROW 50001, 'Workout start date can''t be before user registration date', 1;
             END
         END");
 

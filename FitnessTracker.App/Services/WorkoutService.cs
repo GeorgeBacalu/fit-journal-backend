@@ -3,6 +3,7 @@ using FitnessTracker.App.Dtos.Requests.Workouts;
 using FitnessTracker.App.Dtos.Responses.Workouts;
 using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Domain.Entities;
+using FitnessTracker.Domain.Enums;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
@@ -13,7 +14,12 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 {
     public async Task<GetWorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token = default)
     {
-        var workouts = await unitOfWork.WorkoutRepository.GetAllByUserIdAsync(userId, token);
+        var user = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
+
+        var workouts = user.Role == Role.User
+            ? await unitOfWork.WorkoutRepository.GetAllByUserIdAsync(userId, token)
+            : await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
         return new() { Workouts = mapper.Map<IEnumerable<GetWorkoutResponse>>(workouts) };
     }
@@ -36,6 +42,20 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
         var workout = mapper.Map<Workout>(request);
         await unitOfWork.WorkoutRepository.AddAsync(workout, default);
+        await unitOfWork.CommitAsync(default);
+    }
+
+    public async Task EditAsync(EditWorkoutRequest request, CancellationToken token = default)
+    {
+        var workout = await unitOfWork.WorkoutRepository.GetByIdAsync(request.Id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, request.Id));
+
+        workout.Name = request.Name ?? workout.Name;
+        workout.Description = request.Description ?? workout.Description;
+        workout.Notes = request.Notes ?? workout.Notes;
+        workout.DurationMinutes = request.DurationMinutes ?? workout.DurationMinutes;
+        workout.StartedAt = request.StartedAt ?? workout.StartedAt;
+
         await unitOfWork.CommitAsync(default);
     }
 }

@@ -147,6 +147,8 @@ namespace FitnessTracker.Infra.Migrations
 
                             t.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
                         });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.Workout", b =>

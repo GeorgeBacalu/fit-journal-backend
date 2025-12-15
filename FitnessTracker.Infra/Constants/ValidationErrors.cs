@@ -32,4 +32,5 @@ public static class ValidationErrors
     public const string InvalidDuration = "Invalid duration";
     public const string InvalidWorkoutDate = "Workout start date can't be in the future";
     public const string UserIdRequired = "User ID is required";
+    public const string WorkoutIdRequired = "Workout ID is required";
 }

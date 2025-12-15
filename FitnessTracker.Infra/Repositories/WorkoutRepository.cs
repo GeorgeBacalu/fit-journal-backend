@@ -15,6 +15,9 @@ public class WorkoutRepository(FitnessTrackerContext context) : IWorkoutReposito
             .Where(workout => workout.UserId == userId)
             .ToListAsync(token);
 
+    public async Task<Workout?> GetByIdAsync(Guid id, CancellationToken token = default)
+        => await context.Workouts.SingleOrDefaultAsync(workout => workout.Id == id, token);
+
     public async Task AddAsync(Workout workout, CancellationToken token = default)
         => await context.Workouts.AddAsync(workout, token);
 }

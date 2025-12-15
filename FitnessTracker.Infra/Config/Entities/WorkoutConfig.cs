@@ -20,6 +20,7 @@ public class WorkoutConfig : IEntityTypeConfiguration<Workout>
         {
             table.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
             table.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
+            table.UseSqlOutputClause(false);
         });
     }
 }
