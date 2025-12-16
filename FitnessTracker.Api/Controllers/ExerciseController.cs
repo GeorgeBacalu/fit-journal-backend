@@ -1,6 +1,6 @@
-﻿using FitnessTracker.App.Dtos.Requests.Exercises;
-using FitnessTracker.App.Dtos.Responses.Exercises;
-using FitnessTracker.App.Services.Interfaces;
+﻿using FitnessTracker.Core.Dtos.Requests.Exercises;
+using FitnessTracker.Core.Dtos.Responses.Exercises;
+using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

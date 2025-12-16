@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Mappers;
-using FitnessTracker.App.Services;
+using FitnessTracker.Core.Dtos.Requests.Auth;
+using FitnessTracker.Core.Mappers;
+using FitnessTracker.Core.Services;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Exceptions;
@@ -29,7 +29,12 @@ public class AuthServiceTest(DbFixture fixture)
         await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
 
-        await run(new(new UnitOfWork(context, new UserRepository(context), new WorkoutRepository(context), new ExerciseRepository(context)), mapper), context);
+        await run(new(new UnitOfWork(context,
+            new UserRepository(context),
+            new WorkoutRepository(context),
+            new ExerciseRepository(context),
+            new GoalRepository(context)),
+            mapper), context);
 
         await transaction.RollbackAsync(default);
     }

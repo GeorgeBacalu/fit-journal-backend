@@ -1,4 +1,4 @@
-﻿using FitnessTracker.App.Dtos.Requests.Auth;
+﻿using FitnessTracker.Core.Dtos.Requests.Auth;
 using FitnessTracker.Domain.Enums;
 
 namespace FitnessTracker.Test.Mocks.Auth;
