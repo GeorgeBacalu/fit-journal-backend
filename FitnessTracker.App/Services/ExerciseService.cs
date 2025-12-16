@@ -21,6 +21,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
     public async Task AddAsync(AddExerciseRequest request, CancellationToken token = default)
     {
         var execise = mapper.Map<Exercise>(request);
+
         await unitOfWork.ExerciseRepository.AddAsync(execise, default);
         await unitOfWork.CommitAsync(token);
     }
@@ -35,6 +36,16 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         exercise.Notes = request.Notes ?? exercise.Notes;
         exercise.MuscleGroup = request.MuscleGroup ?? exercise.MuscleGroup;
         exercise.DifficultyLevel = request.DifficultyLevel ?? exercise.DifficultyLevel;
+
+        await unitOfWork.CommitAsync(token);
+    }
+
+    public async Task RemoveRangeAsync(DeleteExercisesRequest request, CancellationToken token = default)
+    {
+        var exercises = await unitOfWork.ExerciseRepository.GetAllByIdsAsync(request.Ids, token);
+
+        foreach (var exercise in exercises)
+            exercise.DeletedAt = DateTime.UtcNow;
 
         await unitOfWork.CommitAsync(token);
     }

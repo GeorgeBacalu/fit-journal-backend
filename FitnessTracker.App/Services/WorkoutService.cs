@@ -39,6 +39,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
             throw new BadRequestException(ErrorMessages.DuplicateWorkoutStartTime);
 
         var workout = mapper.Map<Workout>(request);
+
         await unitOfWork.WorkoutRepository.AddAsync(workout, default);
         await unitOfWork.CommitAsync(token);
     }

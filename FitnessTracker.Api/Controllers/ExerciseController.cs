@@ -32,10 +32,21 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <param name="request">Edited exercise details</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
-    [HttpPost]
+    [HttpPatch]
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
         await exerciseService.EditAsync(request, token);
         return Ok(new { Message = SuccessMessages.ExerciseEdited });
+    }
+
+    /// <summary>Delete exercises</summary>
+    /// <param name="request">Exercise IDs to delete</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveAsync(DeleteExercisesRequest request, CancellationToken token = default)
+    {
+        await exerciseService.RemoveRangeAsync(request, token);
+        return Ok(new { Message = SuccessMessages.ExerciseRemoved });
     }
 }
