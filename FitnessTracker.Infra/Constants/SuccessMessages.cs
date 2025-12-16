@@ -10,4 +10,5 @@ public static class SuccessMessages
     public const string WorkoutRemoved = "Workout removed successfully";
 
     public const string ExerciseAdded = "Exercise added successfully";
+    public const string ExerciseEdited = "Exercise edited successfully";
 }

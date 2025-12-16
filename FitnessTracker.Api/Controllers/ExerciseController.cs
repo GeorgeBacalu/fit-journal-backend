@@ -1,4 +1,5 @@
 ﻿using FitnessTracker.App.Dtos.Requests.Exercises;
+using FitnessTracker.App.Dtos.Responses.Exercises;
 using FitnessTracker.App.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -25,5 +26,16 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     {
         await exerciseService.AddAsync(request, token);
         return Created("", new { Message = SuccessMessages.ExerciseAdded });
+    }
+
+    /// <summary>Edit existing exercise</summary>
+    /// <param name="request">Edited exercise details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
+    {
+        await exerciseService.EditAsync(request, token);
+        return Ok(new { Message = SuccessMessages.ExerciseEdited });
     }
 }

@@ -35,4 +35,5 @@ public static class ValidationErrors
     public const string WorkoutIdRequired = "Workout ID is required";
     public const string MuscleGroupRequired = "Muscle group is required";
     public const string DifficultyLevelRequired = "Difficulty level is required";
+    public const string ExerciseIdRequired = "Exercise ID is required";
 }
