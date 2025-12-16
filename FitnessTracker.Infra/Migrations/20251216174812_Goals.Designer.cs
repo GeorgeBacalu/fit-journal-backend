@@ -4,6 +4,7 @@ using FitnessTracker.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    partial class FitnessTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20251216174812_Goals")]
+    partial class Goals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,11 +121,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Goals", t =>
                         {
-                            t.HasTrigger("TR_Goals_BeforeUserRegistration");
-
-                            t.HasTrigger("TR_Goals_ValidateOverlappingGoals");
-
-                            t.HasTrigger("TR_Goals_ValitateWeight");
+                            t.HasTrigger("TR_Goals_BeforeInsert");
 
                             t.HasCheckConstraint("CK_Goals_Dates", "[StartDate] < [EndDate]");
 
@@ -253,8 +252,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Workouts", t =>
                         {
-                            t.HasTrigger("TR_Goals_BeforeUserRegistration")
-                                .HasDatabaseName("TR_Goals_BeforeUserRegistration1");
+                            t.HasTrigger("TR_Goals_BeforeUserRegistration");
 
                             t.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
 

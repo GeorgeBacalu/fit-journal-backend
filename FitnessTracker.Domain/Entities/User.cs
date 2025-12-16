@@ -16,4 +16,5 @@ public class User : BaseEntity
     public Role Role { get; set; }
 
     public IEnumerable<Workout> Workouts { get; } = [];
+    public IEnumerable<Goal> Goals { get; } = [];
 }

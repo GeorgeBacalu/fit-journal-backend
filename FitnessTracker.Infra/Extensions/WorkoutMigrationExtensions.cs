@@ -6,7 +6,7 @@ namespace FitnessTracker.Infra.Extensions;
 
 public static class WorkoutMigrationExtensions
 {
-    public static OperationBuilder<SqlOperation> AddWorkoutDateTrigger(this MigrationBuilder migrationBuilder)
+    public static OperationBuilder<SqlOperation> AddWorkoutStartDateTrigger(this MigrationBuilder migrationBuilder)
         => migrationBuilder.Sql(@"
         CREATE TRIGGER TR_Workouts_BeforeUserRegistration ON [Workouts]
         AFTER INSERT, UPDATE
@@ -14,16 +14,16 @@ public static class WorkoutMigrationExtensions
             SET NOCOUNT ON;
             
             IF EXISTS (
-                SELECT i.Id FROM inserted i
-                JOIN dbo.Users u ON u.Id = i.UserId
+                SELECT i.[Id] FROM inserted i
+                JOIN Users u ON u.[Id] = i.[UserId]
                 WHERE i.[StartedAt] < u.[CreatedAt]
             )
             BEGIN
                 THROW 50001, 'Workout start date can''t be before user registration date', 1;
             END
-        END");
+        END;");
 
-    public static OperationBuilder<SqlOperation> DropWorkoutDateTrigger(this MigrationBuilder migrationBuilder)
+    public static OperationBuilder<SqlOperation> DropWorkoutStartDateTrigger(this MigrationBuilder migrationBuilder)
         => migrationBuilder.Sql(@"
         IF OBJECT_ID('TR_Workouts_BeforeUserRegistration', 'TR') IS NOT NULL
         DROP TRIGGER TR_Workouts_BeforeUserRegistration;");

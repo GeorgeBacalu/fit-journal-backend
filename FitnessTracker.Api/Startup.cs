@@ -69,8 +69,7 @@ public class Startup
 
     private static void ConfigureDbContext(IServiceCollection services)
         => services.AddDbContext<FitnessTrackerContext>(
-               options => options.UseSqlServer(AppConfig.ConnectionStrings.FitnessTrackerDb,
-                   sqlOptions => sqlOptions.MigrationsAssembly("FitnessTracker.Infra")));
+               options => options.UseSqlServer(AppConfig.ConnectionStrings.FitnessTrackerDb));
 
     private static void ConfigureAutoMapper(IServiceCollection services)
         => services.AddAutoMapper(_ => { },
