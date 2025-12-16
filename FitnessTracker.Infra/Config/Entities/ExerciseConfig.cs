@@ -8,12 +8,15 @@ public class ExerciseConfig : IEntityTypeConfiguration<Exercise>
 {
     public void Configure(EntityTypeBuilder<Exercise> builder)
     {
-        builder.HasIndex(user => user.Name).IsUnique();
+        builder.HasIndex(exercise => exercise.Name).IsUnique();
 
-        builder.Property(user => user.Name).IsRequired().HasMaxLength(50);
-        builder.Property(user => user.MuscleGroup).IsRequired().HasConversion<string>().HasMaxLength(10);
-        builder.Property(user => user.DifficultyLevel).IsRequired().HasConversion<string>().HasMaxLength(15);
+        builder.Property(exercise => exercise.Name).IsRequired().HasMaxLength(50);
+        builder.Property(exercise => exercise.Description).HasMaxLength(250);
+        builder.Property(exercise => exercise.Notes).HasMaxLength(250);
 
-        builder.HasQueryFilter(user => user.DeletedAt == null);
+        builder.Property(exercise => exercise.MuscleGroup).IsRequired().HasConversion<string>().HasMaxLength(10);
+        builder.Property(exercise => exercise.DifficultyLevel).IsRequired().HasConversion<string>().HasMaxLength(15);
+
+        builder.HasQueryFilter(exercise => exercise.DeletedAt == null);
     }
 }

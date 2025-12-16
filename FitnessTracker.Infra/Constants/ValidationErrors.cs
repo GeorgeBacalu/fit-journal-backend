@@ -25,7 +25,7 @@ public static class ValidationErrors
     public const string InvalidHeight = "Invalid height";
     public const string InvalidWeight = "Invalid weight";
 
-    // Description
+    // Workouts & Exercises
 
     public const string InvalidDescriptionLength = "Invalid description length";
     public const string InvalidNotesLength = "Invalid notes length";
@@ -33,4 +33,6 @@ public static class ValidationErrors
     public const string InvalidWorkoutDate = "Workout start date can't be in the future";
     public const string UserIdRequired = "User ID is required";
     public const string WorkoutIdRequired = "Workout ID is required";
+    public const string MuscleGroupRequired = "Muscle group is required";
+    public const string DifficultyLevelRequired = "Difficulty level is required";
 }

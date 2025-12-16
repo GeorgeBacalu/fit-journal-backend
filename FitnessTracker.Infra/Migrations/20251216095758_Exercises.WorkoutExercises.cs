@@ -17,6 +17,8 @@ namespace FitnessTracker.Infra.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     MuscleGroup = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     DifficultyLevel = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
