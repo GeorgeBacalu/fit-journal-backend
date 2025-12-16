@@ -9,6 +9,13 @@ namespace FitnessTracker.Api.Controllers;
 [Route("/api/[controller]")]
 public class ExerciseController(IExerciseService exerciseService) : BaseController
 {
+    /// <summary>Get all exercises</summary>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<GetExercisesResponse>> GetAllAsync(CancellationToken token = default)
+        => Ok(await exerciseService.GetAllAsync(token));
+
     /// <summary>Add new exercise</summary>
     /// <param name="request">Added exercise details</param>
     /// <param name="token">Cancellation token</param>
