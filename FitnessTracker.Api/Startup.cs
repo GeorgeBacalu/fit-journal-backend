@@ -32,11 +32,13 @@ public class Startup
         ConfigureControllers(services);
         ConfigureSwagger(services);
         ConfigureAuth(services);
+        ConfigureCaching(services);
 
         services.AddInfrastructure()
                 .AddCore()
 
                 .AddTransient<LoggingMiddleware>()
+                .AddTransient<ResponseCachingMiddleware>()
                 .AddTransient<ExceptionHandlingMiddleware>();
     }
 
@@ -48,11 +50,13 @@ public class Startup
         app.UseCors(CorsPolicyName);
         app.UseHttpsRedirection();
 
+        app.UseResponseCaching();
+        app.UseMiddleware<LoggingMiddleware>();
+        app.UseMiddleware<ResponseCachingMiddleware>();
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         app.UseAuthentication();
         app.UseAuthorization();
-
-        app.UseMiddleware<LoggingMiddleware>();
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.MapControllers();
     }
@@ -73,6 +77,13 @@ public class Startup
 
     private static void ConfigureControllers(IServiceCollection services)
         => services.AddControllers();
+
+    private static void ConfigureCaching(IServiceCollection services)
+        => services.AddResponseCaching(options =>
+        {
+            options.MaximumBodySize = 1024;
+            options.UseCaseSensitivePaths = true;
+        });
 
     private static void ConfigureSwagger(IServiceCollection services)
         => services.AddSwaggerGen(options =>
