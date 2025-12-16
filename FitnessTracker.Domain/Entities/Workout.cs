@@ -10,4 +10,6 @@ public class Workout : BaseEntity
 
     public Guid UserId { get; set; }
     public User? User { get; set; }
+
+    public IEnumerable<WorkoutExercise> WorkoutExercises { get; set; } = [];
 }

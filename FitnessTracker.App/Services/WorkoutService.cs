@@ -17,9 +17,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         var user = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
 
-        var workouts = user.Role == Role.User
-            ? await unitOfWork.WorkoutRepository.GetAllByUserIdAsync(userId, token)
-            : await unitOfWork.WorkoutRepository.GetAllAsync(token);
+        var workouts = user.Role == Role.User ? user.Workouts : await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
         return new() { Workouts = mapper.Map<IEnumerable<GetWorkoutResponse>>(workouts) };
     }
