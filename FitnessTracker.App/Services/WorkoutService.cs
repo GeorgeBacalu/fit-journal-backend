@@ -17,9 +17,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         var user = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
 
-        var workouts = user.Role == Role.User
-            ? await unitOfWork.WorkoutRepository.GetAllByUserIdAsync(userId, token)
-            : await unitOfWork.WorkoutRepository.GetAllAsync(token);
+        var workouts = user.Role == Role.User ? user.Workouts : await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
         return new() { Workouts = mapper.Map<IEnumerable<GetWorkoutResponse>>(workouts) };
     }
@@ -41,8 +39,9 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
             throw new BadRequestException(ErrorMessages.DuplicateWorkoutStartTime);
 
         var workout = mapper.Map<Workout>(request);
+
         await unitOfWork.WorkoutRepository.AddAsync(workout, default);
-        await unitOfWork.CommitAsync(default);
+        await unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditWorkoutRequest request, CancellationToken token = default)
@@ -56,7 +55,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         workout.DurationMinutes = request.DurationMinutes ?? workout.DurationMinutes;
         workout.StartedAt = request.StartedAt ?? workout.StartedAt;
 
-        await unitOfWork.CommitAsync(default);
+        await unitOfWork.CommitAsync(token);
     }
 
     public async Task RemoveRangeAsync(DeleteWorkoutsRequest request, CancellationToken token = default)
@@ -66,6 +65,6 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         foreach (var workout in workouts)
             workout.DeletedAt = DateTime.UtcNow;
 
-        await unitOfWork.CommitAsync(default);
+        await unitOfWork.CommitAsync(token);
     }
 }

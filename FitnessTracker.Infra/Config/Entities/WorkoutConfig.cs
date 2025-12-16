@@ -8,13 +8,13 @@ public class WorkoutConfig : IEntityTypeConfiguration<Workout>
 {
     public void Configure(EntityTypeBuilder<Workout> builder)
     {
-        builder.HasIndex(user => user.Name).IsUnique();
+        builder.HasIndex(workout => workout.Name).IsUnique();
 
-        builder.Property(user => user.Name).IsRequired().HasMaxLength(50);
-        builder.Property(user => user.Description).HasMaxLength(250);
-        builder.Property(user => user.Notes).HasMaxLength(250);
+        builder.Property(workout => workout.Name).IsRequired().HasMaxLength(50);
+        builder.Property(workout => workout.Description).HasMaxLength(250);
+        builder.Property(workout => workout.Notes).HasMaxLength(250);
 
-        builder.HasQueryFilter(user => user.DeletedAt == null);
+        builder.HasQueryFilter(workout => workout.DeletedAt == null);
 
         builder.ToTable(table =>
         {

@@ -14,4 +14,6 @@ public class User : BaseEntity
     public double Weight { get; set; }
     public Gender Gender { get; set; }
     public Role Role { get; set; }
+
+    public IEnumerable<Workout> Workouts { get; } = [];
 }

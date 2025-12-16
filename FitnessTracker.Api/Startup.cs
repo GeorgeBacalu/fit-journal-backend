@@ -73,7 +73,10 @@ public class Startup
                    sqlOptions => sqlOptions.MigrationsAssembly("FitnessTracker.Infra")));
 
     private static void ConfigureAutoMapper(IServiceCollection services)
-        => services.AddAutoMapper(_ => { }, typeof(UserMapper), typeof(WorkoutMapper));
+        => services.AddAutoMapper(_ => { },
+            typeof(UserMapper),
+            typeof(WorkoutMapper),
+            typeof(ExerciseMapper));
 
     private static void ConfigureControllers(IServiceCollection services)
         => services.AddControllers();

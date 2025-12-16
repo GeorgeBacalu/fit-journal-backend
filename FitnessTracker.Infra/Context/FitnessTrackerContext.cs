@@ -12,11 +12,15 @@ public class FitnessTrackerContext : DbContext
 
     public virtual DbSet<User> Users => Set<User>();
     public virtual DbSet<Workout> Workouts => Set<Workout>();
+    public virtual DbSet<Exercise> Exercises => Set<Exercise>();
+    public virtual DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfig());
         modelBuilder.ApplyConfiguration(new WorkoutConfig());
+        modelBuilder.ApplyConfiguration(new ExerciseConfig());
+        modelBuilder.ApplyConfiguration(new WorkoutExerciseConfig());
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken token = default)
