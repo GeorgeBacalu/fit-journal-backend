@@ -16,8 +16,8 @@ public class UserController(IUserService userService) : BaseController
     /// <returns>Selected user's profile info</returns>
     [Authorize]
     [HttpGet("profile/{id}")]
-    public async Task<ActionResult<GetProfileResponse>> GetProfileAsync(Guid id, CancellationToken token = default)
-        => Ok(await userService.GetProfileAsync(id, token));
+    public async Task<ActionResult<ProfileResponse>> GetProfileAsync(Guid id, CancellationToken token = default) =>
+        Ok(await userService.GetProfileAsync(id, token));
 
     /// <summary>Update personal profile info</summary>
     /// <param name="request">Updated personal profile info</param>

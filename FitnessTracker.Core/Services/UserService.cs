@@ -10,16 +10,19 @@ namespace FitnessTracker.Core.Services;
 
 public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 {
-    public async Task<GetProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default)
+    public async Task<ProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default)
     {
         var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
 
-        return mapper.Map<GetProfileResponse>(user);
+        return mapper.Map<ProfileResponse>(user);
     }
 
     public async Task UpdateProfileAsync(UpdateProfileRequest request, Guid id, CancellationToken token = default)
     {
+        if (request.Birthday is DateOnly birthday && DateOnly.FromDateTime(DateTime.UtcNow) < birthday.AddYears(13))
+            throw new BadRequestException(ErrorMessages.AgeRestriction);
+
         var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
 

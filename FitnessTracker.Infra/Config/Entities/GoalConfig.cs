@@ -10,8 +10,7 @@ public class GoalConfig : IEntityTypeConfiguration<Goal>
     {
         builder.Property(goal => goal.Title).IsRequired().HasMaxLength(50);
         builder.Property(goal => goal.Description).HasMaxLength(250);
-
-        builder.Property(goal => goal.Type).IsRequired().HasConversion<string>().HasMaxLength(15);
+        builder.Property(goal => goal.Type).IsRequired().HasMaxLength(15);
 
         builder.HasQueryFilter(goal =>
             goal.DeletedAt == null &&

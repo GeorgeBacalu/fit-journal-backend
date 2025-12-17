@@ -10,6 +10,6 @@ public class WorkoutMapper : Profile
     public WorkoutMapper()
     {
         CreateMap<AddWorkoutRequest, Workout>();
-        CreateMap<Workout, GetWorkoutResponse>();
+        CreateMap<Workout, ShortWorkoutResponse>();
     }
 }

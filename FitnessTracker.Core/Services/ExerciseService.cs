@@ -11,11 +11,14 @@ namespace FitnessTracker.Core.Services;
 
 public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExerciseService
 {
-    public async Task<GetExercisesResponse> GetAllAsync(CancellationToken token = default)
+    public async Task<ExercisesResponse> GetAllAsync(CancellationToken token = default)
     {
         var exercises = await unitOfWork.ExerciseRepository.GetAllAsync(token);
 
-        return new() { Exercises = mapper.Map<IEnumerable<GetExerciseResponse>>(exercises) };
+        return new()
+        {
+            Exercises = mapper.Map<IEnumerable<ShortExerciseResponse>>(exercises)
+        };
     }
 
     public async Task AddAsync(AddExerciseRequest request, CancellationToken token = default)
@@ -40,13 +43,11 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task RemoveRangeAsync(DeleteExercisesRequest request, CancellationToken token = default)
+    public async Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {
         var exercises = await unitOfWork.ExerciseRepository.GetAllByIdsAsync(request.Ids, token);
 
-        foreach (var exercise in exercises)
-            exercise.DeletedAt = DateTime.UtcNow;
-
+        await unitOfWork.ExerciseRepository.RemoveRangeAsync(exercises, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }

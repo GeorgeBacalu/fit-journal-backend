@@ -5,8 +5,8 @@ namespace FitnessTracker.Core.Services.Interfaces;
 
 public interface IExerciseService
 {
-    Task<GetExercisesResponse> GetAllAsync(CancellationToken token = default);
+    Task<ExercisesResponse> GetAllAsync(CancellationToken token = default);
     Task AddAsync(AddExerciseRequest request, CancellationToken token = default);
     Task EditAsync(EditExerciseRequest request, CancellationToken token = default);
-    Task RemoveRangeAsync(DeleteExercisesRequest request, CancellationToken token = default);
+    Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default);
 }

@@ -17,8 +17,8 @@ public record AddExerciseRequest
     public required string Notes { get; init; }
 
     [Required(ErrorMessage = ValidationErrors.MuscleGroupRequired)]
-    public MuscleGroup MuscleGroup { get; set; }
+    public MuscleGroup? MuscleGroup { get; set; }
 
     [Required(ErrorMessage = ValidationErrors.DifficultyLevelRequired)]
-    public DifficultyLevel DifficultyLevel { get; set; }
+    public DifficultyLevel? DifficultyLevel { get; set; }
 }

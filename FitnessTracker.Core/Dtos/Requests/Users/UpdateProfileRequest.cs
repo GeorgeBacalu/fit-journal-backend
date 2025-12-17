@@ -21,10 +21,10 @@ public record UpdateProfileRequest
     [Past(ErrorMessage = ValidationErrors.InvalidBirthday)]
     public DateOnly? Birthday { get; init; }
 
-    [Range(0, 250, ErrorMessage = ValidationErrors.InvalidHeight)]
+    [Range(120, 250, ErrorMessage = ValidationErrors.InvalidHeight)]
     public double? Height { get; init; }
 
-    [Range(0, 250, ErrorMessage = ValidationErrors.InvalidWeight)]
+    [Range(25, 250, ErrorMessage = ValidationErrors.InvalidWeight)]
     public double? Weight { get; init; }
 
     public Gender? Gender { get; init; }

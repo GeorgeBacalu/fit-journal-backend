@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.Core.Attributes;
-using FitnessTracker.Infra.Constants;
 using FitnessTracker.Domain.Enums;
+using FitnessTracker.Infra.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace FitnessTracker.Core.Dtos.Requests.Auth;
@@ -34,11 +34,11 @@ public record RegisterRequest
     public DateOnly? Birthday { get; init; }
 
     [Required(ErrorMessage = ValidationErrors.HeightRequired)]
-    [Range(0, 250, ErrorMessage = ValidationErrors.InvalidHeight)]
+    [Range(120, 250, ErrorMessage = ValidationErrors.InvalidHeight)]
     public double? Height { get; init; }
 
     [Required(ErrorMessage = ValidationErrors.WeightRequired)]
-    [Range(0, 250, ErrorMessage = ValidationErrors.InvalidWeight)]
+    [Range(25, 250, ErrorMessage = ValidationErrors.InvalidWeight)]
     public double? Weight { get; init; }
 
     [Required(ErrorMessage = ValidationErrors.GenderRequired)]

@@ -10,6 +10,6 @@ public class ExerciseMapper : Profile
     public ExerciseMapper()
     {
         CreateMap<AddExerciseRequest, Exercise>();
-        CreateMap<Exercise, GetExerciseResponse>();
+        CreateMap<Exercise, ShortExerciseResponse>();
     }
 }

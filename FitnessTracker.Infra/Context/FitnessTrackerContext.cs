@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infra.Config.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace FitnessTracker.Infra.Context;
 
@@ -16,22 +16,19 @@ public class FitnessTrackerContext : DbContext
     public virtual DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public virtual DbSet<Goal> Goals => Set<Goal>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfiguration(new UserConfig());
-        modelBuilder.ApplyConfiguration(new WorkoutConfig());
-        modelBuilder.ApplyConfiguration(new ExerciseConfig());
-        modelBuilder.ApplyConfiguration(new WorkoutExerciseConfig());
-        modelBuilder.ApplyConfiguration(new GoalConfig());
-    }
+    protected override void ConfigureConventions(ModelConfigurationBuilder builder) =>
+        builder.Properties<Enum>().HaveConversion<string>();
+
+    protected override void OnModelCreating(ModelBuilder builder) =>
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
     public override Task<int> SaveChangesAsync(CancellationToken token = default)
     {
         var now = DateTime.UtcNow;
 
-        foreach (var entity in ChangeTracker.Entries<BaseEntity>())
-            if (entity.State == EntityState.Modified)
-                entity.Entity.UpdatedAt = now;
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            if (entry.State == EntityState.Modified)
+                entry.Entity.UpdatedAt = now;
 
         return base.SaveChangesAsync(token);
     }

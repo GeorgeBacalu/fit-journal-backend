@@ -24,6 +24,6 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>Access and refresh tokens</returns>
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default)
-        => Ok(await authService.LoginAsync(request, token));
+    public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
+        Ok(await authService.LoginAsync(request, token));
 }

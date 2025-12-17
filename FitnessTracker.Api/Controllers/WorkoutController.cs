@@ -15,8 +15,8 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     /// <returns>List current user's workouts</returns>
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<GetWorkoutsResponse>> GetAllAsync(CancellationToken token = default)
-        => Ok(await workoutService.GetAllAsync(UserId, token));
+    public async Task<ActionResult<WorkoutsResponse>> GetAllAsync(CancellationToken token = default) =>
+        Ok(await workoutService.GetAllAsync(UserId, token));
 
     /// <summary>Add new workout for a user</summary>
     /// <param name="request">Added workout details</param>
@@ -40,12 +40,12 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
         return Ok(new { Message = SuccessMessages.WorkoutEdited });
     }
 
-    /// <summary>Delete workouts</summary>
-    /// <param name="request">Workouts IDs to delete</param>
+    /// <summary>Delete existing workouts</summary>
+    /// <param name="request">Deleted workouts IDs</param>
     /// <param name="token">Cancellation token</param>
     [Authorize(Roles = "Admin")]
     [HttpDelete]
-    public async Task<ActionResult<object>> RemoveAsync(DeleteWorkoutsRequest request, CancellationToken token = default)
+    public async Task<ActionResult<object>> RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
         await workoutService.RemoveRangeAsync(request, token);
         return Ok(new { Message = SuccessMessages.WorkoutRemoved });

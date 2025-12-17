@@ -12,14 +12,17 @@ namespace FitnessTracker.Core.Services;
 
 public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutService
 {
-    public async Task<GetWorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token = default)
+    public async Task<WorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token = default)
     {
         var user = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
 
         var workouts = user.Role == Role.User ? user.Workouts : await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
-        return new() { Workouts = mapper.Map<IEnumerable<GetWorkoutResponse>>(workouts) };
+        return new()
+        {
+            Workouts = mapper.Map<IEnumerable<ShortWorkoutResponse>>(workouts)
+        };
     }
 
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
@@ -58,13 +61,11 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task RemoveRangeAsync(DeleteWorkoutsRequest request, CancellationToken token = default)
+    public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
         var workouts = await unitOfWork.WorkoutRepository.GetAllByIdsAsync(request.Ids, token);
 
-        foreach (var workout in workouts)
-            workout.DeletedAt = DateTime.UtcNow;
-
+        await unitOfWork.WorkoutRepository.RemoveRangeAsync(workouts, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }

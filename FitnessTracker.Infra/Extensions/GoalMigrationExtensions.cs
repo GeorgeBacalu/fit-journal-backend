@@ -6,8 +6,8 @@ namespace FitnessTracker.Infra.Extensions;
 
 public static class GoalMigrationExtensions
 {
-    public static OperationBuilder<SqlOperation> AddGoalStartDateTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> AddGoalStartDateTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         CREATE TRIGGER TR_Goals_BeforeUserRegistration ON [Goals]
         AFTER INSERT, UPDATE
         AS BEGIN
@@ -23,8 +23,8 @@ public static class GoalMigrationExtensions
             END
         END;");
 
-    public static OperationBuilder<SqlOperation> AddGoalValidateWeightTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> AddGoalValidateWeightTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         CREATE TRIGGER TR_Goals_ValitateWeight ON [Goals]
         AFTER INSERT, UPDATE
         AS BEGIN
@@ -52,8 +52,8 @@ public static class GoalMigrationExtensions
             END
         END;");
 
-    public static OperationBuilder<SqlOperation> AddGoalOverlappingTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> AddGoalOverlappingTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         CREATE TRIGGER TR_Goals_ValidateOverlapping ON [Goals]
         AFTER INSERT, UPDATE
         AS BEGIN
@@ -73,18 +73,18 @@ public static class GoalMigrationExtensions
             END
         END;");
 
-    public static OperationBuilder<SqlOperation> DropGoalStartDateTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> DropGoalStartDateTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         IF OBJECT_ID('TR_Goals_BeforeUserRegistration', 'TR') IS NOT NULL
         DROP TRIGGER TR_Goals_BeforeUserRegistration;");
 
-    public static OperationBuilder<SqlOperation> DropGoalValidateWeightTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> DropGoalValidateWeightTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         IF OBJECT_ID('TR_Goals_ValitateWeight', 'TR') IS NOT NULL
         DROP TRIGGER TR_Goals_ValitateWeight;");
 
-    public static OperationBuilder<SqlOperation> DropGoalOverlappingTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> DropGoalOverlappingTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         IF OBJECT_ID('TR_Goals_ValidateOverlapping', 'TR') IS NOT NULL
         DROP TRIGGER TR_Goals_ValidateOverlapping;");
 }

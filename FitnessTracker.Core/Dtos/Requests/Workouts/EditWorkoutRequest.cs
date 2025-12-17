@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FitnessTracker.Core.Dtos.Requests.Workouts;
 
-public class EditWorkoutRequest
+public record EditWorkoutRequest
 {
     [Required(ErrorMessage = ValidationErrors.WorkoutIdRequired)]
     public Guid Id { get; init; }

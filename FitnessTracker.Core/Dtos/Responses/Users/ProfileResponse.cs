@@ -2,7 +2,7 @@
 
 namespace FitnessTracker.Core.Dtos.Responses.Users;
 
-public class GetProfileResponse
+public class ProfileResponse
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }

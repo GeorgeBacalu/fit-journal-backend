@@ -6,8 +6,8 @@ namespace FitnessTracker.Infra.Extensions;
 
 public static class WorkoutMigrationExtensions
 {
-    public static OperationBuilder<SqlOperation> AddWorkoutStartDateTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> AddWorkoutStartDateTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         CREATE TRIGGER TR_Workouts_BeforeUserRegistration ON [Workouts]
         AFTER INSERT, UPDATE
         AS BEGIN
@@ -23,8 +23,8 @@ public static class WorkoutMigrationExtensions
             END
         END;");
 
-    public static OperationBuilder<SqlOperation> DropWorkoutStartDateTrigger(this MigrationBuilder migrationBuilder)
-        => migrationBuilder.Sql(@"
+    public static OperationBuilder<SqlOperation> DropWorkoutStartDateTrigger(this MigrationBuilder builder) =>
+        builder.Sql(@"
         IF OBJECT_ID('TR_Workouts_BeforeUserRegistration', 'TR') IS NOT NULL
         DROP TRIGGER TR_Workouts_BeforeUserRegistration;");
 }

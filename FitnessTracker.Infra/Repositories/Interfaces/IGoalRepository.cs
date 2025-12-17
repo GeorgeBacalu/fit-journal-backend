@@ -2,7 +2,6 @@
 
 namespace FitnessTracker.Infra.Repositories.Interfaces;
 
-public interface IGoalRepository
+public interface IGoalRepository : IBaseRepository<Goal>
 {
-    Task AddAsync(Goal goal, CancellationToken token = default);
 }

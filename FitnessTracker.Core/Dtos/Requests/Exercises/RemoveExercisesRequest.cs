@@ -1,6 +1,7 @@
 ﻿namespace FitnessTracker.Core.Dtos.Requests.Exercises;
 
-public class DeleteExercisesRequest
+public record RemoveExercisesRequest
 {
     public IEnumerable<Guid> Ids { get; init; } = [];
+    public bool IsHardDelete { get; init; }
 }

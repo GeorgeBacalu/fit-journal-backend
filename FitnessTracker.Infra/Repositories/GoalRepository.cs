@@ -4,8 +4,7 @@ using FitnessTracker.Infra.Repositories.Interfaces;
 
 namespace FitnessTracker.Infra.Repositories;
 
-public class GoalRepository(FitnessTrackerContext context) : IGoalRepository
+public class GoalRepository(FitnessTrackerContext context)
+    : BaseRepository<Goal>(context), IGoalRepository
 {
-    public async Task AddAsync(Goal goal, CancellationToken token = default)
-        => await context.Goals.AddAsync(goal, token);
 }
