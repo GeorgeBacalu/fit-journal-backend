@@ -1,5 +1,5 @@
-﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Dtos.Responses.Auth;
+﻿using FitnessTracker.Core.Dtos.Requests.Auth;
+using FitnessTracker.Core.Dtos.Responses.Auth;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Test.Constants;

@@ -3,9 +3,9 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config)
-    => config.WriteTo.Console()
-             .ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog((context, config) =>
+    config.WriteTo.Console()
+          .ReadFrom.Configuration(context.Configuration));
 
 var startup = new Startup(builder.Configuration);
 startup.ConfigureServices(builder.Services);

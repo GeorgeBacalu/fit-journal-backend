@@ -1,6 +1,6 @@
-﻿using FitnessTracker.App.Dtos.Requests.Auth;
-using FitnessTracker.App.Dtos.Responses.Auth;
-using FitnessTracker.App.Services.Interfaces;
+﻿using FitnessTracker.Core.Dtos.Requests.Auth;
+using FitnessTracker.Core.Dtos.Responses.Auth;
+using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +24,6 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>Access and refresh tokens</returns>
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default)
-        => Ok(await authService.LoginAsync(request, token));
+    public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
+        Ok(await authService.LoginAsync(request, token));
 }

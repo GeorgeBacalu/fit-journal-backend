@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.Api.Controllers;
-using FitnessTracker.App.Dtos.Responses.Auth;
-using FitnessTracker.App.Services.Interfaces;
+using FitnessTracker.Core.Dtos.Responses.Auth;
+using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Test.Constants;

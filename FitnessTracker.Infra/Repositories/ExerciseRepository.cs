@@ -5,19 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Infra.Repositories;
 
-public class ExerciseRepository(FitnessTrackerContext context) : IExerciseRepository
+public class ExerciseRepository(FitnessTrackerContext context)
+    : BaseRepository<Exercise>(context), IExerciseRepository
 {
-    public async Task<IEnumerable<Exercise>> GetAllAsync(CancellationToken token = default)
-        => await context.Exercises.ToListAsync(token);
-
-    public async Task<IEnumerable<Exercise>> GetAllByIdsAsync(IEnumerable<Guid> ids, CancellationToken token = default)
-        => await context.Exercises
+    public async Task<IEnumerable<Exercise>> GetAllByIdsAsync(IEnumerable<Guid> ids, CancellationToken token = default) =>
+        await context.Exercises
             .Where(workout => ids.Contains(workout.Id))
             .ToListAsync(token);
-
-    public async Task<Exercise?> GetByIdAsync(Guid id, CancellationToken token = default)
-        => await context.Exercises.SingleOrDefaultAsync(exercise => exercise.Id == id, token);
-
-    public async Task AddAsync(Exercise exercise, CancellationToken token = default)
-        => await context.Exercises.AddAsync(exercise, token);
 }

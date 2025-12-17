@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FitnessTracker.App\FitnessTracker.App.csproj" />
+    <ProjectReference Include="..\FitnessTracker.Core\FitnessTracker.Core.csproj" />
   </ItemGroup>
 
 </Project>

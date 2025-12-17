@@ -10,6 +10,8 @@ public class WorkoutExerciseConfig : IEntityTypeConfiguration<WorkoutExercise>
     {
         builder.Property(workoutExercise => workoutExercise.WeightUsed).HasMaxLength(50);
 
+        builder.HasQueryFilter(workoutExercise => workoutExercise.DeletedAt == null);
+
         builder.ToTable(builder =>
         {
             builder.HasCheckConstraint("CK_WorkoutExercise_Sets", "[Sets] > 0");

@@ -65,7 +65,71 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Exercises");
+                    b.ToTable("Exercises", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.Goal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsAchieved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("TargetWeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Goals", null, t =>
+                        {
+                            t.HasTrigger("TR_Goals_BeforeUserRegistration");
+
+                            t.HasTrigger("TR_Goals_ValidateOverlappingGoals");
+
+                            t.HasTrigger("TR_Goals_ValitateWeight");
+
+                            t.HasCheckConstraint("CK_Goals_Dates", "[StartDate] < [EndDate]");
+
+                            t.HasCheckConstraint("CK_Goals_TargetWeight", "[TargetWeight] > 0");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.User", b =>
@@ -131,7 +195,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users", t =>
+                    b.ToTable("Users", null, t =>
                         {
                             t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
 
@@ -187,9 +251,10 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Workouts", t =>
+                    b.ToTable("Workouts", null, t =>
                         {
-                            t.HasTrigger("TR_Workouts_BeforeUserRegistration");
+                            t.HasTrigger("TR_Goals_BeforeUserRegistration")
+                                .HasDatabaseName("TR_Goals_BeforeUserRegistration1");
 
                             t.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
 
@@ -236,12 +301,23 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutExercises", t =>
+                    b.ToTable("WorkoutExercises", null, t =>
                         {
                             t.HasCheckConstraint("CK_WorkoutExercise_Reps", "[Reps] > 0");
 
                             t.HasCheckConstraint("CK_WorkoutExercise_Sets", "[Sets] > 0");
                         });
+                });
+
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.Goal", b =>
+                {
+                    b.HasOne("FitnessTracker.Domain.Entities.User", "User")
+                        .WithMany("Goals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.Workout", b =>
@@ -277,6 +353,8 @@ namespace FitnessTracker.Infra.Migrations
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Goals");
+
                     b.Navigation("Workouts");
                 });
 

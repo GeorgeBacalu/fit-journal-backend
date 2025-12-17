@@ -1,4 +1,4 @@
-﻿using FitnessTracker.App.Dtos.Requests.Auth;
+﻿using FitnessTracker.Core.Dtos.Requests.Auth;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Test.Mocks.Auth;
 

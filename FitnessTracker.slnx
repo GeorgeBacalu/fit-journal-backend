@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="FitnessTracker.Api/FitnessTracker.Api.csproj" />
-  <Project Path="FitnessTracker.App/FitnessTracker.App.csproj" />
+  <Project Path="FitnessTracker.Core/FitnessTracker.Core.csproj" Id="d9d30ed0-bbd1-4b26-810f-ca1e9ebb6b76" />
   <Project Path="FitnessTracker.Domain/FitnessTracker.Domain.csproj" />
   <Project Path="FitnessTracker.Infra/FitnessTracker.Infra.csproj" />
   <Project Path="FitnessTracker.Test/FitnessTracker.Test.csproj" />

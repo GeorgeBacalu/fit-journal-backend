@@ -15,9 +15,8 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(user => user.Email).IsRequired().HasMaxLength(50);
         builder.Property(user => user.PasswordHash).IsRequired().IsFixedLength().HasMaxLength(60);
         builder.Property(user => user.Phone).IsRequired().HasMaxLength(20);
-
-        builder.Property(user => user.Gender).IsRequired().HasConversion<string>().HasMaxLength(8);
-        builder.Property(user => user.Role).IsRequired().HasConversion<string>().HasMaxLength(6);
+        builder.Property(user => user.Gender).IsRequired().HasMaxLength(8);
+        builder.Property(user => user.Role).IsRequired().HasMaxLength(6);
 
         builder.HasQueryFilter(user => user.DeletedAt == null);
 
@@ -27,6 +26,7 @@ public class UserConfig : IEntityTypeConfiguration<User>
             table.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
             table.HasCheckConstraint("CK_Users_Height", "[Height] BETWEEN 120 AND 250");
             table.HasCheckConstraint("CK_Users_Weight", "[Weight] BETWEEN 25 AND 250");
+            table.HasCheckConstraint("CK_Users_AgeRestriction", "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
         });
     }
 }

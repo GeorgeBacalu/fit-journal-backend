@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FitnessTracker.App.Services;
+using FitnessTracker.Core.Services;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
