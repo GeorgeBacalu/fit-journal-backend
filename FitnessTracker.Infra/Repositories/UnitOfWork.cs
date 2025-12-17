@@ -10,10 +10,10 @@ public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
     public IExerciseRepository? _exercises;
     public IGoalRepository? _goals;
 
-    public IUserRepository Users => _users ??= new UserRepository(context);
-    public IWorkoutRepository Workouts => _workouts ??= new WorkoutRepository(context);
-    public IExerciseRepository Exercises => _exercises ??= new ExerciseRepository(context);
-    public IGoalRepository Goals => _goals ??= new GoalRepository(context);
+    public IUserRepository UserRepository => _users ??= new UserRepository(context);
+    public IWorkoutRepository WorkoutRepository => _workouts ??= new WorkoutRepository(context);
+    public IExerciseRepository ExerciseRepository => _exercises ??= new ExerciseRepository(context);
+    public IGoalRepository GoalRepository => _goals ??= new GoalRepository(context);
 
     public Task CommitAsync(CancellationToken token = default)
         => context.SaveChangesAsync(token);

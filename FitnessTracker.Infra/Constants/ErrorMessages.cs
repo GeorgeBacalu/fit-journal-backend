@@ -15,6 +15,7 @@ public static class ErrorMessages
     public const string ExerciseIdNotFound = "Exercise with id {0} not found";
 
     public const string InvalidCredentials = "Invalid credentials";
+    public const string UnauthorizedAccountDeletion = "Unauthorized to delete other user's account";
 
     public const string WorkoutBeforeRegistration = "Workout date can't be before user registration date";
     public const string DuplicateWorkoutStartTime = "Users can't log multiple workouts with the same start time";

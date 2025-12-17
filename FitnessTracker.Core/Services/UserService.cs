@@ -10,6 +10,16 @@ namespace FitnessTracker.Core.Services;
 
 public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 {
+    public async Task<UsersResponse> GetAllAsync(CancellationToken token = default)
+    {
+        var users = await unitOfWork.UserRepository.GetAllAsync(token);
+
+        return new()
+        {
+            Users = mapper.Map<IEnumerable<ShortUserResponse>>(users)
+        };
+    }
+
     public async Task<ProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default)
     {
         var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)

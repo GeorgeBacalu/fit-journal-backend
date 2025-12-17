@@ -2,10 +2,10 @@
 
 public interface IUnitOfWork
 {
-    IUserRepository Users { get; }
-    IWorkoutRepository Workouts { get; }
-    IExerciseRepository Exercises { get; }
-    IGoalRepository Goals { get; }
+    IUserRepository UserRepository { get; }
+    IWorkoutRepository WorkoutRepository { get; }
+    IExerciseRepository ExerciseRepository { get; }
+    IGoalRepository GoalRepository { get; }
 
     Task CommitAsync(CancellationToken token = default);
 }

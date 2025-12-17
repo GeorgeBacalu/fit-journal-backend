@@ -4,13 +4,13 @@ using FitnessTracker.Core.Dtos.Responses.Auth;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Domain.Enums;
+using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using FitnessTracker.Infra.Config;
 
 namespace FitnessTracker.Core.Services;
 
@@ -44,6 +44,23 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
             AccessToken = GenerateToken(user, TokenType.Access),
             RefreshToken = GenerateToken(user, TokenType.Refresh)
         };
+    }
+
+    public async Task DeleteAccountAsync(Guid? id, Guid userId, CancellationToken token = default)
+    {
+        var currentUser = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
+
+        var targetUserId = id ?? userId;
+
+        if (currentUser.Role != Role.Admin && targetUserId != userId)
+            throw new ForbiddenException(ErrorMessages.UnauthorizedAccountDeletion);
+
+        var targetUser = await unitOfWork.UserRepository.GetByIdAsync(targetUserId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, targetUserId));
+
+        await unitOfWork.UserRepository.RemoveAsync(targetUser, false, token);
+        await unitOfWork.CommitAsync(token);
     }
 
     private string GenerateToken(User user, TokenType type)

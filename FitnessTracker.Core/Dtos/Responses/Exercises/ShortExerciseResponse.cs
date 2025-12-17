@@ -2,7 +2,7 @@
 
 namespace FitnessTracker.Core.Dtos.Responses.Exercises;
 
-public class ShortExerciseResponse
+public record ShortExerciseResponse
 {
     public required string Name { get; set; }
     public MuscleGroup MuscleGroup { get; set; }

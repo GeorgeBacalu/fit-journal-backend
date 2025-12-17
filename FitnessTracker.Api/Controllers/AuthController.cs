@@ -2,6 +2,7 @@
 using FitnessTracker.Core.Dtos.Responses.Auth;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
@@ -26,4 +27,15 @@ public class AuthController(IAuthService authService) : BaseController
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
         Ok(await authService.LoginAsync(request, token));
+
+    /// <summary>Deactivate current user's account (admin can deactivate any account)</summary>
+    /// <param name="id">User ID to deactivate</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpDelete("{id:guid?}")]
+    public async Task<ActionResult<object>> DeleteAccountAsync(Guid? id, CancellationToken token = default)
+    {
+        await authService.DeleteAccountAsync(id, UserId, token);
+        return Ok(new { Message = SuccessMessages.AccountDeactivated });
+    }
 }

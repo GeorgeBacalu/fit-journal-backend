@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Core.Dtos.Responses.Exercises;
 
-public class ExercisesResponse
+public record ExercisesResponse
 {
     public IEnumerable<ShortExerciseResponse> Exercises { get; init; } = [];
 }
