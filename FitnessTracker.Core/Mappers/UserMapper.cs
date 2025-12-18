@@ -11,5 +11,6 @@ public class UserMapper : Profile
     {
         CreateMap<RegisterRequest, User>();
         CreateMap<User, ProfileResponse>();
+        CreateMap<User, ShortUserResponse>();
     }
 }

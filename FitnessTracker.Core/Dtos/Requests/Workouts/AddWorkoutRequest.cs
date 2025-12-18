@@ -22,6 +22,5 @@ public record AddWorkoutRequest
     [Past(ErrorMessage = ValidationErrors.InvalidWorkoutDate)]
     public DateTime StartedAt { get; init; }
 
-    [Required(ErrorMessage = ValidationErrors.UserIdRequired)]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 }

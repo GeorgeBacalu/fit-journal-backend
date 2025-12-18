@@ -3,6 +3,7 @@ using FitnessTracker.Core.Services;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Context;
 using FitnessTracker.Infra.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -71,7 +72,7 @@ public class Startup(IConfiguration configuration)
                 Version = "v1"
             });
 
-            options.AddSecurityDefinition("Bearer", new()
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new()
             {
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
@@ -88,7 +89,7 @@ public class Startup(IConfiguration configuration)
                         Reference = new()
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
+                            Id = JwtBearerDefaults.AuthenticationScheme
                         }
                     },
                     []
@@ -100,14 +101,13 @@ public class Startup(IConfiguration configuration)
 
     private static void ConfigureAuth(IServiceCollection services)
     {
-        services.AddAuthentication("Bearer").AddJwtBearer(
-            options => options.TokenValidationParameters = new()
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options => options.TokenValidationParameters = new()
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.Zero,
                 ValidIssuer = AppConfig.Auth.Issuer,
                 ValidAudience = AppConfig.Auth.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))

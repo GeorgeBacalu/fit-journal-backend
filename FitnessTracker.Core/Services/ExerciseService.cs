@@ -21,6 +21,14 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         };
     }
 
+    public async Task<ExerciseResponse> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        var exercise = await unitOfWork.ExerciseRepository.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.ExerciseIdNotFound, id));
+
+        return mapper.Map<ExerciseResponse>(exercise);
+    }
+
     public async Task AddAsync(AddExerciseRequest request, CancellationToken token = default)
     {
         var execise = mapper.Map<Exercise>(request);

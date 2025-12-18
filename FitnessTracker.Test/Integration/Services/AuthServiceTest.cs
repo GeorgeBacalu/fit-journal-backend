@@ -29,12 +29,7 @@ public class AuthServiceTest(DbFixture fixture)
         await context.Users.AddRangeAsync(UserMocks.Users, default);
         await context.SaveChangesAsync(default);
 
-        await run(new(new UnitOfWork(context,
-            new UserRepository(context),
-            new WorkoutRepository(context),
-            new ExerciseRepository(context),
-            new GoalRepository(context)),
-            mapper), context);
+        await run(new(new UnitOfWork(context), mapper), context);
 
         await transaction.RollbackAsync(default);
     }

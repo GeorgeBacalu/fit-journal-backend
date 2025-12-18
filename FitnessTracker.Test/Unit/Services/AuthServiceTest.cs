@@ -62,7 +62,7 @@ public class AuthServiceTest
         // Arrange
         AuthConfig.EnsureInitialized();
 
-        userRepositoryMock.Setup(mock => mock.GetByEmailAsync(ValidationSamples.ValidEmail)).ReturnsAsync(UserMocks.Users[0]);
+        userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.ValidEmail)).ReturnsAsync(UserMocks.Users[0]);
 
         // Act
         var result = await authService.LoginAsync(LoginRequests.Valid, default);
@@ -76,7 +76,7 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldThrowNotFound_WhenEmailDoesNotExist()
     {
         // Arrange
-        userRepositoryMock.Setup(mock => mock.GetByEmailAsync(ValidationSamples.NonExistingEmail)).ReturnsAsync((User?)null);
+        userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.NonExistingEmail)).ReturnsAsync((User?)null);
 
         // Act
         var action = () => authService.LoginAsync(LoginRequests.NonExistingEmail, default);
@@ -89,7 +89,7 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldThrowBadRequest_WhenPasswordIsIncorrect()
     {
         // Arrange
-        userRepositoryMock.Setup(mock => mock.GetByEmailAsync(ValidationSamples.ValidEmail)).ReturnsAsync(UserMocks.Users[0]);
+        userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.ValidEmail)).ReturnsAsync(UserMocks.Users[0]);
 
         // Act
         var action = () => authService.LoginAsync(LoginRequests.WrongPassword, default);

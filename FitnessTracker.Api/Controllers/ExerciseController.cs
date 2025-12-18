@@ -18,6 +18,15 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<ExercisesResponse>> GetAllAsync(CancellationToken token = default) =>
         Ok(await exerciseService.GetAllAsync(token));
 
+    /// <summary>Get exercise by ID</summary>
+    /// <param name="id">Exercise ID to fetch</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Exercise with given ID</returns>
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ExerciseResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await exerciseService.GetByIdAsync(id, token));
+
     /// <summary>Add new exercise</summary>
     /// <param name="request">Added exercise details</param>
     /// <param name="token">Cancellation token</param>

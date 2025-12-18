@@ -10,17 +10,25 @@ namespace FitnessTracker.Api.Controllers;
 [Route("/api/[controller]")]
 public class UserController(IUserService userService) : BaseController
 {
-    /// <summary>View selected user's profile info</summary>
+    /// <summary>Get all users</summary>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>List of all users</returns>
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<UsersResponse>> GetAllAsync(CancellationToken token = default) =>
+        Ok(await userService.GetAllAsync(token));
+
+    /// <summary>View selected user's personal info</summary>
     /// <param name="id">Selected user's ID</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>Selected user's profile info</returns>
+    /// <returns>Selected user's personal info</returns>
     [Authorize]
     [HttpGet("profile/{id}")]
     public async Task<ActionResult<ProfileResponse>> GetProfileAsync(Guid id, CancellationToken token = default) =>
         Ok(await userService.GetProfileAsync(id, token));
 
-    /// <summary>Update personal profile info</summary>
-    /// <param name="request">Updated personal profile info</param>
+    /// <summary>Update user personal info</summary>
+    /// <param name="request">Updated user personal info</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
     [HttpPatch("profile")]
