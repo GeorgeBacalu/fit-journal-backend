@@ -31,7 +31,7 @@ public class UserController(IUserService userService) : BaseController
     /// <param name="request">Updated user personal info</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
-    [HttpPatch("profile")]
+    [HttpPut("profile")]
     public async Task<ActionResult<object>> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken token = default)
     {
         await userService.UpdateProfileAsync(request, UserId, token);

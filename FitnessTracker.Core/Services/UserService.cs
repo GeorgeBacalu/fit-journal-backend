@@ -30,8 +30,11 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 
     public async Task UpdateProfileAsync(UpdateProfileRequest request, Guid id, CancellationToken token = default)
     {
-        if (request.Birthday is DateOnly birthday && DateOnly.FromDateTime(DateTime.UtcNow) < birthday.AddYears(13))
-            throw new BadRequestException(ErrorMessages.AgeRestriction);
+        if (await unitOfWork.UserRepository.AnyAsync(user => user.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
+        if (await unitOfWork.UserRepository.AnyAsync(user => user.Email == request.Email, token))
+            throw new BadRequestException(ValidationErrors.EmailTaken);
 
         var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));

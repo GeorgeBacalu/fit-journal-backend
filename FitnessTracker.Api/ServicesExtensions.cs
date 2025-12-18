@@ -1,68 +1,35 @@
-﻿using FitnessTracker.Core.Mappers;
-using FitnessTracker.Core.Services;
+﻿using FitnessTracker.Api;
+using FitnessTracker.Core.Mappers;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Context;
-using FitnessTracker.Infra.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 using System.Text;
 
 namespace FitnessTracker.Api;
 
-public class Startup(IConfiguration configuration)
+public static class ServicesExtensions
 {
-    public void ConfigureServices(IServiceCollection services)
-    {
-        AppConfig.Init(configuration);
-
-        ConfigureCors(services);
-        ConfigureDbContext(services);
-        ConfigureAutoMapper(services);
-        ConfigureControllers(services);
-        ConfigureSwagger(services);
-        ConfigureAuth(services);
-
-        services.AddInfra()
-                .AddCore()
-                .AddMiddlewares();
-    }
-
-    public void Configure(WebApplication app)
-    {
-        app.UseSwagger()
-           .UseSwaggerUI()
-
-           .UseCors("AllowAll")
-           .UseHttpsRedirection()
-
-           .UseMiddlewares()
-           .UseAuthentication()
-           .UseAuthorization();
-
-        app.MapControllers();
-    }
-
-    private static void ConfigureCors(IServiceCollection services) =>
+    public static IServiceCollection AddCorsPolicy(this IServiceCollection services) =>
         services.AddCors(options =>
             options.AddPolicy("AllowAll", policy =>
                 policy.AllowAnyOrigin()
                       .AllowAnyMethod()
                       .AllowAnyHeader()));
 
-    private static void ConfigureDbContext(IServiceCollection services) =>
-        services.AddDbContext<FitnessTrackerContext>(
-            options => options.UseSqlServer(AppConfig.ConnectionStrings.FitnessTrackerDb));
+    public static IServiceCollection AddDbContext(this IServiceCollection services) =>
+        services.AddDbContext<FitnessTrackerContext>(options =>
+            options.UseSqlServer(AppConfig.ConnectionStrings.FitnessTrackerDb));
 
-    private static void ConfigureAutoMapper(IServiceCollection services) =>
+    public static IServiceCollection AddAutoMapper(this IServiceCollection services) =>
         services.AddAutoMapper(_ => { }, typeof(UserMapper).Assembly);
 
-    private static void ConfigureControllers(IServiceCollection services) =>
-        services.AddControllers();
-
-    private static void ConfigureSwagger(IServiceCollection services) =>
+    public static IServiceCollection AddSwagger(this IServiceCollection services) =>
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new()
@@ -76,8 +43,8 @@ public class Startup(IConfiguration configuration)
             {
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
-                Name = "Authorization",
-                Scheme = "bearer",
+                Name = HeaderNames.Authorization,
+                Scheme = JwtBearerDefaults.AuthenticationScheme.ToLower(),
                 BearerFormat = "JWT"
             });
 
@@ -99,7 +66,7 @@ public class Startup(IConfiguration configuration)
             options.IncludeXmlComments($"{AppContext.BaseDirectory}/{Assembly.GetExecutingAssembly().GetName().Name}.xml");
         });
 
-    private static void ConfigureAuth(IServiceCollection services)
+    public static IServiceCollection AddAuth(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => options.TokenValidationParameters = new()
@@ -112,7 +79,12 @@ public class Startup(IConfiguration configuration)
                 ValidAudience = AppConfig.Auth.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))
             });
-
-        services.AddAuthorization();
+        
+        return services.AddAuthorization();
     }
+
+    public static void AddSerilog(this IHostBuilder host) =>
+        host.UseSerilog((context, config) =>
+            config.WriteTo.Console()
+                  .ReadFrom.Configuration(context.Configuration));
 }

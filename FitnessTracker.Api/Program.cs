@@ -1,15 +1,43 @@
 using FitnessTracker.Api;
+using FitnessTracker.Core.Services;
+using FitnessTracker.Infra.Config;
+using FitnessTracker.Infra.Repositories;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) =>
-    config.WriteTo.Console()
-          .ReadFrom.Configuration(context.Configuration));
+AppConfig.Init(builder.Configuration);
 
-var startup = new Startup(builder.Configuration);
-startup.ConfigureServices(builder.Services);
+builder.Services
+    .AddCorsPolicy()
+
+    .AddDbContext()
+    .AddAutoMapper()
+    .AddInfra()
+
+    .AddCore()
+    .AddValidators()
+    .AddMiddlewares()
+
+    .AddSwagger()
+    .AddAuth()
+
+    .AddControllers();
+
+builder.Host.AddSerilog();
 
 var app = builder.Build();
-startup.Configure(app);
+
+app.UseSwagger()
+   .UseSwaggerUI()
+
+   .UseCors("AllowAll")
+   .UseHttpsRedirection()
+
+   .UseMiddlewares()
+   .UseAuthentication()
+   .UseAuthorization();
+
+app.MapControllers();
+
 app.Run();

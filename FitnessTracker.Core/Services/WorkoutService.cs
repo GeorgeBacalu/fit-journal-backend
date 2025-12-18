@@ -31,15 +31,6 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
-        if (request.UserId.HasValue)
-        {
-            var user = await unitOfWork.UserRepository.GetByIdAsync(request.UserId.Value, default)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, request.UserId));
-
-            if (request.StartedAt < user.CreatedAt)
-                throw new BadRequestException(ErrorMessages.WorkoutBeforeRegistration);
-        }
-
         var workouts = await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
         if (workouts.Any(workout =>
@@ -59,11 +50,11 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         var workout = await unitOfWork.WorkoutRepository.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, request.Id));
 
-        workout.Name = request.Name ?? workout.Name;
-        workout.Description = request.Description ?? workout.Description;
-        workout.Notes = request.Notes ?? workout.Notes;
-        workout.DurationMinutes = request.DurationMinutes ?? workout.DurationMinutes;
-        workout.StartedAt = request.StartedAt ?? workout.StartedAt;
+        workout.Name = workout.Name;
+        workout.Description = workout.Description;
+        workout.Notes = workout.Notes;
+        workout.DurationMinutes = workout.DurationMinutes;
+        workout.StartedAt = workout.StartedAt;
 
         await unitOfWork.CommitAsync(token);
     }

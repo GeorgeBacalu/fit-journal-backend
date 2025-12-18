@@ -21,6 +21,12 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
+        if (await unitOfWork.UserRepository.AnyAsync(user => user.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
+        if (await unitOfWork.UserRepository.AnyAsync(user => user.Email == request.Email, token))
+            throw new BadRequestException(ValidationErrors.EmailTaken);
+
         var user = mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
