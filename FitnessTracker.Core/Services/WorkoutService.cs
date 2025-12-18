@@ -3,7 +3,6 @@ using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Core.Dtos.Responses.Workouts;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Domain.Enums;
 using FitnessTracker.Infra.Constants;
 using FitnessTracker.Infra.Exceptions;
 using FitnessTracker.Infra.Repositories.Interfaces;
@@ -12,12 +11,9 @@ namespace FitnessTracker.Core.Services;
 
 public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutService
 {
-    public async Task<WorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token = default)
+    public async Task<WorkoutsResponse> GetAllAsync(CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
-
-        var workouts = user.Role == Role.User ? user.Workouts : await unitOfWork.WorkoutRepository.GetAllAsync(token);
+        var workouts = await unitOfWork.WorkoutRepository.GetAllAsync(token);
 
         return new()
         {
@@ -25,13 +21,24 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         };
     }
 
+    public async Task<WorkoutResponse> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        var workout = await unitOfWork.WorkoutRepository.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, id));
+
+        return mapper.Map<WorkoutResponse>(workout);
+    }
+
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetByIdAsync(request.UserId, default)
+        if (request.UserId.HasValue)
+        {
+            var user = await unitOfWork.UserRepository.GetByIdAsync(request.UserId.Value, default)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, request.UserId));
 
-        if (request.StartedAt < user.CreatedAt)
-            throw new BadRequestException(ErrorMessages.WorkoutBeforeRegistration);
+            if (request.StartedAt < user.CreatedAt)
+                throw new BadRequestException(ErrorMessages.WorkoutBeforeRegistration);
+        }
 
         var workouts = await unitOfWork.WorkoutRepository.GetAllAsync(token);
 

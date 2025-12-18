@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net.Mime;
 
 namespace FitnessTracker.Infra.Middlewares;
 
@@ -59,7 +58,6 @@ public class ExceptionMiddleware : IMiddleware
                 }
             };
 
-            context.Response.ContentType = MediaTypeNames.Application.Json;
             context.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }

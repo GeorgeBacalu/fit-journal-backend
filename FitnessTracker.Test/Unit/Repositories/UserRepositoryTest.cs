@@ -39,7 +39,7 @@ public class UserRepositoryTest
         // Arrange
 
         // Act
-        var result = await userRepository.GetByEmailAsync(ValidationSamples.ValidEmail, default);
+        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.ValidEmail, default);
 
         // Assert
         result.Should().Be(UserMocks.Users[0]);
@@ -51,7 +51,7 @@ public class UserRepositoryTest
         // Arrange
 
         // Act
-        var result = await userRepository.GetByEmailAsync(ValidationSamples.NonExistingEmail, default);
+        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.NonExistingEmail, default);
 
         // Assert
         result.Should().BeNull();

@@ -21,9 +21,6 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
-        if (request.Birthday is DateOnly birthday && DateOnly.FromDateTime(DateTime.UtcNow) < birthday.AddYears(13))
-            throw new BadRequestException(ErrorMessages.AgeRestriction);
-
         var user = mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
@@ -33,7 +30,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetByEmailAsync(request.Email, token)
+        var user = await unitOfWork.UserRepository.GetAsync(user => user.Email == request.Email, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserEmailNotFound, request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))

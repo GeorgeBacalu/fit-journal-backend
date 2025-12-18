@@ -21,7 +21,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <summary>Get exercise by ID</summary>
     /// <param name="id">Exercise ID to fetch</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>User with given ID</returns>
+    /// <returns>Exercise with given ID</returns>
     [Authorize]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ExerciseResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
