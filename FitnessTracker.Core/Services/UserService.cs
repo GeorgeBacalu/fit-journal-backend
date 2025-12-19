@@ -31,10 +31,10 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 
     public async Task EditProfileAsync(EditProfileRequest request, Guid id, CancellationToken token = default)
     {
-        if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name && user.Id != id, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
-        if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email && user.Id != id, token))
             throw new BadRequestException(ValidationErrors.EmailTaken);
 
         var user = await unitOfWork.Users.GetByIdAsync(id, token)

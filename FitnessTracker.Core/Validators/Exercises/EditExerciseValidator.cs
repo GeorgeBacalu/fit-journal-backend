@@ -15,6 +15,6 @@ public class EditExerciseValidator : AbstractValidator<EditExerciseRequest>
             .Must(id => id != Guid.Empty)
             .WithMessage(ValidationErrors.InvalidExerciseId);
 
-        Include(new EditExerciseValidator());
+        Include(new AddExerciseValidator());
     }
 }

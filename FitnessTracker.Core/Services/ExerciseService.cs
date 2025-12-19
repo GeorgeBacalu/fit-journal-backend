@@ -35,15 +35,15 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
-        var execise = mapper.Map<Exercise>(request);
+        var exercise = mapper.Map<Exercise>(request);
 
-        await unitOfWork.Exercises.AddAsync(execise, token);
+        await unitOfWork.Exercises.AddAsync(exercise, token);
         await unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
-        if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name, token))
+        if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name && exercise.Id != request.Id, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
         var exercise = await unitOfWork.Exercises.GetByIdAsync(request.Id, token)

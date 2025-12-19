@@ -49,7 +49,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task EditAsync(EditWorkoutRequest request, CancellationToken token = default)
     {
-        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name, token))
+        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name && workout.Id != request.Id, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
         if (await unitOfWork.Workouts.AnyAsync(workout =>

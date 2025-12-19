@@ -1,7 +1,5 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.Goals;
-using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Core.Dtos.Responses.Goals;
-using FitnessTracker.Core.Services;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +18,15 @@ public class GoalController(IGoalService goalService) : BaseController
     [HttpGet]
     public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(bool isAchieved = false, CancellationToken token = default) =>
         Ok(await goalService.GetAllByUserAsync(UserId, isAchieved, token));
+
+    /// <summary>Get goal by ID</summary>
+    /// <param name="id">Goal ID to fetch</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Goal with given ID</returns>
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<GoalResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await goalService.GetByIdAsync(id, token));
 
     /// <summary>Add new goal for current user</summary>
     /// <param name="request">Added goal details</param>

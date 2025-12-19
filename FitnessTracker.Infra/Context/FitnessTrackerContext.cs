@@ -15,6 +15,7 @@ public class FitnessTrackerContext : DbContext
     public virtual DbSet<Exercise> Exercises => Set<Exercise>();
     public virtual DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public virtual DbSet<Goal> Goals => Set<Goal>();
+    public virtual DbSet<FoodItem> FoodItems => Set<FoodItem>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder builder) =>
         builder.Properties<Enum>().HaveConversion<string>();

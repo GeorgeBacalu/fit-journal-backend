@@ -6,6 +6,7 @@ public interface IUnitOfWork
     IWorkoutRepository Workouts { get; }
     IExerciseRepository Exercises { get; }
     IGoalRepository Goals { get; }
+    IFoodItemRepository FoodItems { get; }
 
     Task CommitAsync(CancellationToken token = default);
 }

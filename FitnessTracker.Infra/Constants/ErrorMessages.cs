@@ -37,4 +37,9 @@ public static class ErrorMessages
     public const string GoalBeforeRegistration = "Goal start date can't precede registration date";
     public const string UnauthorizedGoalEdit = "Unauthorized to edit another user's goal";
     public const string UnauthorizedGoalRemove = "Unauthorized to remove another user's goal";
+
+    // Food items
+
+    public const string FoodItemIdNotFound = "Food item with id {0} not found";
+    public const string FoodItemIdsNotFound = "Invalid food item IDs found";
 }

@@ -4,6 +4,7 @@ using FitnessTracker.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    partial class FitnessTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20251219144500_FoodItems")]
+    partial class FoodItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Exercises", (string)null);
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.FoodItem", b =>
@@ -105,7 +108,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("FoodItems", null, t =>
+                    b.ToTable("FoodItems", t =>
                         {
                             t.HasCheckConstraint("CK_FoodItem_Calories", "[Calories] >= 0");
 
@@ -165,7 +168,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Goals", null, t =>
+                    b.ToTable("Goals", t =>
                         {
                             t.HasTrigger("TR_Goals_BeforeUserRegistration");
 
@@ -244,7 +247,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users", null, t =>
+                    b.ToTable("Users", t =>
                         {
                             t.HasCheckConstraint("CK_Users_AgeRestriction", "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
 
@@ -302,7 +305,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Workouts", null, t =>
+                    b.ToTable("Workouts", t =>
                         {
                             t.HasTrigger("TR_Goals_BeforeUserRegistration")
                                 .HasDatabaseName("TR_Goals_BeforeUserRegistration1");
@@ -352,7 +355,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutExercises", null, t =>
+                    b.ToTable("WorkoutExercises", t =>
                         {
                             t.HasCheckConstraint("CK_WorkoutExercise_Reps", "[Reps] > 0");
 

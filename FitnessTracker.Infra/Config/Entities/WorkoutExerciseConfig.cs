@@ -8,14 +8,20 @@ public class WorkoutExerciseConfig : IEntityTypeConfiguration<WorkoutExercise>
 {
     public void Configure(EntityTypeBuilder<WorkoutExercise> builder)
     {
-        builder.Property(workoutExercise => workoutExercise.WeightUsed).HasMaxLength(50);
+        builder.Property(workoutExercise => workoutExercise.WeightUsed)
+            .HasMaxLength(50);
 
         builder.HasQueryFilter(workoutExercise => workoutExercise.DeletedAt == null);
 
-        builder.ToTable(builder =>
+        builder.ToTable(table =>
         {
-            builder.HasCheckConstraint("CK_WorkoutExercise_Sets", "[Sets] > 0");
-            builder.HasCheckConstraint("CK_WorkoutExercise_Reps", "[Reps] > 0");
+            table.HasCheckConstraint(
+                "CK_WorkoutExercise_Sets",
+                "[Sets] > 0");
+
+            table.HasCheckConstraint(
+                "CK_WorkoutExercise_Reps",
+                "[Reps] > 0");
         });
     }
 }

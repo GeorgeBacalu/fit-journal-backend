@@ -42,7 +42,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <param name="request">Edited exercise details</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
-    [HttpPatch]
+    [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
         await exerciseService.EditAsync(request, token);
@@ -57,6 +57,6 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {
         await exerciseService.RemoveRangeAsync(request, token);
-        return Ok(new { Message = SuccessMessages.ExerciseRemoved });
+        return Ok(new { Message = SuccessMessages.ExercisesRemoved });
     }
 }
