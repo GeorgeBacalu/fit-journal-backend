@@ -22,7 +22,7 @@ public class AuthServiceTest
 
     public AuthServiceTest()
     {
-        unitOfWorkMock.Setup(mock => mock.UserRepository).Returns(userRepositoryMock.Object);
+        unitOfWorkMock.Setup(mock => mock.Users).Returns(userRepositoryMock.Object);
         authService = new(unitOfWorkMock.Object, mapperMock.Object);
     }
 
@@ -50,7 +50,7 @@ public class AuthServiceTest
         var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
+        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.AgeRestriction);
 
         userRepositoryMock.Verify(mock => mock.AddAsync(It.IsAny<User>(), default), Times.Never);
         unitOfWorkMock.Verify(mock => mock.CommitAsync(default), Times.Never);

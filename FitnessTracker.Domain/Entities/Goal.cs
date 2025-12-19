@@ -4,7 +4,7 @@ namespace FitnessTracker.Domain.Entities;
 
 public class Goal : BaseEntity
 {
-    public required string Title { get; set; }
+    public required string Name { get; set; }
     public string? Description { get; set; }
     public GoalType Type { get; set; }
     public int TargetWeight { get; set; }

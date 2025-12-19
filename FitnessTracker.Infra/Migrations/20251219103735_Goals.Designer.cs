@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    [Migration("20251216174812_Goals")]
-    partial class Goals
+    [Migration("20251219103735_Goals")]
+    partial class GoalsReponse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,16 +93,16 @@ namespace FitnessTracker.Infra.Migrations
                     b.Property<bool>("IsAchieved")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
                     b.Property<int>("TargetWeight")
                         .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -121,7 +121,11 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Goals", t =>
                         {
-                            t.HasTrigger("TR_Goals_BeforeInsert");
+                            t.HasTrigger("TR_Goals_BeforeUserRegistration");
+
+                            t.HasTrigger("TR_Goals_ValidateOverlapping");
+
+                            t.HasTrigger("TR_Goals_ValitateWeight");
 
                             t.HasCheckConstraint("CK_Goals_Dates", "[StartDate] < [EndDate]");
 
@@ -196,6 +200,8 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Users", t =>
                         {
+                            t.HasCheckConstraint("CK_Users_AgeRestriction", "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
+
                             t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
 
                             t.HasCheckConstraint("CK_Users_Email", "[Email] LIKE '%_@__%.__%'");
@@ -240,7 +246,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -252,11 +258,12 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.ToTable("Workouts", t =>
                         {
-                            t.HasTrigger("TR_Goals_BeforeUserRegistration");
+                            t.HasTrigger("TR_Goals_BeforeUserRegistration")
+                                .HasDatabaseName("TR_Goals_BeforeUserRegistration1");
 
-                            t.HasCheckConstraint("CK_Workout_Date", "[StartedAt] <= CURRENT_TIMESTAMP");
+                            t.HasCheckConstraint("CK_Workout_DurationMinutes", "[DurationMinutes] BETWEEN 5 AND 300");
 
-                            t.HasCheckConstraint("CK_Workout_DurationMinuts", "[DurationMinutes] BETWEEN 5 AND 300");
+                            t.HasCheckConstraint("CK_Workout_StartedAt", "[StartedAt] <= CURRENT_TIMESTAMP");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -286,9 +293,9 @@ namespace FitnessTracker.Infra.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("WeightUsed")
+                    b.Property<int>("WeightUsed")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("WorkoutId")
                         .HasColumnType("uniqueidentifier");
@@ -322,9 +329,7 @@ namespace FitnessTracker.Infra.Migrations
                 {
                     b.HasOne("FitnessTracker.Domain.Entities.User", "User")
                         .WithMany("Workouts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

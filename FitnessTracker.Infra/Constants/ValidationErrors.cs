@@ -45,6 +45,7 @@ public static class ValidationErrors
     public const string DurationRequired = "Duration is required";
     public const string InvalidDuration = "Duration must be between {Min} and {Max} minutes";
 
+    public const string StartDateRequired = "Start date is required";
     public const string InvalidStartDate = "Start date can't be in the future";
 
     public const string WorkoutIdRequired = "Workout ID is required";
@@ -63,4 +64,17 @@ public static class ValidationErrors
     public const string InvalidExerciseId = "Invalid exercise ID";
 
     public const string ExerciseIdsRequired = "No exercise IDs provided";
+
+    // Goals
+
+    public const string GoalTypeRequired = "Goal type is required";
+
+    public const string TargetWeightRequired = "Target weight is required";
+    public const string InvalidTargetWeight = "Trget weight must be between {Min} and {Max} kg";
+
+    public const string StartBeforeEnd = "Start date must be earlier than the end date";
+
+    public const string EndDateRequired = "End date is required";
+    public const string InvalidEndDate = "End date can't be in the past";
+
 }

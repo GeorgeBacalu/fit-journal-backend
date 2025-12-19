@@ -59,7 +59,7 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
+            await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.AgeRestriction);
         });
 
     [Theory]

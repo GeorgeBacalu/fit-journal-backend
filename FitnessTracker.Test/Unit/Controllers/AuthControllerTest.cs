@@ -37,13 +37,13 @@ public class AuthControllerTest
     {
         // Arrange
         authServiceMock.Setup(mock => mock.RegisterAsync(RegisterRequests.Under13, default))
-            .ThrowsAsync(new BadRequestException(ErrorMessages.AgeRestriction));
+            .ThrowsAsync(new BadRequestException(ValidationErrors.AgeRestriction));
 
         // Act
         var action = () => authController.RegisterAsync(RegisterRequests.Under13, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.AgeRestriction);
+        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.AgeRestriction);
     }
 
     [Fact]
