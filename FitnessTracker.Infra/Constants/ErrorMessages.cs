@@ -25,4 +25,8 @@ public static class ErrorMessages
     public const string ExerciseIdNotFound = "Exercise with id {0} not found";
     public const string ExerciseIdsNotFound = "Invalid exercises IDs found";
     public const string ExercisesInUse = "Exercises  used by existing workouts";
+
+    // Goals
+
+    public const string GoalBeforeRegistration = "Goal start date can't precede registration date";
 }

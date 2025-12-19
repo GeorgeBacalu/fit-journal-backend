@@ -25,7 +25,7 @@ public static class GoalMigrationExtensions
 
     public static OperationBuilder<SqlOperation> AddGoalValidateWeightTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"
-        CREATE TRIGGER TR_Goals_ValitateWeight ON [Goals]
+        CREATE TRIGGER TR_Goals_ValidateWeight ON [Goals]
         AFTER INSERT, UPDATE
         AS BEGIN
             SET NOCOUNT ON;
@@ -80,8 +80,8 @@ public static class GoalMigrationExtensions
 
     public static OperationBuilder<SqlOperation> DropGoalValidateWeightTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"
-        IF OBJECT_ID('TR_Goals_ValitateWeight', 'TR') IS NOT NULL
-        DROP TRIGGER TR_Goals_ValitateWeight;");
+        IF OBJECT_ID('TR_Goals_ValidateWeight', 'TR') IS NOT NULL
+        DROP TRIGGER TR_Goals_ValidateWeight;");
 
     public static OperationBuilder<SqlOperation> DropGoalOverlappingTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"
