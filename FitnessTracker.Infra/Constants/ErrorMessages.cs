@@ -11,6 +11,7 @@ public static class ErrorMessages
 
     public const string UserIdNotFound = "User with ID {0} not found";
     public const string UserEmailNotFound = "User with email {0} not found";
+
     public const string InvalidCredentials = "Invalid credentials";
     public const string UnauthorizedAccountDeletion = "Unauthorized to delete another user's account";
 
@@ -18,17 +19,22 @@ public static class ErrorMessages
 
     public const string WorkoutIdNotFound = "Workout with id {0} not found";
     public const string WorkoutIdsNotFound = "Invalid workouts IDs found";
+
     public const string DuplicatedWorkoutStartTime = "Workout already exists at this time.";
 
     // Exercises
 
     public const string ExerciseIdNotFound = "Exercise with id {0} not found";
     public const string ExerciseIdsNotFound = "Invalid exercises IDs found";
+
     public const string ExercisesInUse = "Exercises  used by existing workouts";
 
     // Goals
 
     public const string GoalIdNotFound = "Goal with id {0} not found";
+    public const string GoalIdsNotFound = "Invalid goal IDs found";
+
     public const string GoalBeforeRegistration = "Goal start date can't precede registration date";
     public const string UnauthorizedGoalEdit = "Unauthorized to edit another user's goal";
+    public const string UnauthorizedGoalRemove = "Unauthorized to remove another user's goal";
 }

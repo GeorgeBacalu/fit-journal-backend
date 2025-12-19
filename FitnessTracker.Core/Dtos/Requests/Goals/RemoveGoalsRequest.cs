@@ -2,4 +2,6 @@
 
 public record RemoveGoalsRequest
 {
+    public IEnumerable<Guid> Ids { get; init; } = [];
+    public bool IsHardDelete { get; set; }
 }

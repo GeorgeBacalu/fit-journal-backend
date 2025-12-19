@@ -1,5 +1,7 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.Goals;
+using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Core.Dtos.Responses.Goals;
+using FitnessTracker.Core.Services;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -39,5 +41,16 @@ public class GoalController(IGoalService goalService) : BaseController
     {
         await goalService.EditAsync(request, UserId, token);
         return Ok(new { Message = SuccessMessages.GoalEdited });
+    }
+
+    /// <summary>Remove existing workouts</summary>
+    /// <param name="request">Removed workouts IDs</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveRangeAsync(RemoveGoalsRequest request, CancellationToken token = default)
+    {
+        await goalService.RemoveRangeAsync(request, UserId, token);
+        return Ok(new { Message = SuccessMessages.GoalsRemoved });
     }
 }

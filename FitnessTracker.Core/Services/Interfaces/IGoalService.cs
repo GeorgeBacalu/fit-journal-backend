@@ -9,4 +9,5 @@ public interface IGoalService
     Task<GoalResponse> GetByIdAsync(Guid id, CancellationToken token = default);
     Task AddAsync(AddGoalRequest request, Guid userId, CancellationToken token = default);
     Task EditAsync(EditGoalRequest request, Guid userId, CancellationToken token = default);
+    Task RemoveRangeAsync(RemoveGoalsRequest request, Guid userId, CancellationToken token = default);
 }

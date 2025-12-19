@@ -71,4 +71,18 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper) : IGoalService
 
         await unitOfWork.CommitAsync(token);
     }
+
+    public async Task RemoveRangeAsync(RemoveGoalsRequest request, Guid userId, CancellationToken token = default)
+    {
+        var ids = await unitOfWork.Goals.GetExistingIdsAsync(request.Ids, token);
+
+        if (ids.Count() != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.GoalIdsNotFound);
+
+        if (await unitOfWork.Goals.AnyAsync(goal => goal.UserId != userId))
+            throw new ForbiddenException(ErrorMessages.UnauthorizedGoalRemove);
+
+        await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
+        await unitOfWork.CommitAsync(token);
+    }
 }
