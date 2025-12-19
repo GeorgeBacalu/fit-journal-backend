@@ -2,15 +2,15 @@
 
 namespace FitnessTracker.Api;
 
-public static class DependencyInjection
+public static class DIExtensions
 {
     public static IServiceCollection AddMiddlewares(this IServiceCollection services) =>
         services.AddTransient<ExceptionMiddleware>()
-                .AddTransient<LoggingMiddleware>()
-                .AddTransient<CachingMiddleware>();
+                .AddTransient<CachingMiddleware>()
+                .AddTransient<LoggingMiddleware>();
 
     public static IApplicationBuilder UseMiddlewares(this IApplicationBuilder app) =>
         app.UseMiddleware<ExceptionMiddleware>()
-           .UseMiddleware<LoggingMiddleware>()
-           .UseMiddleware<CachingMiddleware>();
+           .UseMiddleware<CachingMiddleware>()
+           .UseMiddleware<LoggingMiddleware>();
 }

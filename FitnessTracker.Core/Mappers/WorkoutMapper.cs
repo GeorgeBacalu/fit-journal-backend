@@ -10,6 +10,12 @@ public class WorkoutMapper : Profile
     public WorkoutMapper()
     {
         CreateMap<AddWorkoutRequest, Workout>();
+        CreateMap<EditWorkoutRequest, Workout>()
+            .ForAllMembers(options =>
+                options.Condition((source, destination, sourceMember) =>
+                    sourceMember != null));
+
         CreateMap<Workout, ShortWorkoutResponse>();
+        CreateMap<Workout, WorkoutResponse>();
     }
 }

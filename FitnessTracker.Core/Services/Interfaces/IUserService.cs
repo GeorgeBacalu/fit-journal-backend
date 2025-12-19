@@ -7,5 +7,5 @@ public interface IUserService
 {
     Task<UsersResponse> GetAllAsync(CancellationToken token = default);
     Task<ProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default);
-    Task UpdateProfileAsync(UpdateProfileRequest request, Guid id, CancellationToken token = default);
+    Task EditProfileAsync(EditProfileRequest request, Guid id, CancellationToken token = default);
 }

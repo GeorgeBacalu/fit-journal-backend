@@ -3,4 +3,5 @@
 public record ExercisesResponse
 {
     public IEnumerable<ShortExerciseResponse> Exercises { get; init; } = [];
+    public int TotalCount { get; set; }
 }

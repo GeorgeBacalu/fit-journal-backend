@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Infra.Extensions;
+﻿using FitnessTracker.Infra.Extensions.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable

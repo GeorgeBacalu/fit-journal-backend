@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
-namespace FitnessTracker.Infra.Extensions;
+namespace FitnessTracker.Infra.Extensions.Migrations;
 
 public static class GoalMigrationExtensions
 {

@@ -13,17 +13,18 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 {
     public async Task<WorkoutsResponse> GetAllAsync(CancellationToken token = default)
     {
-        var workouts = await unitOfWork.WorkoutRepository.GetAllAsync(token);
+        var workouts = await unitOfWork.Workouts.GetAllAsync(token);
 
         return new()
         {
-            Workouts = mapper.Map<IEnumerable<ShortWorkoutResponse>>(workouts)
+            Workouts = mapper.Map<IEnumerable<ShortWorkoutResponse>>(workouts),
+            TotalCount = workouts.Count()
         };
     }
 
     public async Task<WorkoutResponse> GetByIdAsync(Guid id, CancellationToken token = default)
     {
-        var workout = await unitOfWork.WorkoutRepository.GetByIdAsync(id, token)
+        var workout = await unitOfWork.Workouts.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, id));
 
         return mapper.Map<WorkoutResponse>(workout);
@@ -31,48 +32,49 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
-        if (request.UserId.HasValue)
-        {
-            var user = await unitOfWork.UserRepository.GetByIdAsync(request.UserId.Value, default)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, request.UserId));
+        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
 
-            if (request.StartedAt < user.CreatedAt)
-                throw new BadRequestException(ErrorMessages.WorkoutBeforeRegistration);
-        }
-
-        var workouts = await unitOfWork.WorkoutRepository.GetAllAsync(token);
-
-        if (workouts.Any(workout =>
+        if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
             workout.StartedAt.Hour == request.StartedAt.Hour &&
-            workout.StartedAt.Minute == request.StartedAt.Minute))
-            throw new BadRequestException(ErrorMessages.DuplicateWorkoutStartTime);
+            workout.StartedAt.Minute == request.StartedAt.Minute, token))
+            throw new BadRequestException(ErrorMessages.DuplicatedWorkoutStartTime);
 
         var workout = mapper.Map<Workout>(request);
 
-        await unitOfWork.WorkoutRepository.AddAsync(workout, default);
+        await unitOfWork.Workouts.AddAsync(workout, token);
         await unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditWorkoutRequest request, CancellationToken token = default)
     {
-        var workout = await unitOfWork.WorkoutRepository.GetByIdAsync(request.Id, token)
+        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
+        if (await unitOfWork.Workouts.AnyAsync(workout =>
+            workout.StartedAt.Date == request.StartedAt.Date &&
+            workout.StartedAt.Hour == request.StartedAt.Hour &&
+            workout.StartedAt.Minute == request.StartedAt.Minute &&
+            workout.Id != request.Id, token))
+            throw new BadRequestException(ErrorMessages.DuplicatedWorkoutStartTime);
+
+        var workout = await unitOfWork.Workouts.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, request.Id));
 
-        workout.Name = request.Name ?? workout.Name;
-        workout.Description = request.Description ?? workout.Description;
-        workout.Notes = request.Notes ?? workout.Notes;
-        workout.DurationMinutes = request.DurationMinutes ?? workout.DurationMinutes;
-        workout.StartedAt = request.StartedAt ?? workout.StartedAt;
+        mapper.Map<Workout>(request);
 
         await unitOfWork.CommitAsync(token);
     }
 
     public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
-        var workouts = await unitOfWork.WorkoutRepository.GetAllByIdsAsync(request.Ids, token);
+        var ids = await unitOfWork.Workouts.GetExistingIdsAsync(request.Ids, token);
+        
+        if (ids.Count() != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.WorkoutIdsNotFound);
 
-        await unitOfWork.WorkoutRepository.RemoveRangeAsync(workouts, request.IsHardDelete, token);
+        await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }

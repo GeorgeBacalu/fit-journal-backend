@@ -1,15 +1,7 @@
-﻿using FitnessTracker.Infra.Constants;
-using System.ComponentModel.DataAnnotations;
-
-namespace FitnessTracker.Core.Dtos.Requests.Auth;
+﻿namespace FitnessTracker.Core.Dtos.Requests.Auth;
 
 public record LoginRequest
 {
-    [Required(ErrorMessage = ValidationErrors.EmailRequired)]
-    [EmailAddress(ErrorMessage = ValidationErrors.InvalidEmail)]
-    [MaxLength(50, ErrorMessage = ValidationErrors.InvalidEmailLength)]
     public required string Email { get; init; }
-
-    [Required(ErrorMessage = ValidationErrors.PasswordRequired)]
     public required string Password { get; init; }
 }
