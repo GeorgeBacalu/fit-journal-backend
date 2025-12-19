@@ -32,6 +32,9 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
+        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
             workout.StartedAt.Hour == request.StartedAt.Hour &&
@@ -46,6 +49,9 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task EditAsync(EditWorkoutRequest request, CancellationToken token = default)
     {
+        if (await unitOfWork.Workouts.AnyAsync(workout => workout.Name == request.Name, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
             workout.StartedAt.Hour == request.StartedAt.Hour &&
@@ -64,10 +70,11 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
     public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
         var ids = await unitOfWork.Workouts.GetExistingIdsAsync(request.Ids, token);
+        
         if (ids.Count() != request.Ids.Count())
             throw new NotFoundException(ErrorMessages.WorkoutIdsNotFound);
 
-        await unitOfWork.Workouts.RemoveRangeAsync(request.Ids, request.IsHardDelete, token);
+        await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }
