@@ -2,6 +2,8 @@
 
 public static class ValidationErrors
 {
+    // Users
+
     public const string NameRequired = "Name is required";
     public const string InvalidNameLength = "Name must have max {MaxLength} characters";
     public const string NameTaken = "Name already taken";
@@ -43,13 +45,13 @@ public static class ValidationErrors
     public const string DurationRequired = "Duration is required";
     public const string InvalidDuration = "Duration must be between {Min} and {Max} minutes";
 
-    public const string StartDateRequired = "Start date is required";
     public const string InvalidStartDate = "Start date can't be in the future";
 
     public const string WorkoutIdRequired = "Workout ID is required";
     public const string InvalidWorkoutId = "Invalid workout ID";
 
     public const string WorkoutIdsRequired = "No workout IDs provided";
+    public const string DuplicatedWorkoutIds = "Request contains duplicated workout IDs";
 
     // Exercises
 

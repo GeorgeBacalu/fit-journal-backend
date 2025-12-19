@@ -18,23 +18,23 @@ public class UserController(IUserService userService) : BaseController
     public async Task<ActionResult<UsersResponse>> GetAllAsync(CancellationToken token = default) =>
         Ok(await userService.GetAllAsync(token));
 
-    /// <summary>View selected user's personal info</summary>
-    /// <param name="id">Selected user's ID</param>
+    /// <summary>View chosen user's personal info</summary>
+    /// <param name="id">Chosen user's ID</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>Selected user's personal info</returns>
+    /// <returns>Chosen user's personal info</returns>
     [Authorize]
-    [HttpGet("profile/{id}")]
+    [HttpGet("profile/{id:guid}")]
     public async Task<ActionResult<ProfileResponse>> GetProfileAsync(Guid id, CancellationToken token = default) =>
         Ok(await userService.GetProfileAsync(id, token));
 
-    /// <summary>Update user personal info</summary>
-    /// <param name="request">Updated user personal info</param>
+    /// <summary>Edit user personal info</summary>
+    /// <param name="request">Edited user personal info</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
     [HttpPut("profile")]
-    public async Task<ActionResult<object>> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken token = default)
+    public async Task<ActionResult<object>> EditProfileAsync(EditProfileRequest request, CancellationToken token = default)
     {
-        await userService.UpdateProfileAsync(request, UserId, token);
-        return Ok(new { Message = SuccessMessages.ProfileUpdated });
+        await userService.EditProfileAsync(request, UserId, token);
+        return Ok(new { Message = SuccessMessages.ProfileEdited });
     }
 }

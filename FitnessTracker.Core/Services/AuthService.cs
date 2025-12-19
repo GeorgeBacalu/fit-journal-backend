@@ -21,22 +21,22 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
-        if (await unitOfWork.UserRepository.AnyAsync(user => user.Name == request.Name, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
-        if (await unitOfWork.UserRepository.AnyAsync(user => user.Email == request.Email, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email, token))
             throw new BadRequestException(ValidationErrors.EmailTaken);
 
         var user = mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-        await unitOfWork.UserRepository.AddAsync(user, token);
+        await unitOfWork.Users.AddAsync(user, token);
         await unitOfWork.CommitAsync(token);
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetAsync(user => user.Email == request.Email, token)
+        var user = await unitOfWork.Users.GetAsync(user => user.Email == request.Email, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserEmailNotFound, request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
@@ -51,23 +51,23 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 
     public async Task DeleteAccountAsync(Guid? id, Guid userId, CancellationToken token = default)
     {
-        var currentUser = await unitOfWork.UserRepository.GetByIdAsync(userId, token)
+        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
 
         var targetUserId = id ?? userId;
 
-        if (currentUser.Role != Role.Admin && targetUserId != userId)
+        if (user.Role != Role.Admin && targetUserId != userId)
             throw new ForbiddenException(ErrorMessages.UnauthorizedAccountDeletion);
 
-        var targetUser = await unitOfWork.UserRepository.GetByIdAsync(targetUserId, token)
+        var targetUser = await unitOfWork.Users.GetByIdAsync(targetUserId, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, targetUserId));
 
-        await unitOfWork.UserRepository.RemoveAsync(targetUser, false, token);
+        await unitOfWork.Users.RemoveAsync(targetUser, hardDelete: false, token);
         await unitOfWork.CommitAsync(token);
     }
 
-    private string GenerateToken(User user, TokenType type)
-        => _tokenHandler.WriteToken(_tokenHandler.CreateToken(new()
+    private static string GenerateToken(User user, TokenType type) =>
+        _tokenHandler.WriteToken(_tokenHandler.CreateToken(new()
         {
             Issuer = AppConfig.Auth.Issuer,
             Audience = AppConfig.Auth.Audience,

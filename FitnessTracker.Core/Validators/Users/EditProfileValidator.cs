@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace FitnessTracker.Core.Validators.Users;
 
-public class UpdateProfileValidator : AbstractValidator<UpdateProfileRequest>
+public class EditProfileValidator : AbstractValidator<EditProfileRequest>
 {
-    public UpdateProfileValidator()
+    public EditProfileValidator()
     {
         RuleFor(request => request.Name)
             .NotEmpty()

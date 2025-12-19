@@ -2,7 +2,7 @@
 
 namespace FitnessTracker.Core.Dtos.Requests.Users;
 
-public record UpdateProfileRequest
+public record EditProfileRequest
 {
     public required string Name { get; init; }
     public required string Email { get; init; }

@@ -31,9 +31,6 @@ public class AddWorkoutValidator : AbstractValidator<AddWorkoutRequest>
             .WithMessage(ValidationErrors.InvalidDuration);
 
         RuleFor(request => request.StartedAt)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.StartDateRequired)
-
             .LessThanOrEqualTo(DateTime.UtcNow)
             .WithMessage(ValidationErrors.InvalidStartDate);
     }

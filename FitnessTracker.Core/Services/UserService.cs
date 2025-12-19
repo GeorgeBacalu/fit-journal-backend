@@ -12,40 +12,35 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 {
     public async Task<UsersResponse> GetAllAsync(CancellationToken token = default)
     {
-        var users = await unitOfWork.UserRepository.GetAllAsync(token);
+        var users = await unitOfWork.Users.GetAllAsync(token);
 
         return new()
         {
-            Users = mapper.Map<IEnumerable<ShortUserResponse>>(users)
+            Users = mapper.Map<IEnumerable<ShortUserResponse>>(users),
+            TotalCount = users.Count()
         };
     }
 
     public async Task<ProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default)
     {
-        var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)
+        var user = await unitOfWork.Users.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
 
         return mapper.Map<ProfileResponse>(user);
     }
 
-    public async Task UpdateProfileAsync(UpdateProfileRequest request, Guid id, CancellationToken token = default)
+    public async Task EditProfileAsync(EditProfileRequest request, Guid id, CancellationToken token = default)
     {
-        if (await unitOfWork.UserRepository.AnyAsync(user => user.Name == request.Name, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name, token))
             throw new BadRequestException(ValidationErrors.NameTaken);
 
-        if (await unitOfWork.UserRepository.AnyAsync(user => user.Email == request.Email, token))
+        if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email, token))
             throw new BadRequestException(ValidationErrors.EmailTaken);
 
-        var user = await unitOfWork.UserRepository.GetByIdAsync(id, token)
+        var user = await unitOfWork.Users.GetByIdAsync(id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
 
-        user.Name = request.Name ?? user.Name;
-        user.Email = request.Email ?? user.Email;
-        user.Phone = request.Phone ?? user.Phone;
-        user.Birthday = request.Birthday ?? user.Birthday;
-        user.Height = request.Height ?? user.Height;
-        user.Weight = request.Weight ?? user.Weight;
-        user.Gender = request.Gender ?? user.Gender;
+        mapper.Map(request, user);
 
         await unitOfWork.CommitAsync(token);
     }

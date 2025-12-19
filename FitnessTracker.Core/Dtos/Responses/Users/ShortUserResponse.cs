@@ -6,7 +6,6 @@ public record ShortUserResponse
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }
-
     public DateOnly Birthday { get; init; }
     public double Height { get; init; }
     public double Weight { get; init; }
