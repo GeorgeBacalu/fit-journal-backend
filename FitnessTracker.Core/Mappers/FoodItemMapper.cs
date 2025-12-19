@@ -10,6 +10,10 @@ public class FoodItemMapper : Profile
     public FoodItemMapper()
     {
         CreateMap<AddFoodItemRequest, FoodItem>();
+        CreateMap<EditFoodItemRequest, Goal>()
+            .ForAllMembers(options =>
+                options.Condition((source, destination, sourceMember) =>
+                    sourceMember != null));
 
         CreateMap<FoodItem, FoodItemResponse>();
     }

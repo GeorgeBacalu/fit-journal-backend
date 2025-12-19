@@ -8,4 +8,5 @@ public interface IFoodItemService
     Task<FoodItemsResponse> GetAllAsync(CancellationToken token = default);
     Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token = default);
     Task AddAsync(AddFoodItemRequest request, CancellationToken token = default);
+    Task EditAsync(EditFoodItemRequest request, CancellationToken token = default);
 }

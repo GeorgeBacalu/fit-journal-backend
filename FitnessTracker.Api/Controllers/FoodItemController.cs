@@ -33,4 +33,15 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
         await foodItemService.AddAsync(request, token);
         return Created("", new { Message = SuccessMessages.FoodItemAdded });
     }
+
+    /// <summary>Edit existing food item</summary>
+    /// <param name="request">Edited food item details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult<object>> EditAsync(EditFoodItemRequest request, CancellationToken token = default)
+    {
+        await foodItemService.EditAsync(request, token);
+        return Ok(new { Message = SuccessMessages.FoodItemEdited });
+    }
 }

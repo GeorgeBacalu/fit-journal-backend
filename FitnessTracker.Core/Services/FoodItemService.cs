@@ -40,4 +40,17 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
         await unitOfWork.FoodItems.AddAsync(foodItem, token);
         await unitOfWork.CommitAsync(token);
     }
+
+    public async Task EditAsync(EditFoodItemRequest request, CancellationToken token = default)
+    {
+        if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name && foodItem.Id != request.Id, token))
+            throw new BadRequestException(ValidationErrors.NameTaken);
+
+        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.Id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItemIdNotFound, request.Id));
+
+        mapper.Map(request, foodItem);
+
+        await unitOfWork.CommitAsync(token);
+    }
 }

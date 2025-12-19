@@ -93,4 +93,7 @@ public static class ValidationErrors
 
     public const string FatRequired = "Fat is required";
     public const string InvalidFat = "Fat must be a positive value";
+
+    public const string FoodItemIdRequired = "Food item ID is required";
+    public const string InvalidFoodItemId = "Invalid food item ID";
 }

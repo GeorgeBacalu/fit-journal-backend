@@ -42,7 +42,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <param name="request">Edited exercise details</param>
     /// <param name="token">Cancellation token</param>
     [Authorize]
-    [HttpPatch]
+    [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
         await exerciseService.EditAsync(request, token);
