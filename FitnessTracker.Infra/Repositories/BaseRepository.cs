@@ -19,8 +19,8 @@ public class BaseRepository<T>(FitnessTrackerContext context)
 
     public async Task<IEnumerable<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids, CancellationToken token = default) =>
         await context.Set<T>()
-            .Where(workout => ids.Contains(workout.Id))
-            .Select(workout => workout.Id)
+            .Where(entity => ids.Contains(entity.Id))
+            .Select(entity => entity.Id)
             .ToListAsync(token);
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default) =>

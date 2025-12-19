@@ -1,7 +1,5 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.Goals;
-using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Core.Dtos.Responses.Goals;
-using FitnessTracker.Core.Services;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;

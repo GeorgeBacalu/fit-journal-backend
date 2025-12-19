@@ -25,4 +25,8 @@ public static class SuccessMessages
     public const string GoalAdded = "Goal added successfully";
     public const string GoalEdited = "Goal edited successfully";
     public const string GoalsRemoved = "Goal removed successfully";
+
+    // Food items
+
+    public const string FoodItemAdded = "Food item added successfully";
 }

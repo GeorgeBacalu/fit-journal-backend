@@ -57,6 +57,6 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {
         await exerciseService.RemoveRangeAsync(request, token);
-        return Ok(new { Message = SuccessMessages.ExerciseRemoved });
+        return Ok(new { Message = SuccessMessages.ExercisesRemoved });
     }
 }

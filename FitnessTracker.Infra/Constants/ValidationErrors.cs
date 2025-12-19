@@ -79,4 +79,18 @@ public static class ValidationErrors
 
     public const string GoalIdRequired = "Goal ID is required";
     public const string InvalidGoalId = "Invalid goal ID";
+
+    // Food Items
+
+    public const string CaloriesRequired = "Calories are required";
+    public const string InvalidCalories = "Calories must be a positive value";
+
+    public const string ProteinRequired = "Protein is required";
+    public const string InvalidProtein = "Protein must be a positive value";
+
+    public const string CarbsRequired = "Carbohydrates are required";
+    public const string InvalidCarbs = "Carbohydrates must be a positive value";
+
+    public const string FatRequired = "Fat is required";
+    public const string InvalidFat = "Fat must be a positive value";
 }
