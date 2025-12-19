@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FitnessTracker.Core.Dtos.Requests.FoodItems;
+using FitnessTracker.Core.Dtos.Responses.FoodItems;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infra.Constants;
@@ -10,6 +11,17 @@ namespace FitnessTracker.Core.Services;
 
 public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItemService
 {
+    public async Task<FoodItemsResponse> GetAllAsync(CancellationToken token = default)
+    {
+        var foodItems = await unitOfWork.FoodItems.GetAllAsync(token);
+
+        return new()
+        {
+            FoodItems = mapper.Map<IEnumerable<FoodItemResponse>>(foodItems),
+            TotalCount = foodItems.Count()
+        };
+    }
+
     public async Task AddAsync(AddFoodItemRequest request, CancellationToken token = default)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name, token))

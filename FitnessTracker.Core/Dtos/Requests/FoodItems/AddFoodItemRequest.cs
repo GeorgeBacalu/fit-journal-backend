@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Core.Dtos.Requests.FoodItems;
 
-public class AddFoodItemRequest
+public record AddFoodItemRequest
 {
     public required string Name { get; init; }
     public decimal? Calories { get; init; }
