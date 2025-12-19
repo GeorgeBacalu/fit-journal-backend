@@ -8,18 +8,31 @@ public class WorkoutConfig : IEntityTypeConfiguration<Workout>
 {
     public void Configure(EntityTypeBuilder<Workout> builder)
     {
-        builder.HasIndex(workout => workout.Name).IsUnique();
+        builder.HasIndex(workout => workout.Name)
+            .IsUnique();
 
-        builder.Property(workout => workout.Name).IsRequired().HasMaxLength(50);
-        builder.Property(workout => workout.Description).HasMaxLength(250);
-        builder.Property(workout => workout.Notes).HasMaxLength(250);
+        builder.Property(workout => workout.Name)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        builder.Property(workout => workout.Description)
+            .HasMaxLength(250);
+
+        builder.Property(workout => workout.Notes)
+            .HasMaxLength(250);
 
         builder.HasQueryFilter(workout => workout.DeletedAt == null);
 
         builder.ToTable(table =>
         {
-            table.HasCheckConstraint("CK_Workout_DurationMinutes", "[DurationMinutes] BETWEEN 5 AND 300");
-            table.HasCheckConstraint("CK_Workout_StartedAt", "[StartedAt] <= CURRENT_TIMESTAMP");
+            table.HasCheckConstraint(
+                "CK_Workout_DurationMinutes",
+                "[DurationMinutes] BETWEEN 5 AND 300");
+
+            table.HasCheckConstraint(
+                "CK_Workout_StartedAt",
+                "[StartedAt] <= CURRENT_TIMESTAMP");
+
             table.HasTrigger("TR_Goals_BeforeUserRegistration");
         });
     }
