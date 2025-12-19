@@ -13,7 +13,7 @@ namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
     [Migration("20251219103735_Goals")]
-    partial class Goals
+    partial class GoalsReponse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

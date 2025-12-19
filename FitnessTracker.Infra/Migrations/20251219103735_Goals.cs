@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitnessTracker.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class Goals : Migration
+    public partial class GoalsReponse : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
