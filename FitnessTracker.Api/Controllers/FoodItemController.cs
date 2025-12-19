@@ -18,6 +18,11 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     public async Task<ActionResult<FoodItemsResponse>> GetAllAsync(CancellationToken token = default) =>
         Ok(await foodItemService.GetAllAsync(token));
 
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<FoodItemResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await foodItemService.GetByIdAsync(id, token));
+
     /// <summary>Add new food item</summary>
     /// <param name="request">Added food item details</param>
     /// <param name="token">Cancellation token</param>

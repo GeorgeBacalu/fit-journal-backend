@@ -22,6 +22,14 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
         };
     }
 
+    public async Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItemIdNotFound, id));
+
+        return mapper.Map<FoodItemResponse>(foodItem);
+    }
+
     public async Task AddAsync(AddFoodItemRequest request, CancellationToken token = default)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name, token))
