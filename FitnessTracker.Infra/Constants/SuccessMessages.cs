@@ -12,15 +12,17 @@ public static class SuccessMessages
 
     public const string WorkoutAdded = "Workout added successfully";
     public const string WorkoutEdited = "Workout edited successfully";
-    public const string WorkoutRemoved = "Workout removed successfully";
+    public const string WorkoutsRemoved = "Workouts removed successfully";
 
     // Exercises
 
     public const string ExerciseAdded = "Exercise added successfully";
     public const string ExerciseEdited = "Exercise edited successfully";
-    public const string ExerciseRemoved = "Exercise removed successfully";
+    public const string ExercisesRemoved = "Exercises removed successfully";
 
     // Goals
 
     public const string GoalAdded = "Goal added successfully";
+    public const string GoalEdited = "Goal edited successfully";
+    public const string GoalsRemoved = "Goal removed successfully";
 }
