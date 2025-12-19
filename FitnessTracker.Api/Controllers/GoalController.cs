@@ -19,6 +19,15 @@ public class GoalController(IGoalService goalService) : BaseController
     public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(bool isAchieved = false, CancellationToken token = default) =>
         Ok(await goalService.GetAllByUserAsync(UserId, isAchieved, token));
 
+    /// <summary>Get goal by ID</summary>
+    /// <param name="id">Goal ID to fetch</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Goal with given ID</returns>
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<GoalResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await goalService.GetByIdAsync(id, token));
+
     /// <summary>Add new goal for current user</summary>
     /// <param name="request">Added goal details</param>
     /// <param name="token">Cancellation token</param>

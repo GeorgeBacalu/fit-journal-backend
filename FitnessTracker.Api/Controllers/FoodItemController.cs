@@ -44,4 +44,15 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
         await foodItemService.EditAsync(request, token);
         return Ok(new { Message = SuccessMessages.FoodItemEdited });
     }
+
+    /// <summary>Delete existing food items</summary>
+    /// <param name="request">Deleted food items IDs</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default)
+    {
+        await foodItemService.RemoveRangeAsync(request, token);
+        return Ok(new { Message = SuccessMessages.FoodItemsRemoved });
+    }
 }

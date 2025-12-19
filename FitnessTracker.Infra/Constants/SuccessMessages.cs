@@ -30,4 +30,5 @@ public static class SuccessMessages
 
     public const string FoodItemAdded = "Food item added successfully";
     public const string FoodItemEdited = "Food item edited successfully";
+    public const string FoodItemsRemoved = "Food items removed successfully";
 }

@@ -64,6 +64,7 @@ public static class ValidationErrors
     public const string InvalidExerciseId = "Invalid exercise ID";
 
     public const string ExerciseIdsRequired = "No exercise IDs provided";
+    public const string DuplicatedExerciseIds = "Request contains duplicated exercise IDs";
 
     // Goals
 
@@ -80,6 +81,9 @@ public static class ValidationErrors
     public const string GoalIdRequired = "Goal ID is required";
     public const string InvalidGoalId = "Invalid goal ID";
 
+    public const string GoalIdsRequired = "No goal IDs provided";
+    public const string DuplicatedGoalIds = "Request contains duplicated goal IDs";
+
     // Food Items
 
     public const string CaloriesRequired = "Calories are required";
@@ -88,12 +92,15 @@ public static class ValidationErrors
     public const string ProteinRequired = "Protein is required";
     public const string InvalidProtein = "Protein must be a positive value";
 
-    public const string CarbsRequired = "Carbohydrates are required";
-    public const string InvalidCarbs = "Carbohydrates must be a positive value";
+    public const string CarbsRequired = "Carbs are required";
+    public const string InvalidCarbs = "Carbs must be a positive value";
 
     public const string FatRequired = "Fat is required";
     public const string InvalidFat = "Fat must be a positive value";
 
     public const string FoodItemIdRequired = "Food item ID is required";
     public const string InvalidFoodItemId = "Invalid food item ID";
+
+    public const string FoodItemIdsRequired = "Invalid food item ID";
+    public const string DuplicatedFoodItemIds = "Request contains duplicated food item IDs";
 }

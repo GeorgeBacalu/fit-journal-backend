@@ -41,4 +41,5 @@ public static class ErrorMessages
     // Food items
 
     public const string FoodItemIdNotFound = "Food item with id {0} not found";
+    public const string FoodItemIdsNotFound = "Invalid food item IDs found";
 }

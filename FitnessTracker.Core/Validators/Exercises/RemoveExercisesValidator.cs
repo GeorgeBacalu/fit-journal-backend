@@ -10,6 +10,9 @@ public class RemoveExercisesValidator : AbstractValidator<RemoveExercisesRequest
     {
         RuleFor(request => request.Ids)
             .NotEmpty()
-            .WithMessage(ValidationErrors.ExerciseIdsRequired);
+            .WithMessage(ValidationErrors.ExerciseIdsRequired)
+
+            .Must(ids => ids.Distinct().Count() == ids.Count())
+            .WithMessage(ValidationErrors.DuplicatedExerciseIds);
     }
 }

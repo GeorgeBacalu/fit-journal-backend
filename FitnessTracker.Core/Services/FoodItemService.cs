@@ -53,4 +53,15 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
 
         await unitOfWork.CommitAsync(token);
     }
+
+    public async Task RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default)
+    {
+        var ids = await unitOfWork.FoodItems.GetExistingIdsAsync(request.Ids, token);
+
+        if (ids.Count() != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.FoodItemIdsNotFound);
+
+        await unitOfWork.FoodItems.RemoveRangeAsync(ids, request.IsHardDelete, token);
+        await unitOfWork.CommitAsync(token);
+    }
 }
