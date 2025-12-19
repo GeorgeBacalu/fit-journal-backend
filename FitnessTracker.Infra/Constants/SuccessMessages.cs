@@ -23,4 +23,5 @@ public static class SuccessMessages
     // Goals
 
     public const string GoalAdded = "Goal added successfully";
+    public const string GoalEdited = "Goal edited successfully";
 }

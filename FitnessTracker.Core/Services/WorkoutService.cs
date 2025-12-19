@@ -62,7 +62,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         var workout = await unitOfWork.Workouts.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.WorkoutIdNotFound, request.Id));
 
-        mapper.Map<Workout>(request);
+        mapper.Map(request, workout);
 
         await unitOfWork.CommitAsync(token);
     }

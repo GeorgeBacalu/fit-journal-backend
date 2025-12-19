@@ -28,5 +28,7 @@ public static class ErrorMessages
 
     // Goals
 
+    public const string GoalIdNotFound = "Goal with id {0} not found";
     public const string GoalBeforeRegistration = "Goal start date can't precede registration date";
+    public const string UnauthorizedGoalEdit = "Unauthorized to edit another user's goal";
 }

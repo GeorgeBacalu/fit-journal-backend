@@ -29,4 +29,15 @@ public class GoalController(IGoalService goalService) : BaseController
         await goalService.AddAsync(request, UserId, token);
         return Created("", new { Message = SuccessMessages.GoalAdded });
     }
+
+    /// <summary>Edit current user's goal</summary>
+    /// <param name="request">Edited goals details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult<object>> EditAsync(EditGoalRequest request, CancellationToken token = default)
+    {
+        await goalService.EditAsync(request, UserId, token);
+        return Ok(new { Message = SuccessMessages.GoalEdited });
+    }
 }

@@ -77,4 +77,6 @@ public static class ValidationErrors
     public const string EndDateRequired = "End date is required";
     public const string InvalidEndDate = "End date can't be in the past";
 
+    public const string GoalIdRequired = "Goal ID is required";
+    public const string InvalidGoalId = "Invalid goal ID";
 }

@@ -49,7 +49,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         var exercise = await unitOfWork.Exercises.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.ExerciseIdNotFound, request.Id));
 
-        mapper.Map<Exercise>(exercise);
+        mapper.Map(request, exercise);
 
         await unitOfWork.CommitAsync(token);
     }
