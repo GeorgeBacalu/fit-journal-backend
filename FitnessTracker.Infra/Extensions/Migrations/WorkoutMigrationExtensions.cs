@@ -15,7 +15,7 @@ public static class WorkoutMigrationExtensions
             
             IF EXISTS (
                 SELECT i.[Id] FROM inserted i
-                JOIN Users u ON u.[Id] = i.[UserId]
+                JOIN [Users] u ON u.[Id] = i.[UserId]
                 WHERE i.[StartedAt] < u.[CreatedAt]
             )
             BEGIN

@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitnessTracker.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class WorkoutStartDateTrigger : Migration
+    public partial class FoodLogTriggers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder) =>
-            migrationBuilder.AddWorkoutStartDateTrigger();
+            migrationBuilder.AddFoodLogDateTrigger();
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder) =>
-            migrationBuilder.DropWorkoutStartDateTrigger();
+            migrationBuilder.DropFoodLogDateTrigger();
     }
 }
