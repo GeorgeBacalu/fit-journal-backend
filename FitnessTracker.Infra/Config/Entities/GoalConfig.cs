@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessTracker.Infra.Config.Entities;
 
-public class GoalConfig : IEntityTypeConfiguration<Goal>
+internal class GoalConfig : IEntityTypeConfiguration<Goal>
 {
     public void Configure(EntityTypeBuilder<Goal> builder)
     {

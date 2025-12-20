@@ -18,25 +18,25 @@ public static class RegisterRequests
         Gender = Gender.Male
     };
 
-    public static readonly RegisterRequest NoName = Valid with { Name = "" };
+    public static readonly RegisterRequest NoName = Valid with { Name = string.Empty };
 
     public static readonly RegisterRequest NameTooLong = Valid with { Name = "Michael Jonathan Alexander Christopher Johnson Senior the Third" };
 
-    public static readonly RegisterRequest NoEmail = Valid with { Email = "" };
+    public static readonly RegisterRequest NoEmail = Valid with { Email = string.Empty };
 
     public static readonly RegisterRequest InvalidEmail = Valid with { Email = "michael.johnson" };
 
     public static readonly RegisterRequest EmailTooLong = Valid with { Email = "michael.jonathan.alexander.christopher.johnson.senior.the.third@email.com" };
 
-    public static readonly RegisterRequest NoPassword = Valid with { Password = "" };
+    public static readonly RegisterRequest NoPassword = Valid with { Password = string.Empty };
 
     public static readonly RegisterRequest InvalidPassword = Valid with { Password = "MichaelJohnsonPassword0", ConfirmedPassword = "MichaelJohnsonPassword0" };
 
-    public static readonly RegisterRequest NoConfirmedPassword = Valid with { ConfirmedPassword = "" };
+    public static readonly RegisterRequest NoConfirmedPassword = Valid with { ConfirmedPassword = string.Empty };
 
     public static readonly RegisterRequest NonMatchingPasswords = Valid with { Password = "MichaelJohnsonPassword0!", ConfirmedPassword = "MichaelJohnsonPassword1!" };
 
-    public static readonly RegisterRequest NoPhone = Valid with { Phone = "" };
+    public static readonly RegisterRequest NoPhone = Valid with { Phone = string.Empty };
 
     public static readonly RegisterRequest InvalidPhone = Valid with { Phone = "invalid-phone" };
 

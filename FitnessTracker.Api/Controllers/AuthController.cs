@@ -1,6 +1,7 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.Auth;
 using FitnessTracker.Core.Dtos.Responses.Auth;
 using FitnessTracker.Core.Services.Interfaces;
+using FitnessTracker.Domain.Enums;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,8 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<object>> RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         await authService.RegisterAsync(request, token);
-        return Created("", new { Message = SuccessMessages.UserRegistered });
+        
+        return Created(string.Empty, new { Message = ResponseMessages.Users.Registered });
     }
 
     /// <summary>Login existing user</summary>
@@ -28,14 +30,26 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
         Ok(await authService.LoginAsync(request, token));
 
-    /// <summary>Deactivate current user's account (admin can deactivate any account)</summary>
-    /// <param name="id">User ID to deactivate</param>
+    /// <summary>Deactivate current user account</summary>
     /// <param name="token">Cancellation token</param>
     [Authorize]
-    [HttpDelete("{id:guid?}")]
-    public async Task<ActionResult<object>> DeleteAccountAsync(Guid? id, CancellationToken token = default)
+    [HttpDelete]
+    public async Task<ActionResult<object>> DeleteAsync(CancellationToken token = default)
     {
-        await authService.DeleteAccountAsync(id, UserId, token);
-        return Ok(new { Message = SuccessMessages.AccountDeactivated });
+        await authService.DeleteAsync(UserId, token);
+        
+        return Ok(new { Message = ResponseMessages.Users.AccountDeactivated });
+    }
+
+    /// <summary>Deactivate user account (admin)</summary>
+    /// <param name="id">Deactivated user ID</param> 
+    /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
+    [HttpDelete("admin/{id:guid}")]
+    public async Task<ActionResult<object>> DeleteAsync(Guid id, CancellationToken token = default)
+    {
+        await authService.DeleteAsync(id, token);
+
+        return Ok(new { Message = ResponseMessages.Users.AccountDeactivated });
     }
 }

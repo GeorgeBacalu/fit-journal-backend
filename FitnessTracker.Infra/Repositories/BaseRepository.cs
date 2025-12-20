@@ -11,31 +11,31 @@ public class BaseRepository<T>(FitnessTrackerContext context)
 {
     protected readonly FitnessTrackerContext context = context;
 
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token = default) =>
+    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token) =>
         await context.Set<T>().AsNoTracking().ToListAsync(token);
 
-    public async Task<T?> GetByIdAsync(Guid id, CancellationToken token = default) =>
+    public async Task<T?> GetByIdAsync(Guid id, CancellationToken token) =>
         await context.Set<T>().FindAsync([id], token);
 
-    public async Task<IEnumerable<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids, CancellationToken token = default) =>
+    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
+        await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate, token);
+
+    public async Task<IEnumerable<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids, CancellationToken token) =>
         await context.Set<T>()
             .Where(entity => ids.Contains(entity.Id))
             .Select(entity => entity.Id)
             .ToListAsync(token);
 
-    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default) =>
-        await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate, token);
-
-    public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken token = default) =>
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
         await context.Set<T>().AnyAsync(predicate, token);
 
-    public async Task AddAsync(T entity, CancellationToken token = default) =>
+    public async Task AddAsync(T entity, CancellationToken token) =>
         await context.Set<T>().AddAsync(entity, token);
 
-    public async Task UpdateAsync(T entity, CancellationToken token = default) =>
+    public async Task UpdateAsync(T entity, CancellationToken token) =>
         context.Set<T>().Update(entity);
 
-    public async Task RemoveAsync(T entity, bool hardDelete = false, CancellationToken token = default)
+    public async Task RemoveAsync(T entity, bool hardDelete, CancellationToken token)
     {
         if (hardDelete)
             context.Set<T>().Remove(entity);
@@ -43,7 +43,7 @@ public class BaseRepository<T>(FitnessTrackerContext context)
             entity.DeletedAt = DateTime.UtcNow;
     }
 
-    public async Task<int> RemoveRangeAsync(IEnumerable<Guid> ids, bool hardDelete = false, CancellationToken token = default)
+    public async Task<int> RemoveRangeAsync(IEnumerable<Guid> ids, bool hardDelete, CancellationToken token)
     {
         var query = context.Set<T>().Where(entity => ids.Contains(entity.Id));
 

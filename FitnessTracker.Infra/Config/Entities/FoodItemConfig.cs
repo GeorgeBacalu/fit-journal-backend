@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessTracker.Infra.Config.Entities;
 
-public class FoodItemConfig : IEntityTypeConfiguration<FoodItem>
+internal class FoodItemConfig : IEntityTypeConfiguration<FoodItem>
 {
     public void Configure(EntityTypeBuilder<FoodItem> builder)
     {

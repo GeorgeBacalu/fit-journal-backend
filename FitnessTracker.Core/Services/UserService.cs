@@ -10,7 +10,7 @@ namespace FitnessTracker.Core.Services;
 
 public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 {
-    public async Task<UsersResponse> GetAllAsync(CancellationToken token = default)
+    public async Task<UsersResponse> GetAllAsync(CancellationToken token)
     {
         var users = await unitOfWork.Users.GetAllAsync(token);
 
@@ -21,24 +21,24 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
         };
     }
 
-    public async Task<ProfileResponse> GetProfileAsync(Guid id, CancellationToken token = default)
+    public async Task<UserResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var user = await unitOfWork.Users.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, id));
 
-        return mapper.Map<ProfileResponse>(user);
+        return mapper.Map<UserResponse>(user);
     }
 
-    public async Task EditProfileAsync(EditProfileRequest request, Guid id, CancellationToken token = default)
+    public async Task EditAsync(EditUserRequest request, Guid id, CancellationToken token)
     {
         if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name && user.Id != id, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.Users.NameTaken);
 
         if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email && user.Id != id, token))
-            throw new BadRequestException(ValidationErrors.EmailTaken);
+            throw new BadRequestException(ValidationErrors.Users.EmailTaken);
 
         var user = await unitOfWork.Users.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, id));
 
         mapper.Map(request, user);
 

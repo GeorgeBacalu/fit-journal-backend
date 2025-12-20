@@ -63,7 +63,7 @@ public static class ServicesExtensions
                 }
             });
 
-            options.IncludeXmlComments($"{AppContext.BaseDirectory}/{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            options.IncludeXmlComments($"{AppContext.BaseDirectory}{Assembly.GetExecutingAssembly().GetName().Name}.xml");
         });
 
     public static IServiceCollection AddAuth(this IServiceCollection services)
@@ -79,7 +79,7 @@ public static class ServicesExtensions
                 ValidAudience = AppConfig.Auth.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret))
             });
-        
+
         return services.AddAuthorization();
     }
 

@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Core.Validators.Auth;
+﻿using FitnessTracker.Core.Dtos.Requests.Auth;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;

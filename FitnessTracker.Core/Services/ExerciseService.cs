@@ -11,7 +11,7 @@ namespace FitnessTracker.Core.Services;
 
 public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExerciseService
 {
-    public async Task<ExercisesResponse> GetAllAsync(CancellationToken token = default)
+    public async Task<ExercisesResponse> GetAllAsync(CancellationToken token)
     {
         var exercises = await unitOfWork.Exercises.GetAllAsync(token);
 
@@ -22,18 +22,18 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         };
     }
 
-    public async Task<ExerciseResponse> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<ExerciseResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var exercise = await unitOfWork.Exercises.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.ExerciseIdNotFound, id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Exercises.IdNotFound, id));
 
         return mapper.Map<ExerciseResponse>(exercise);
     }
 
-    public async Task AddAsync(AddExerciseRequest request, CancellationToken token = default)
+    public async Task AddAsync(AddExerciseRequest request, CancellationToken token)
     {
         if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.Exercises.NameTaken);
 
         var exercise = mapper.Map<Exercise>(request);
 
@@ -41,28 +41,28 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task EditAsync(EditExerciseRequest request, CancellationToken token = default)
+    public async Task EditAsync(EditExerciseRequest request, CancellationToken token)
     {
         if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name && exercise.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.Exercises.NameTaken);
 
         var exercise = await unitOfWork.Exercises.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.ExerciseIdNotFound, request.Id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Exercises.IdNotFound, request.Id));
 
         mapper.Map(request, exercise);
 
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
+    public async Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token)
     {
         var ids = await unitOfWork.Exercises.GetExistingIdsAsync(request.Ids, token);
         
         if (ids.Count() != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.ExerciseIdsNotFound);
+            throw new NotFoundException(ErrorMessages.Exercises.IdsNotFound);
 
-        if (await unitOfWork.Exercises.AnyAreUsedAsync(ids, token))
-            throw new BadRequestException(ErrorMessages.ExercisesInUse);
+        if (await unitOfWork.Exercises.AnyInUseAsync(ids, token))
+            throw new BadRequestException(ErrorMessages.Exercises.AlreadyInUse);
 
         await unitOfWork.Exercises.RemoveRangeAsync(ids, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);

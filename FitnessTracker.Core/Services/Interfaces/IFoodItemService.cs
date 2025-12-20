@@ -5,9 +5,13 @@ namespace FitnessTracker.Core.Services.Interfaces;
 
 public interface IFoodItemService
 {
-    Task<FoodItemsResponse> GetAllAsync(CancellationToken token = default);
-    Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token = default);
-    Task AddAsync(AddFoodItemRequest request, CancellationToken token = default);
-    Task EditAsync(EditFoodItemRequest request, CancellationToken token = default);
-    Task RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default);
+    Task<FoodItemsResponse> GetAllAsync(CancellationToken token);
+    
+    Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token);
+    
+    Task AddAsync(AddFoodItemRequest request, CancellationToken token);
+    
+    Task EditAsync(EditFoodItemRequest request, CancellationToken token);
+    
+    Task RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token);
 }

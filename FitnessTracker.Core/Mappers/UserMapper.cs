@@ -11,12 +11,9 @@ public class UserMapper : Profile
     public UserMapper()
     {
         CreateMap<RegisterRequest, User>();
-        CreateMap<EditProfileRequest, User>()
-            .ForAllMembers(options =>
-                options.Condition((source, destination, sourceMember) =>
-                    sourceMember != null));
+        CreateMap<EditUserRequest, User>();
         
         CreateMap<User, ShortUserResponse>();
-        CreateMap<User, ProfileResponse>();
+        CreateMap<User, UserResponse>();
     }
 }

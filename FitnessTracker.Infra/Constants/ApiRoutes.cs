@@ -12,6 +12,25 @@ public static class ApiRoutes
     public static class Users
     {
         public const string Base = "api/users";
-        public const string Profile = $"{Base}/profile";
+    }
+
+    public static class Workouts
+    {
+        public const string Base = "api/workouts";
+    }
+
+    public static class Exercises
+    {
+        public const string Base = "api/exercises";
+    }
+
+    public static class Goals
+    {
+        public const string Base = "api/goals";
+    }
+
+    public static class FoodItems
+    {
+        public const string Base = "api/foodItems";
     }
 }

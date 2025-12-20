@@ -16,16 +16,16 @@ namespace FitnessTracker.Core.Services;
 
 public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
 {
-    private static readonly JwtSecurityTokenHandler _tokenHandler = new();
-    private static readonly SymmetricSecurityKey _secret = new(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret));
+    private static readonly JwtSecurityTokenHandler tokenHandler = new();
+    private static readonly SymmetricSecurityKey secret = new(Encoding.UTF8.GetBytes(AppConfig.Auth.Secret));
 
-    public async Task RegisterAsync(RegisterRequest request, CancellationToken token = default)
+    public async Task RegisterAsync(RegisterRequest request, CancellationToken token)
     {
         if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.Users.NameTaken);
 
         if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email, token))
-            throw new BadRequestException(ValidationErrors.EmailTaken);
+            throw new BadRequestException(ValidationErrors.Users.EmailTaken);
 
         var user = mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -34,13 +34,13 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token = default)
+    public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token)
     {
         var user = await unitOfWork.Users.GetAsync(user => user.Email == request.Email, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserEmailNotFound, request.Email));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.EmailNotFound, request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new BadRequestException(ErrorMessages.InvalidCredentials);
+            throw new BadRequestException(ErrorMessages.Users.InvalidCredentials);
 
         return new()
         {
@@ -49,25 +49,17 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
         };
     }
 
-    public async Task DeleteAccountAsync(Guid? id, Guid userId, CancellationToken token = default)
+    public async Task DeleteAsync(Guid id, CancellationToken token)
     {
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, userId));
+        var user = await unitOfWork.Users.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, id));
 
-        var targetUserId = id ?? userId;
-
-        if (user.Role != Role.Admin && targetUserId != userId)
-            throw new ForbiddenException(ErrorMessages.UnauthorizedAccountDeletion);
-
-        var targetUser = await unitOfWork.Users.GetByIdAsync(targetUserId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.UserIdNotFound, targetUserId));
-
-        await unitOfWork.Users.RemoveAsync(targetUser, hardDelete: false, token);
+        await unitOfWork.Users.RemoveAsync(user, hardDelete: false, token);
         await unitOfWork.CommitAsync(token);
     }
 
     private static string GenerateToken(User user, TokenType type) =>
-        _tokenHandler.WriteToken(_tokenHandler.CreateToken(new()
+        tokenHandler.WriteToken(tokenHandler.CreateToken(new()
         {
             Issuer = AppConfig.Auth.Issuer,
             Audience = AppConfig.Auth.Audience,
@@ -76,7 +68,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
                     new("userId", $"{user.Id}"),
                     new("role", $"{user.Role}")
                 ]),
-            SigningCredentials = new(_secret, SecurityAlgorithms.HmacSha256),
+            SigningCredentials = new(secret, SecurityAlgorithms.HmacSha256),
             Expires = type == TokenType.Access
                 ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
                 : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)

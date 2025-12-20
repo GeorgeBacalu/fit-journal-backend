@@ -23,7 +23,7 @@ public class FitnessTrackerContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder) =>
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-    public override Task<int> SaveChangesAsync(CancellationToken token = default)
+    public override Task<int> SaveChangesAsync(CancellationToken token)
     {
         var now = DateTime.UtcNow;
 

@@ -29,7 +29,7 @@ public class AuthControllerTest
 
         // Assert
         result!.StatusCode.Should().Be(StatusCodes.Status201Created);
-        result.Value.Should().BeEquivalentTo(new { Message = SuccessMessages.UserRegistered });
+        result.Value.Should().BeEquivalentTo(new { Message = ResponseMessages.Users.Registered });
     }
 
     [Fact]
@@ -37,13 +37,13 @@ public class AuthControllerTest
     {
         // Arrange
         authServiceMock.Setup(mock => mock.RegisterAsync(RegisterRequests.Under13, default))
-            .ThrowsAsync(new BadRequestException(ValidationErrors.AgeRestriction));
+            .ThrowsAsync(new BadRequestException(ValidationErrors.Users.AgeRestriction));
 
         // Act
         var action = () => authController.RegisterAsync(RegisterRequests.Under13, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.AgeRestriction);
+        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.Users.AgeRestriction);
     }
 
     [Fact]
@@ -65,13 +65,13 @@ public class AuthControllerTest
     {
         // Arrange
         authServiceMock.Setup(mock => mock.LoginAsync(LoginRequests.NonExistingEmail, default))
-            .ThrowsAsync(new NotFoundException(string.Format(ErrorMessages.UserEmailNotFound, ValidationSamples.NonExistingEmail)));
+            .ThrowsAsync(new NotFoundException(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail)));
 
         // Act
         var action = () => authController.LoginAsync(LoginRequests.NonExistingEmail, default);
 
         // Assert
-        await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.UserEmailNotFound, ValidationSamples.NonExistingEmail));
+        await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail));
     }
 
     [Fact]
@@ -79,12 +79,12 @@ public class AuthControllerTest
     {
         // Arrange
         authServiceMock.Setup(mock => mock.LoginAsync(LoginRequests.WrongPassword, default))
-            .ThrowsAsync(new BadRequestException(ErrorMessages.InvalidCredentials));
+            .ThrowsAsync(new BadRequestException(ErrorMessages.Users.InvalidCredentials));
 
         // Act
         var action = () => authController.LoginAsync(LoginRequests.WrongPassword, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.InvalidCredentials);
+        await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.Users.InvalidCredentials);
     }
 }

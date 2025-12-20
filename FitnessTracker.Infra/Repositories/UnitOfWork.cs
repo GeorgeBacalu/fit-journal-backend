@@ -5,18 +5,18 @@ namespace FitnessTracker.Infra.Repositories;
 
 public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
 {
-    private IUserRepository? _users;
-    private IWorkoutRepository? _workouts;
-    private IExerciseRepository? _exercises;
-    private IGoalRepository? _goals;
-    private IFoodItemRepository _foodItems;
+    private IUserRepository? users;
+    private IWorkoutRepository? workouts;
+    private IExerciseRepository? exercises;
+    private IGoalRepository? goals;
+    private IFoodItemRepository? foodItems;
 
-    public IUserRepository Users => _users ??= new UserRepository(context);
-    public IWorkoutRepository Workouts => _workouts ??= new WorkoutRepository(context);
-    public IExerciseRepository Exercises => _exercises ??= new ExerciseRepository(context);
-    public IGoalRepository Goals => _goals ??= new GoalRepository(context);
-    public IFoodItemRepository FoodItems => _foodItems ??= new FoodItemRepository(context);
+    public IUserRepository Users => users ??= new UserRepository(context);
+    public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(context);
+    public IExerciseRepository Exercises => exercises ??= new ExerciseRepository(context);
+    public IGoalRepository Goals => goals ??= new GoalRepository(context);
+    public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(context);
 
-    public Task CommitAsync(CancellationToken token = default)
+    public Task<int> CommitAsync(CancellationToken token)
         => context.SaveChangesAsync(token);
 }

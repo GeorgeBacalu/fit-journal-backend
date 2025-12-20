@@ -4,5 +4,5 @@ namespace FitnessTracker.Infra.Repositories.Interfaces;
 
 public interface IExerciseRepository : IBaseRepository<Exercise>
 {
-    Task<bool> AnyAreUsedAsync(IEnumerable<Guid> ids, CancellationToken token = default);
+    Task<bool> AnyInUseAsync(IEnumerable<Guid> ids, CancellationToken token);
 }

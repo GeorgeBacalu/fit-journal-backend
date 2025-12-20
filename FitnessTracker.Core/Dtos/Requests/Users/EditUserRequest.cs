@@ -2,14 +2,12 @@
 using FitnessTracker.Infra.Constants;
 using FluentValidation;
 
-namespace FitnessTracker.Core.Dtos.Requests.Auth;
+namespace FitnessTracker.Core.Dtos.Requests.Users;
 
-public record RegisterRequest
+public record EditUserRequest
 {
     public string? Name { get; init; }
     public string? Email { get; init; }
-    public string? Password { get; init; }
-    public string? ConfirmedPassword { get; init; }
     public string? Phone { get; init; }
     public DateOnly? Birthday { get; init; }
     public double? Height { get; init; }
@@ -17,9 +15,9 @@ public record RegisterRequest
     public Gender? Gender { get; init; }
 }
 
-public class RegisterValidator : AbstractValidator<RegisterRequest>
+public class EditUserValidator : AbstractValidator<EditUserRequest>
 {
-    public RegisterValidator()
+    public EditUserValidator()
     {
         RuleFor(request => request.Name)
             .NotEmpty()
@@ -37,23 +35,6 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
 
             .MaximumLength(50)
             .WithMessage(ValidationErrors.Users.InvalidEmailLength);
-
-        RuleFor(request => request.Password)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.PasswordRequired)
-
-            .Matches(ValidationRules.Users.PasswordRegex)
-            .WithMessage(ValidationErrors.Users.InvalidPassword)
-
-            .Length(6, 30)
-            .WithMessage(ValidationErrors.Users.InvalidPasswordLength);
-
-        RuleFor(request => request.ConfirmedPassword)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.ConfirmPassword)
-
-            .Equal(request => request.Password)
-            .WithMessage(ValidationErrors.Users.PasswordsMismatch);
 
         RuleFor(request => request.Phone)
             .NotEmpty()

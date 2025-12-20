@@ -10,10 +10,7 @@ public class ExerciseMapper : Profile
     public ExerciseMapper()
     {
         CreateMap<AddExerciseRequest, Exercise>();
-        CreateMap<EditExerciseRequest, Exercise>()
-            .ForAllMembers(options =>
-                options.Condition((source, destination, sourceMember) =>
-                    sourceMember != null));
+        CreateMap<EditExerciseRequest, Exercise>();
 
         CreateMap<Exercise, ShortExerciseResponse>();
         CreateMap<Exercise, ExerciseResponse>();
