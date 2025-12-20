@@ -11,7 +11,7 @@ namespace FitnessTracker.Core.Services;
 
 public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItemService
 {
-    public async Task<FoodItemsResponse> GetAllAsync(CancellationToken token = default)
+    public async Task<FoodItemsResponse> GetAllAsync(CancellationToken token)
     {
         var foodItems = await unitOfWork.FoodItems.GetAllAsync(token);
 
@@ -22,18 +22,18 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
         };
     }
 
-    public async Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var foodItem = await unitOfWork.FoodItems.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItemIdNotFound, id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItems.IdNotFound, id));
 
         return mapper.Map<FoodItemResponse>(foodItem);
     }
 
-    public async Task AddAsync(AddFoodItemRequest request, CancellationToken token = default)
+    public async Task AddAsync(AddFoodItemRequest request, CancellationToken token)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.FoodItems.NameTaken);
 
         var foodItem = mapper.Map<FoodItem>(request);
 
@@ -41,25 +41,25 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task EditAsync(EditFoodItemRequest request, CancellationToken token = default)
+    public async Task EditAsync(EditFoodItemRequest request, CancellationToken token)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name && foodItem.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.NameTaken);
+            throw new BadRequestException(ValidationErrors.FoodItems.NameTaken);
 
         var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItemIdNotFound, request.Id));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItems.IdNotFound, request.Id));
 
         mapper.Map(request, foodItem);
 
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default)
+    public async Task RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token)
     {
         var ids = await unitOfWork.FoodItems.GetExistingIdsAsync(request.Ids, token);
 
         if (ids.Count() != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.FoodItemIdsNotFound);
+            throw new NotFoundException(ErrorMessages.FoodItems.IdsNotFound);
 
         await unitOfWork.FoodItems.RemoveRangeAsync(ids, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);

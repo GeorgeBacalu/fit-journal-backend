@@ -6,17 +6,17 @@ namespace FitnessTracker.Test.Integration;
 
 public class DbFixture : IDisposable
 {
-    private readonly SqliteConnection _connection = new("Filename=:memory:");
+    private readonly SqliteConnection connection = new("Filename=:memory:");
     public DbContextOptions<FitnessTrackerContext> DbOptions { get; }
 
     public DbFixture()
     {
-        _connection.Open();
-        DbOptions = new DbContextOptionsBuilder<FitnessTrackerContext>().UseSqlite(_connection).Options;
+        connection.Open();
+        DbOptions = new DbContextOptionsBuilder<FitnessTrackerContext>().UseSqlite(connection).Options;
 
         using var context = new FitnessTrackerContext(DbOptions);
         context.Database.EnsureCreated();
     }
 
-    public void Dispose() => _connection.Dispose();
+    public void Dispose() => connection.Dispose();
 }

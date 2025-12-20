@@ -8,5 +8,5 @@ public interface IUnitOfWork
     IGoalRepository Goals { get; }
     IFoodItemRepository FoodItems { get; }
 
-    Task CommitAsync(CancellationToken token = default);
+    Task<int> CommitAsync(CancellationToken token);
 }

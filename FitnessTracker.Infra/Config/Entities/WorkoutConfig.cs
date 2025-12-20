@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessTracker.Infra.Config.Entities;
 
-public class WorkoutConfig : IEntityTypeConfiguration<Workout>
+internal class WorkoutConfig : IEntityTypeConfiguration<Workout>
 {
     public void Configure(EntityTypeBuilder<Workout> builder)
     {

@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessTracker.Infra.Config.Entities;
 
-public class UserConfig : IEntityTypeConfiguration<User>
+internal class UserConfig : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasIndex(user => user.Name).IsUnique();
-        builder.HasIndex(user => user.Email).IsUnique();
+        builder.HasIndex(user => user.Name)
+            .IsUnique();
+
+        builder.HasIndex(user => user.Email)
+            .IsUnique();
 
         builder.Property(user => user.Name)
             .IsRequired()

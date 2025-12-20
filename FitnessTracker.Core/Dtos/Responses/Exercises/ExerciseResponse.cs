@@ -4,6 +4,7 @@ namespace FitnessTracker.Core.Dtos.Responses.Exercises;
 
 public record ExerciseResponse
 {
+    public Guid Id { get; init; }
     public required string Name { get; init; }
     public string? Description { get; init; }
     public string? Notes { get; init; }

@@ -59,11 +59,11 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.AgeRestriction);
+            await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.Users.AgeRestriction);
         });
 
     [Theory]
-    [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequestsService), MemberType = typeof(UserTestData))]
+    [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
     public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string message)
         => RunAsync(async (authService, context) =>
         {
@@ -105,7 +105,7 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.LoginAsync(LoginRequests.NonExistingEmail, default);
 
             // Assert
-            await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.UserIdNotFound, ValidationSamples.NonExistingEmail));
+            await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.IdNotFound, ValidationSamples.NonExistingEmail));
         });
 
     [Fact]
@@ -118,6 +118,6 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.LoginAsync(LoginRequests.WrongPassword, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.InvalidCredentials);
+            await action.Should().ThrowAsync<BadRequestException>(ErrorMessages.Users.InvalidCredentials);
         });
 }

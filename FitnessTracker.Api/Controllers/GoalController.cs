@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
+[Authorize]
 [Route("/api/[controller]")]
 public class GoalController(IGoalService goalService) : BaseController
 {
@@ -14,16 +15,14 @@ public class GoalController(IGoalService goalService) : BaseController
     /// <param name="isAchieved">Achievement status</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>List of all current user's goals by achievement status</returns>
-    [Authorize]
     [HttpGet]
-    public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(bool isAchieved = false, CancellationToken token = default) =>
+    public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(bool isAchieved, CancellationToken token = default) =>
         Ok(await goalService.GetAllByUserAsync(UserId, isAchieved, token));
 
     /// <summary>Get goal by ID</summary>
     /// <param name="id">Goal ID to fetch</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>Goal with given ID</returns>
-    [Authorize]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GoalResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
         Ok(await goalService.GetByIdAsync(id, token));
@@ -31,33 +30,33 @@ public class GoalController(IGoalService goalService) : BaseController
     /// <summary>Add new goal for current user</summary>
     /// <param name="request">Added goal details</param>
     /// <param name="token">Cancellation token</param>
-    [Authorize]
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddGoalRequest request, CancellationToken token = default)
     {
         await goalService.AddAsync(request, UserId, token);
-        return Created("", new { Message = SuccessMessages.GoalAdded });
+        
+        return Created(string.Empty, new { Message = ResponseMessages.Goals.Added });
     }
 
     /// <summary>Edit current user's goal</summary>
     /// <param name="request">Edited goals details</param>
     /// <param name="token">Cancellation token</param>
-    [Authorize]
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditGoalRequest request, CancellationToken token = default)
     {
         await goalService.EditAsync(request, UserId, token);
-        return Ok(new { Message = SuccessMessages.GoalEdited });
+        
+        return Ok(new { Message = ResponseMessages.Goals.Edited });
     }
 
     /// <summary>Remove existing workouts</summary>
     /// <param name="request">Removed workouts IDs</param>
     /// <param name="token">Cancellation token</param>
-    [Authorize]
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveGoalsRequest request, CancellationToken token = default)
     {
         await goalService.RemoveRangeAsync(request, UserId, token);
-        return Ok(new { Message = SuccessMessages.GoalsRemoved });
+        
+        return Ok(new { Message = ResponseMessages.Goals.RemovedRange });
     }
 }

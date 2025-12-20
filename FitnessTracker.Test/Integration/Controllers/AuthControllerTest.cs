@@ -47,7 +47,7 @@ public class AuthControllerTest
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
-            responseBody.Should().ContainKey("message").WhoseValue.Should().Be(SuccessMessages.UserRegistered);
+            responseBody.Should().ContainKey("message").WhoseValue.Should().Be(ResponseMessages.Users.Registered);
         });
 
     [Fact]
@@ -64,7 +64,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = ValidationErrors.AgeRestriction,
+                Detail = ValidationErrors.Users.AgeRestriction,
                 Status = StatusCodes.Status400BadRequest
             });
         });
@@ -90,7 +90,7 @@ public class AuthControllerTest
 
     [Theory]
     [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
-    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string title, string detail)
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string detail)
         => RunAsync(async () =>
         {
             // Arrange
@@ -103,7 +103,6 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.Conflict);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Title = title,
                 Detail = detail,
                 Status = StatusCodes.Status409Conflict
             });
@@ -139,7 +138,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = string.Format(ErrorMessages.UserEmailNotFound, ValidationSamples.NonExistingEmail),
+                Detail = string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail),
                 Status = StatusCodes.Status404NotFound
             });
         });
@@ -158,7 +157,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = ErrorMessages.InvalidCredentials,
+                Detail = ErrorMessages.Users.InvalidCredentials,
                 Status = StatusCodes.Status400BadRequest
             });
         });

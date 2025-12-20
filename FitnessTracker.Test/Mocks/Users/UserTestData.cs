@@ -8,79 +8,73 @@ public static class UserTestData
 {
     public static IEnumerable<object[]> InvalidRegisterRequests() =>
     [
-        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.NameRequired }],
+        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.Users.NameRequired }],
 
-        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { ValidationErrors.InvalidNameLength }],
+        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { ValidationErrors.Users.InvalidNameLength }],
 
-        [RegisterRequests.NoEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.EmailRequired, ValidationErrors.InvalidEmail }],
+        [RegisterRequests.NoEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.EmailRequired, ValidationErrors.Users.InvalidEmail }],
 
-        [RegisterRequests.InvalidEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.InvalidEmail }],
+        [RegisterRequests.InvalidEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.InvalidEmail }],
 
-        [RegisterRequests.EmailTooLong, nameof(RegisterRequest.Email), new[] { ValidationErrors.InvalidEmailLength }],
+        [RegisterRequests.EmailTooLong, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.InvalidEmailLength }],
 
-        [RegisterRequests.NoPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.PasswordRequired }],
+        [RegisterRequests.NoPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.PasswordRequired }],
 
-        [RegisterRequests.InvalidPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.InvalidPassword }],
+        [RegisterRequests.InvalidPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.InvalidPassword }],
 
-        [RegisterRequests.NoConfirmedPassword, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.ConfirmPassword, ValidationErrors.PasswordsMismatch }],
+        [RegisterRequests.NoConfirmedPassword, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.ConfirmPassword, ValidationErrors.Users.PasswordsMismatch }],
 
-        [RegisterRequests.NonMatchingPasswords, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.PasswordsMismatch }],
+        [RegisterRequests.NonMatchingPasswords, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.PasswordsMismatch }],
 
-        [RegisterRequests.NoPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.PhoneRequired, ValidationErrors.InvalidPhone }],
+        [RegisterRequests.NoPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.PhoneRequired, ValidationErrors.Users.InvalidPhone }],
 
-        [RegisterRequests.InvalidPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.InvalidPhone }],
+        [RegisterRequests.InvalidPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.InvalidPhone }],
 
-        [RegisterRequests.PhoneTooLong, nameof(RegisterRequest.Phone), new[] { ValidationErrors.InvalidPhoneLength }],
+        [RegisterRequests.PhoneTooLong, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.InvalidPhoneLength }],
 
-        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.BirthdayRequired }],
+        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.BirthdayRequired }],
 
-        [RegisterRequests.BirthdayFuture, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.InvalidBirthday }],
+        [RegisterRequests.BirthdayFuture, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.InvalidBirthday }],
 
-        [RegisterRequests.NoHeight, nameof(RegisterRequest.Height), new[] { ValidationErrors.HeightRequired }],
+        [RegisterRequests.NoHeight, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.HeightRequired }],
 
-        [RegisterRequests.HeightTooLow, nameof(RegisterRequest.Height), new[] { ValidationErrors.InvalidHeight }],
+        [RegisterRequests.HeightTooLow, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.InvalidHeight }],
 
-        [RegisterRequests.HeightTooHigh, nameof(RegisterRequest.Height), new[] { ValidationErrors.InvalidHeight }],
+        [RegisterRequests.HeightTooHigh, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.InvalidHeight }],
 
-        [RegisterRequests.NoWeight, nameof(RegisterRequest.Weight), new[] { ValidationErrors.WeightRequired }],
+        [RegisterRequests.NoWeight, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.WeightRequired }],
 
-        [RegisterRequests.WeightTooLow, nameof(RegisterRequest.Weight), new[] { ValidationErrors.InvalidWeight }],
+        [RegisterRequests.WeightTooLow, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.InvalidWeight }],
 
-        [RegisterRequests.WeightTooHigh, nameof(RegisterRequest.Weight), new[] { ValidationErrors.InvalidWeight }],
+        [RegisterRequests.WeightTooHigh, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.InvalidWeight }],
 
-        [RegisterRequests.NoGender, nameof(RegisterRequest.Gender), new[] { ValidationErrors.GenderRequired }]
+        [RegisterRequests.NoGender, nameof(RegisterRequest.Gender), new[] { ValidationErrors.Users.GenderRequired }]
     ];
 
     public static IEnumerable<object[]> InvalidLoginRequests() =>
     [
-        [LoginRequests.NoEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.EmailRequired, ValidationErrors.InvalidEmail }],
+        [LoginRequests.NoEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.EmailRequired, ValidationErrors.Users.InvalidEmail }],
 
-        [LoginRequests.InvalidEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.InvalidEmail }],
+        [LoginRequests.InvalidEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.InvalidEmail }],
 
-        [LoginRequests.EmailTooLong, nameof(LoginRequest.Email), new[] { ValidationErrors.InvalidEmailLength }],
+        [LoginRequests.EmailTooLong, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.InvalidEmailLength }],
 
-        [LoginRequests.NoPassword, nameof(LoginRequest.Password), new[] { ValidationErrors.PasswordRequired }]
+        [LoginRequests.NoPassword, nameof(LoginRequest.Password), new[] { ValidationErrors.Users.PasswordRequired }]
     ];
 
     public static IEnumerable<object[]> InvalidAddUsers() =>
     [
-        [AddUsers.UserInvalidEmail(), ConstraintMessages.CheckUsersEmail],
-        [AddUsers.UserFutureBirthday(), ConstraintMessages.CheckUsersBirthday],
-        [AddUsers.UserInvalidHeight(), ConstraintMessages.CheckUsersHeight],
-        [AddUsers.UserInvalidWeight(), ConstraintMessages.CheckUsersWeight],
-        [AddUsers.UserDuplicatedName("John Doe"), ConstraintMessages.DuplicatedName],
-        [AddUsers.UserDuplicatedEmail("john.doe@email.com"), ConstraintMessages.DuplicatedEmail]
+        [AddUsers.UserInvalidEmail(), DatabaseErrors.Users.CheckUsersEmail],
+        [AddUsers.UserFutureBirthday(), DatabaseErrors.Users.CheckUsersBirthday],
+        [AddUsers.UserInvalidHeight(), DatabaseErrors.Users.CheckUsersHeight],
+        [AddUsers.UserInvalidWeight(), DatabaseErrors.Users.CheckUsersWeight],
+        [AddUsers.UserDuplicatedName("John Doe"), DatabaseErrors.Users.DuplicatedName],
+        [AddUsers.UserDuplicatedEmail("john.doe@email.com"), DatabaseErrors.Users.DuplicatedEmail]
     ];
 
     public static IEnumerable<object[]> DuplicatedFieldRegisterRequests() =>
     [
-        [RegisterRequests.DuplicatedName, ErrorMessages.DuplicatedName, ErrorMessages.NameTaken],
-        [RegisterRequests.DuplicatedEmail, ErrorMessages.DuplicatedEmail, ErrorMessages.EmailTaken]
-    ];
-
-    public static IEnumerable<object[]> DuplicatedFieldRegisterRequestsService() =>
-    [
-        [RegisterRequests.DuplicatedName, ErrorMessages.NameTaken],
-        [RegisterRequests.DuplicatedEmail, ErrorMessages.EmailTaken]
+        [RegisterRequests.DuplicatedName, ErrorMessages.Users.NameTaken],
+        [RegisterRequests.DuplicatedEmail, ErrorMessages.Users.EmailTaken]
     ];
 }

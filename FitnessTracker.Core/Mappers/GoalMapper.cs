@@ -10,10 +10,7 @@ public class GoalMapper : Profile
     public GoalMapper()
     {
         CreateMap<AddGoalRequest, Goal>();
-        CreateMap<EditGoalRequest, Goal>()
-            .ForAllMembers(options =>
-                options.Condition((source, destination, sourceMember) =>
-                    sourceMember != null));
+        CreateMap<EditGoalRequest, Goal>();
 
         CreateMap<Goal, ShortGoalResponse>();
         CreateMap<Goal, GoalResponse>();

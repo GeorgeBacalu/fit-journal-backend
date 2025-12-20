@@ -1,7 +1,23 @@
-﻿namespace FitnessTracker.Core.Dtos.Requests.Goals;
+﻿using FitnessTracker.Infra.Constants;
+using FluentValidation;
+
+namespace FitnessTracker.Core.Dtos.Requests.Goals;
 
 public record RemoveGoalsRequest
 {
     public IEnumerable<Guid> Ids { get; init; } = [];
-    public bool IsHardDelete { get; set; }
+    public bool IsHardDelete { get; init; }
+}
+
+public class RemoveGoalsValidator : AbstractValidator<RemoveGoalsRequest>
+{
+    public RemoveGoalsValidator()
+    {
+        RuleFor(request => request.Ids)
+            .NotEmpty()
+            .WithMessage(ValidationErrors.Goals.IdsRequired)
+
+            .Must(ids => ids.Distinct().Count() == ids.Count())
+            .WithMessage(ValidationErrors.Goals.DuplicatedIds);
+    }
 }
