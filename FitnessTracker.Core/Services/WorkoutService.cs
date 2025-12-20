@@ -32,6 +32,12 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task AddAsync(AddWorkoutRequest request, Guid userId, CancellationToken token)
     {
+        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
+        ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+
+        if (request.StartedAt < user.CreatedAt)
+            throw new BadRequestException(ErrorMessages.Workouts.BeforeRegistration);
+
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.Name == request.Name &&
             workout.UserId == userId, token))

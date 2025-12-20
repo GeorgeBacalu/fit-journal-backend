@@ -36,4 +36,9 @@ public static class ResponseMessages
         public const string Edited = "Food item edited successfully";
         public const string RemovedRange = "Food items removed successfully";
     }
+
+    public static class FoodLogs
+    {
+        public const string Added = "Food log added successfully";
+    }
 }

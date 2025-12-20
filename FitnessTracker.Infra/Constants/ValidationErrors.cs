@@ -121,4 +121,18 @@ public static class ValidationErrors
         public const string IdsRequired = "Invalid food item ID";
         public const string DuplicatedIds = "Duplicated food item IDs provided";
     }
+
+    public static class FoodLogs
+    {
+        public const string DateRequired = "Date is required";
+        public const string FutureDate = "Date can't be in the future";
+
+        public const string ServingsRequired = "Servings are required";
+        public const string InvalidServings = "Servings must be a positive value";
+
+        public const string QuantityRequired = "Quantity is required";
+        public const string InvalidQuantity = "Quantity must be between {Min} and {Max} g";
+
+        public const string FoodIdRequired = "Food ID is required";
+    }
 }

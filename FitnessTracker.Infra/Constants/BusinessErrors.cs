@@ -48,4 +48,9 @@ public static class ErrorMessages
         public const string IdNotFound = "Food item with id {0} not found";
         public const string IdsNotFound = "Invalid food item IDs found";
     }
+
+    public static class FoodLogs
+    {
+        public const string BeforeRegistration = "Food log date can't precede registration date";
+    }
 }
