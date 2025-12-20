@@ -2,12 +2,15 @@
 
 public static class ValidationErrors
 {
-    public static class Users
+    public static class Common
     {
         public const string NameRequired = "Name is required";
         public const string InvalidNameLength = "Name must have max {MaxLength} characters";
         public const string NameTaken = "Name already taken";
+    }
 
+    public static class Users
+    {
         public const string EmailRequired = "Email is required";
         public const string InvalidEmail = "Invalid email format";
         public const string InvalidEmailLength = "Email must have max {MaxLength} characters";
@@ -40,10 +43,6 @@ public static class ValidationErrors
 
     public static class Workouts
     {
-        public const string NameRequired = "Name is required";
-        public const string InvalidNameLength = "Name must have max {MaxLength} characters";
-        public const string NameTaken = "Name already taken";
-
         public const string InvalidDescriptionLength = "Description must have between {MinLength} and {MaxLength} characters";
 
         public const string InvalidNotesLength = "Notes must have between {MinLength} and {MaxLength} characters";
@@ -65,10 +64,6 @@ public static class ValidationErrors
 
     public static class Exercises
     {
-        public const string NameRequired = "Name is required";
-        public const string InvalidNameLength = "Name must have max {MaxLength} characters";
-        public const string NameTaken = "Name already taken";
-
         public const string InvalidDescriptionLength = "Description must have between {MinLength} and {MaxLength} characters";
 
         public const string InvalidNotesLength = "Notes must have between {MinLength} and {MaxLength} characters";
@@ -86,9 +81,6 @@ public static class ValidationErrors
 
     public static class Goals
     {
-        public const string NameRequired = "Name is required";
-        public const string InvalidNameLength = "Name must have max {MaxLength} characters";
-
         public const string InvalidDescriptionLength = "Description must have between {MinLength} and {MaxLength} characters";
 
         public const string TypeRequired = "Goal type is required";
@@ -111,10 +103,6 @@ public static class ValidationErrors
 
     public static class FoodItems
     {
-        public const string NameRequired = "Name is required";
-        public const string InvalidNameLength = "Name must have max {MaxLength} characters";
-        public const string NameTaken = "Name already taken";
-
         public const string CaloriesRequired = "Calories are required";
         public const string InvalidCalories = "Calories must be a positive value";
 

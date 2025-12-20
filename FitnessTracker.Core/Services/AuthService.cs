@@ -22,7 +22,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper) : IAuthService
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token)
     {
         if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.Users.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email, token))
             throw new BadRequestException(ValidationErrors.Users.EmailTaken);

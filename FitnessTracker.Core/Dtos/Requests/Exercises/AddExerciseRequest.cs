@@ -19,10 +19,10 @@ public class AddExerciseValidator : AbstractValidator<AddExerciseRequest>
     {
         RuleFor(request => request.Name)
             .NotEmpty()
-            .WithMessage(ValidationErrors.Exercises.NameRequired)
+            .WithMessage(ValidationErrors.Common.NameRequired)
 
             .MaximumLength(50)
-            .WithMessage(ValidationErrors.Exercises.InvalidNameLength);
+            .WithMessage(ValidationErrors.Common.InvalidNameLength);
 
         RuleFor(request => request.Description)
             .MaximumLength(250)

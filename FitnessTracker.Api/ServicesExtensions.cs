@@ -1,5 +1,4 @@
-﻿using FitnessTracker.Api;
-using FitnessTracker.Core.Mappers;
+﻿using FitnessTracker.Core.Mappers;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -15,18 +15,6 @@ internal class FoodItemConfig : IEntityTypeConfiguration<FoodItem>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(foodItem => foodItem.Calories)
-            .HasColumnType("decimal(6, 2)");
-
-        builder.Property(foodItem => foodItem.Protein)
-            .HasColumnType("decimal(6, 2)");
-
-        builder.Property(foodItem => foodItem.Carbs)
-            .HasColumnType("decimal(6, 2)");
-
-        builder.Property(foodItem => foodItem.Fat)
-            .HasColumnType("decimal(6, 2)");
-
         builder.HasQueryFilter(foodItem => foodItem.DeletedAt == null);
 
         builder.ToTable(table =>

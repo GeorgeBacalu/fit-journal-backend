@@ -34,7 +34,7 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     public async Task<ActionResult<object>> AddAsync(AddWorkoutRequest request, CancellationToken token = default)
     {
         await workoutService.AddAsync(request, UserId, token);
-        
+
         return Created(string.Empty, new { Message = ResponseMessages.Workouts.Added });
     }
 
@@ -58,7 +58,7 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     public async Task<ActionResult<object>> EditAsync(EditWorkoutRequest request, CancellationToken token = default)
     {
         await workoutService.EditAsync(request, UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.Workouts.Edited });
     }
 
@@ -70,7 +70,7 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     public async Task<ActionResult<object>> AdminEditAsync(EditWorkoutRequest request, CancellationToken token = default)
     {
         await workoutService.AdminEditAsync(request, token);
-        
+
         return Ok(new { Message = ResponseMessages.Workouts.Edited });
     }
 
@@ -80,8 +80,8 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
-        await workoutService.RemoveRangeAsync(request, token);
-        
+        await workoutService.RemoveRangeAsync(request, UserId, token);
+
         return Ok(new { Message = ResponseMessages.Workouts.RemovedRange });
     }
 
@@ -92,7 +92,7 @@ public class WorkoutController(IWorkoutService workoutService) : BaseController
     [HttpDelete("admin")]
     public async Task<ActionResult<object>> AdminRemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token = default)
     {
-        await workoutService.RemoveRangeAsync(request, token);
+        await workoutService.AdminRemoveRangeAsync(request, token);
 
         return Ok(new { Message = ResponseMessages.Workouts.RemovedRange });
     }

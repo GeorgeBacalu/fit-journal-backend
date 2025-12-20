@@ -105,7 +105,7 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.LoginAsync(LoginRequests.NonExistingEmail, default);
 
             // Assert
-            await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.IdNotFound, ValidationSamples.NonExistingEmail));
+            await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.IdNotFound, ValidationSamples.Users.NonExistingEmail));
         });
 
     [Fact]

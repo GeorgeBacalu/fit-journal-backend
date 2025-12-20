@@ -20,10 +20,10 @@ public class AddGoalValidator : AbstractValidator<AddGoalRequest>
     {
         RuleFor(request => request.Name)
             .NotEmpty()
-            .WithMessage(ValidationErrors.Goals.NameRequired)
+            .WithMessage(ValidationErrors.Common.NameRequired)
 
             .MaximumLength(50)
-            .WithMessage(ValidationErrors.Goals.InvalidNameLength);
+            .WithMessage(ValidationErrors.Common.InvalidNameLength);
 
         RuleFor(request => request.Description)
             .MaximumLength(250)

@@ -65,13 +65,13 @@ public class AuthControllerTest
     {
         // Arrange
         authServiceMock.Setup(mock => mock.LoginAsync(LoginRequests.NonExistingEmail, default))
-            .ThrowsAsync(new NotFoundException(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail)));
+            .ThrowsAsync(new NotFoundException(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.Users.NonExistingEmail)));
 
         // Act
         var action = () => authController.LoginAsync(LoginRequests.NonExistingEmail, default);
 
         // Assert
-        await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail));
+        await action.Should().ThrowAsync<NotFoundException>(string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.Users.NonExistingEmail));
     }
 
     [Fact]

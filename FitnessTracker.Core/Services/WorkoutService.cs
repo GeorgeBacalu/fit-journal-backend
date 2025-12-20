@@ -35,7 +35,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.Name == request.Name &&
             workout.UserId == userId, token))
-            throw new BadRequestException(ValidationErrors.Workouts.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
@@ -57,7 +57,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
             workout.Name == request.Name &&
             workout.UserId == userId &&
             workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Workouts.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
@@ -83,7 +83,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.Name == request.Name &&
             workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Workouts.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         if (await unitOfWork.Workouts.AnyAsync(workout =>
             workout.StartedAt.Date == request.StartedAt.Date &&
@@ -100,14 +100,19 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
         await unitOfWork.CommitAsync(token);
     }
 
-    public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token)
+    public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, Guid userId, CancellationToken token)
     {
         var ids = await unitOfWork.Workouts.GetExistingIdsAsync(request.Ids, token);
-        
+
         if (ids.Count() != request.Ids.Count())
             throw new NotFoundException(ErrorMessages.Workouts.IdsNotFound);
 
         await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
         await unitOfWork.CommitAsync(token);
+    }
+
+    public Task AdminRemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token)
+    {
+        throw new NotImplementedException();
     }
 }

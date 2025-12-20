@@ -34,7 +34,7 @@ public class UserController(IUserService userService) : BaseController
     public async Task<ActionResult<object>> EditAsync(EditUserRequest request, CancellationToken token = default)
     {
         await userService.EditAsync(request, UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.Users.Edited });
     }
 

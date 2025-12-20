@@ -13,11 +13,11 @@ public static class LoginRequests
 
     public static readonly LoginRequest NoEmail = Valid with { Email = string.Empty };
 
-    public static readonly LoginRequest NonExistingEmail = Valid with { Email = ValidationSamples.NonExistingEmail };
+    public static readonly LoginRequest NonExistingEmail = Valid with { Email = ValidationSamples.Users.NonExistingEmail };
 
-    public static readonly LoginRequest InvalidEmail = Valid with { Email = ValidationSamples.InvalidEmail };
+    public static readonly LoginRequest InvalidEmail = Valid with { Email = ValidationSamples.Users.InvalidEmail };
 
-    public static readonly LoginRequest EmailTooLong = Valid with { Email = ValidationSamples.EmailTooLong };
+    public static readonly LoginRequest EmailTooLong = Valid with { Email = ValidationSamples.Users.EmailTooLong };
 
     public static readonly LoginRequest NoPassword = Valid with { Password = string.Empty };
 

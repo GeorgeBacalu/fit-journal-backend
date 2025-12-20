@@ -34,7 +34,7 @@ public class GoalController(IGoalService goalService) : BaseController
     public async Task<ActionResult<object>> AddAsync(AddGoalRequest request, CancellationToken token = default)
     {
         await goalService.AddAsync(request, UserId, token);
-        
+
         return Created(string.Empty, new { Message = ResponseMessages.Goals.Added });
     }
 
@@ -45,7 +45,7 @@ public class GoalController(IGoalService goalService) : BaseController
     public async Task<ActionResult<object>> EditAsync(EditGoalRequest request, CancellationToken token = default)
     {
         await goalService.EditAsync(request, UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.Goals.Edited });
     }
 
@@ -56,7 +56,7 @@ public class GoalController(IGoalService goalService) : BaseController
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveGoalsRequest request, CancellationToken token = default)
     {
         await goalService.RemoveRangeAsync(request, UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.Goals.RemovedRange });
     }
 }

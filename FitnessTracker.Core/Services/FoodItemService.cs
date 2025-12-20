@@ -33,7 +33,7 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
     public async Task AddAsync(AddFoodItemRequest request, CancellationToken token)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.FoodItems.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         var foodItem = mapper.Map<FoodItem>(request);
 
@@ -44,7 +44,7 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
     public async Task EditAsync(EditFoodItemRequest request, CancellationToken token)
     {
         if (await unitOfWork.FoodItems.AnyAsync(foodItem => foodItem.Name == request.Name && foodItem.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.FoodItems.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.FoodItems.IdNotFound, request.Id));

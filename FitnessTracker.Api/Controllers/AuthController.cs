@@ -18,7 +18,7 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<object>> RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         await authService.RegisterAsync(request, token);
-        
+
         return Created(string.Empty, new { Message = ResponseMessages.Users.Registered });
     }
 
@@ -37,7 +37,7 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<object>> DeleteAsync(CancellationToken token = default)
     {
         await authService.DeleteAsync(UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.Users.AccountDeactivated });
     }
 

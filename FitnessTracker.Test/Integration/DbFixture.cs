@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Test.Integration;
 
-public class DbFixture : IDisposable
+public sealed class DbFixture : IDisposable
 {
     private readonly SqliteConnection connection = new("Filename=:memory:");
-    public DbContextOptions<FitnessTrackerContext> DbOptions { get; }
+    public DbContextOptions<FitnessTrackerContext> DbOptions { get; private set; }
 
     public DbFixture()
     {

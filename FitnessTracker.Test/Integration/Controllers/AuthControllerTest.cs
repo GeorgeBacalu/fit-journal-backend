@@ -20,7 +20,11 @@ public class AuthControllerTest
     private readonly WebAppFactory factory;
     private readonly HttpClient http;
 
-    public AuthControllerTest(DbFixture fixture) => http = (factory = new(fixture)).CreateClient();
+    public AuthControllerTest(DbFixture fixture)
+    {
+        factory = new(fixture);
+        http = factory.CreateClient();
+    }
 
     private async Task RunAsync(Func<Task> run)
     {
@@ -138,7 +142,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.NonExistingEmail),
+                Detail = string.Format(ErrorMessages.Users.EmailNotFound, ValidationSamples.Users.NonExistingEmail),
                 Status = StatusCodes.Status404NotFound
             });
         });
@@ -150,7 +154,7 @@ public class AuthControllerTest
             // Arrange
 
             // Act
-            var response = await http.PostAsJsonAsync(ApiRoutes.Auth.Login, LoginRequests.WrongPassword, default);
+            var response = await http.PostAsJsonAsync(ApiRoutes.Auth.Login, LoginRequests.WrongPassword);
             var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
 
             // Assert

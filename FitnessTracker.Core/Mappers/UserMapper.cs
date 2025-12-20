@@ -12,7 +12,7 @@ public class UserMapper : Profile
     {
         CreateMap<RegisterRequest, User>();
         CreateMap<EditUserRequest, User>();
-        
+
         CreateMap<User, ShortUserResponse>();
         CreateMap<User, UserResponse>();
     }

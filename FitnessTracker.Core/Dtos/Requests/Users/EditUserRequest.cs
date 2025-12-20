@@ -21,10 +21,10 @@ public class EditUserValidator : AbstractValidator<EditUserRequest>
     {
         RuleFor(request => request.Name)
             .NotEmpty()
-            .WithMessage(ValidationErrors.Users.NameRequired)
+            .WithMessage(ValidationErrors.Common.NameRequired)
 
             .MaximumLength(50)
-            .WithMessage(ValidationErrors.Users.InvalidNameLength);
+            .WithMessage(ValidationErrors.Common.InvalidNameLength);
 
         RuleFor(request => request.Email)
             .NotEmpty()
