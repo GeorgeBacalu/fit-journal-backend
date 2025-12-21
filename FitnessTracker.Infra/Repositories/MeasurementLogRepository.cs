@@ -5,6 +5,6 @@ using FitnessTracker.Infra.Repositories.Interfaces;
 namespace FitnessTracker.Infra.Repositories;
 
 public class MeasurementLogRepository(FitnessTrackerContext context)
-    : BaseRepository<MeasurementLog>(context), IMeasurementLogRepository
+    : UserOwnedRepository<MeasurementLog>(context), IMeasurementLogRepository
 {
 }

@@ -18,6 +18,14 @@ public class MeasurementLogController(IMeasurementLogService measurementLogServi
     public async Task<ActionResult<MeasurementLogsResponse>> GetAllAsync(CancellationToken token = default) =>
         Ok(await measurementLogService.GetAllAsync(UserId, token));
 
+    /// <summary>Get user measurement log by ID</summary>
+    /// <param name="id">Given user measurement log ID</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>User measurement log with given ID</returns>
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<MeasurementLogResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await measurementLogService.GetByIdAsync(id, UserId, token));
+
     /// <summary>Add new measurement log</summary>
     /// <param name="request">Added measurement log details</param>
     /// <param name="token">Cancellation token</param>

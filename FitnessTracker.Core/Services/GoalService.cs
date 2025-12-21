@@ -14,9 +14,9 @@ namespace FitnessTracker.Core.Services;
 
 public class GoalService(IUnitOfWork unitOfWork, IMapper mapper) : IGoalService
 {
-    public async Task<GoalsResponse> GetAllByUserAsync(Guid userId, bool isAchieved, CancellationToken token)
+    public async Task<GoalsResponse> GetAllByUserAsync(Guid userId, CancellationToken token)
     {
-        var goals = await unitOfWork.Goals.GetAllByUserQuery(userId, isAchieved)
+        var goals = await unitOfWork.Goals.GetAllQuery(userId)
             .ProjectTo<ShortGoalResponse>(mapper.ConfigurationProvider)
             .ToListAsync(token);
 

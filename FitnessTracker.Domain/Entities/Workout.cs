@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Domain.Entities;
 
-public class Workout : BaseEntity
+public class Workout : BaseEntity, IUserOwnedEntity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }

@@ -1,6 +1,6 @@
 namespace FitnessTracker.Domain.Entities;
 
-public class MeasurementLog : BaseEntity
+public class MeasurementLog : BaseEntity, IUserOwnedEntity
 {
     public DateOnly Date { get; set; }
     public decimal Weight { get; set; }

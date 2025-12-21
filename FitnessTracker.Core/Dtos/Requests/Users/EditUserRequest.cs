@@ -61,14 +61,14 @@ public class EditUserValidator : AbstractValidator<EditUserRequest>
             .WithMessage(ValidationErrors.Users.HeightRequired)
 
             .InclusiveBetween(120, 250)
-            .WithMessage(ValidationErrors.Users.InvalidHeight);
+            .WithMessage(ValidationErrors.Users.HeightOutOfRange);
 
         RuleFor(request => request.Weight)
             .NotEmpty()
             .WithMessage(ValidationErrors.Users.WeightRequired)
 
             .InclusiveBetween(25, 250)
-            .WithMessage(ValidationErrors.Users.InvalidWeight);
+            .WithMessage(ValidationErrors.Users.WeightOutOfRange);
 
         RuleFor(request => request.Gender)
             .NotEmpty()

@@ -33,7 +33,7 @@ public static class ValidationErrors
         public const string AgeRestriction = "You must be at least 13 years old";
 
         public const string HeightRequired = "Height is required";
-        public const string HeightOtOfRange = "Height must be between {Min} and {Max} cm";
+        public const string HeightOutOfRange = "Height must be between {Min} and {Max} cm";
 
         public const string WeightRequired = "Weight is required";
         public const string WeightOutOfRange = "Weight must be between {Min} and {Max} kg";

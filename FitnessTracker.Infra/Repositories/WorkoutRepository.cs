@@ -5,6 +5,6 @@ using FitnessTracker.Infra.Repositories.Interfaces;
 namespace FitnessTracker.Infra.Repositories;
 
 public class WorkoutRepository(FitnessTrackerContext context)
-    : BaseRepository<Workout>(context), IWorkoutRepository
+    : UserOwnedRepository<Workout>(context), IWorkoutRepository
 {
 }

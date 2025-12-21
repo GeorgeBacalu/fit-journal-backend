@@ -14,11 +14,13 @@ public class BaseRepository<T>(FitnessTrackerContext context)
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token) =>
         await context.Set<T>().AsNoTracking().ToListAsync(token);
 
-    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
-        await context.Set<T>().AsNoTracking().Where(predicate).ToListAsync(token);
+    public IQueryable<T> GetAllQuery() => context.Set<T>().AsNoTracking();
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken token) =>
-        await context.Set<T>().FindAsync([id], token);
+        await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(entity => entity.Id == id, token);
+
+    public async Task<T?> GetByIdTrackedAsync(Guid id, CancellationToken token) =>
+        await context.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id, token);
 
     public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
         await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate, token);

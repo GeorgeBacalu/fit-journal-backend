@@ -13,13 +13,21 @@ public class MeasurementLogService(IUnitOfWork unitOfWork, IMapper mapper) : IMe
 {
     public async Task<MeasurementLogsResponse> GetAllAsync(Guid userId, CancellationToken token)
     {
-        var measurementLogs = await unitOfWork.MeasurementLogs.GetAllAsync(measurementLog => measurementLog.UserId == userId, token);
+        var measurementLogs = await unitOfWork.MeasurementLogs.GetAllAsync(userId, token);
 
         return new()
         {
             MeasurementLogs = mapper.Map<IEnumerable<ShortMeasurementLogResponse>>(measurementLogs),
             TotalCount = measurementLogs.Count()
         };
+    }
+
+    public async Task<MeasurementLogService> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
+    {
+        var measurementLog = await unitOfWork.MeasurementLogs.GetByIdAsync(id, userId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.MeasurementLogs.IdNotFound, id));
+
+        return mapper.Map<MeasurementLogService>(measurementLog);
     }
 
     public async Task AddAsync(AddMeasurementLogRequest request, Guid userId, CancellationToken token)

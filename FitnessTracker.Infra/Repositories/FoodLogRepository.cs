@@ -5,6 +5,6 @@ using FitnessTracker.Infra.Repositories.Interfaces;
 namespace FitnessTracker.Infra.Repositories;
 
 public class FoodLogRepository(FitnessTrackerContext context)
-    : BaseRepository<FoodLog>(context), IFoodLogRepository
+    : UserOwnedRepository<FoodLog>(context), IFoodLogRepository
 {
 }

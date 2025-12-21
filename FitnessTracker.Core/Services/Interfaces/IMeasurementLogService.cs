@@ -7,5 +7,7 @@ public interface IMeasurementLogService
 {
     Task<MeasurementLogsResponse> GetAllAsync(Guid userId, CancellationToken token);
 
+    Task<MeasurementLogService> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
+
     Task AddAsync(AddMeasurementLogRequest request, Guid userId, CancellationToken token);
 }
