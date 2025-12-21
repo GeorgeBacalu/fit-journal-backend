@@ -12,4 +12,6 @@ public interface IMeasurementLogService
     Task AddAsync(AddMeasurementLogRequest request, Guid userId, CancellationToken token);
 
     Task EditAsyc(EditMeasurementLogRequest request, Guid userId, CancellationToken token);
+
+    Task RemoveRangeAsync(RemoveMeasurementLogsRequest request, Guid userId, CancellationToken token);
 }

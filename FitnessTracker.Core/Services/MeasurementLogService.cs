@@ -64,4 +64,15 @@ public class MeasurementLogService(IUnitOfWork unitOfWork, IMapper mapper) : IMe
 
         await unitOfWork.CommitAsync(token);
     }
+
+    public async Task RemoveRangeAsync(RemoveMeasurementLogsRequest request, Guid userId, CancellationToken token)
+    {
+        var count = await unitOfWork.MeasurementLogs.CountByIdsAsync(request.Ids, userId, token);
+
+        if (count != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.MeasurementLogs.IdsNotFound);
+
+        await unitOfWork.MeasurementLogs.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
+        await unitOfWork.CommitAsync(token);
+    }
 }

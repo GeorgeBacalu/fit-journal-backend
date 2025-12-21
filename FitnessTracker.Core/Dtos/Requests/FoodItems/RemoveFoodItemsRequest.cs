@@ -6,7 +6,7 @@ namespace FitnessTracker.Core.Dtos.Requests.FoodItems;
 public record RemoveFoodItemsRequest
 {
     public IEnumerable<Guid> Ids { get; init; } = [];
-    public bool IsHardDelete { get; init; }
+    public bool HardDelete { get; init; }
 }
 
 public class RemoveFoodItemsValidator : AbstractValidator<RemoveFoodItemsRequest>

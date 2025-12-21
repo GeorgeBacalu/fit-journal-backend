@@ -18,4 +18,18 @@ public class UserOwnedRepository<T>(FitnessTrackerContext context)
 
     public async Task<T?> GetByIdTrackedAsync(Guid id, Guid userId, CancellationToken token) =>
         await context.Set<T>().FirstOrDefaultAsync(entity => entity.UserId == userId && entity.Id == id, token);
+
+    public async Task<int> CountByIdsAsync(IEnumerable<Guid> ids, Guid userId, CancellationToken token) =>
+        await context.Set<T>().AsNoTracking().CountAsync(entity => entity.UserId == userId && ids.Contains(entity.Id), token);
+
+    public async Task<int> RemoveRangeAsync(IEnumerable<Guid> ids, Guid userId, bool hardDelete, CancellationToken token)
+    {
+        var query = context.Set<T>().Where(entity => entity.UserId == userId && ids.Contains(entity.Id));
+
+        return hardDelete
+            ? await query.ExecuteDeleteAsync(token)
+            : await query.ExecuteUpdateAsync(setter =>
+                setter.SetProperty(entity =>
+                    entity.DeletedAt, DateTime.UtcNow), token);
+    }
 }

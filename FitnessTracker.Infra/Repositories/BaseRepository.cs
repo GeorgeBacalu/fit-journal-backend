@@ -25,11 +25,8 @@ public class BaseRepository<T>(FitnessTrackerContext context)
     public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
         await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate, token);
 
-    public async Task<IEnumerable<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids, CancellationToken token) =>
-        await context.Set<T>()
-            .Where(entity => ids.Contains(entity.Id))
-            .Select(entity => entity.Id)
-            .ToListAsync(token);
+    public async Task<int> CountByIdsAsync(IEnumerable<Guid> ids, CancellationToken token) =>
+        await context.Set<T>().AsNoTracking().CountAsync(entity => ids.Contains(entity.Id), token);
 
     public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken token) =>
         await context.Set<T>().AnyAsync(predicate, token);

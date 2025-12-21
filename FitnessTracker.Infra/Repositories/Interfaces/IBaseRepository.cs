@@ -15,8 +15,8 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task<T?> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken token);
 
-    Task<IEnumerable<Guid>> GetExistingIdsAsync(IEnumerable<Guid> ids, CancellationToken token);
-    
+    Task<int> CountByIdsAsync(IEnumerable<Guid> ids, CancellationToken token);
+
     Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken token);
     
     Task AddAsync(T entity, CancellationToken token);

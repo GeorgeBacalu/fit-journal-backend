@@ -6,7 +6,7 @@ namespace FitnessTracker.Core.Dtos.Requests.Goals;
 public record RemoveGoalsRequest
 {
     public IEnumerable<Guid> Ids { get; init; } = [];
-    public bool IsHardDelete { get; init; }
+    public bool HardDelete { get; init; }
 }
 
 public class RemoveGoalsValidator : AbstractValidator<RemoveGoalsRequest>

@@ -118,7 +118,7 @@ public static class ValidationErrors
         public const string IdRequired = "Food item ID is required";
         public const string InvalidId = "Invalid food item ID";
 
-        public const string IdsRequired = "Invalid food item ID";
+        public const string IdsRequired = "No food item IDs provided";
         public const string DuplicatedIds = "Duplicated food item IDs provided";
     }
 
@@ -136,7 +136,7 @@ public static class ValidationErrors
         public const string IdRequired = "Food log ID is required";
         public const string InvalidId = "Invalid food log ID";
 
-        public const string IdsRequired = "Invalid food log ID";
+        public const string IdsRequired = "No food log IDs provided";
         public const string DuplicatedIds = "Duplicated food log IDs provided";
     }
 
@@ -162,5 +162,8 @@ public static class ValidationErrors
 
         public const string IdRequired = "Measurement log ID is required";
         public const string InvalidId = "Invalid measurement log ID";
+
+        public const string IdsRequired = "No measurement log IDs provided";
+        public const string DuplicatedIds = "Duplicated measurement log IDs provided";
     }
 }

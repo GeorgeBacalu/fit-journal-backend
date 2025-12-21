@@ -1,5 +1,7 @@
-﻿using FitnessTracker.Core.Dtos.Requests.MeasurementLogs;
+﻿using FitnessTracker.Core.Dtos.Requests.FoodLogs;
+using FitnessTracker.Core.Dtos.Requests.MeasurementLogs;
 using FitnessTracker.Core.Dtos.Responses.MeasurementLogs;
+using FitnessTracker.Core.Services;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -46,5 +48,16 @@ public class MeasurementLogController(IMeasurementLogService measurementLogServi
         await measurementLogService.EditAsyc(request, UserId, token);
 
         return Ok(new { Message = ResponseMessages.MeasurementLogs.Edited });
+    }
+
+    /// <summary>Remove existing measurement log</summary>
+    /// <param name="request">Removed measurement log IDs</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveRangeAsync(RemoveMeasurementLogsRequest request, CancellationToken token = default)
+    {
+        await measurementLogService.RemoveRangeAsync(request, UserId, token);
+
+        return Ok(new { Message = ResponseMessages.MeasurementLogs.RemovedRange });
     }
 }

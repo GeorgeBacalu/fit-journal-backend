@@ -48,5 +48,6 @@ public static class ResponseMessages
     {
         public const string Added = "Measurement log added successfully";
         public const string Edited = "Measurement log edited successfully";
+        public const string RemovedRange = "Measurement logs removed successfully";
     }
 }
