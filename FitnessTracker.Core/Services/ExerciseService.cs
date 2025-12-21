@@ -56,15 +56,15 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
 
     public async Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token)
     {
-        var ids = await unitOfWork.Exercises.GetExistingIdsAsync(request.Ids, token);
-
-        if (ids.Count() != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.Exercises.IdsNotFound);
-
-        if (await unitOfWork.Exercises.AnyInUseAsync(ids, token))
+        if (await unitOfWork.Exercises.AnyInUseAsync(request.Ids, token))
             throw new BadRequestException(ErrorMessages.Exercises.AlreadyInUse);
 
-        await unitOfWork.Exercises.RemoveRangeAsync(ids, request.IsHardDelete, token);
+        var count = await unitOfWork.Exercises.CountByIdsAsync(request.Ids, token);
+
+        if (count != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.Exercises.IdsNotFound);
+
+        await unitOfWork.Exercises.RemoveRangeAsync(request.Ids, request.HardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }

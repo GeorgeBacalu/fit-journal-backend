@@ -12,6 +12,7 @@ public class FoodItemMapper : Profile
         CreateMap<AddFoodItemRequest, FoodItem>();
         CreateMap<EditFoodItemRequest, Goal>();
 
+        CreateMap<FoodItem, ShortFoodItemResponse>();
         CreateMap<FoodItem, FoodItemResponse>();
     }
 }

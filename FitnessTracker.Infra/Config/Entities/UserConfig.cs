@@ -52,16 +52,16 @@ internal class UserConfig : IEntityTypeConfiguration<User>
                 "[Birthday] <= CURRENT_TIMESTAMP");
 
             table.HasCheckConstraint(
+                "CK_Users_AgeRestriction",
+                "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
+
+            table.HasCheckConstraint(
                 "CK_Users_Height",
                 "[Height] BETWEEN 120 AND 250");
 
             table.HasCheckConstraint(
                 "CK_Users_Weight",
                 "[Weight] BETWEEN 25 AND 250");
-
-            table.HasCheckConstraint(
-                "CK_Users_AgeRestriction",
-                "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
         });
     }
 }

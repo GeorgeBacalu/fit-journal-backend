@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Domain.Entities;
 
-public class Workout : BaseEntity
+public class Workout : BaseEntity, IUserOwnedEntity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }
@@ -8,7 +8,7 @@ public class Workout : BaseEntity
     public int DurationMinutes { get; set; }
     public DateTime StartedAt { get; set; }
 
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
     public User? User { get; set; }
 
     public IEnumerable<WorkoutExercise> WorkoutExercises { get; set; } = [];

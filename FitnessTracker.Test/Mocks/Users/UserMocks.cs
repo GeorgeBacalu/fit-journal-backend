@@ -15,8 +15,8 @@ public static class UserMocks
             PasswordHash = "$2a$11$keNH6EuCs3ZNsWXSyN0dYuOwBgDDVBJ3tkEois5anX1K3bm3xCeFq", // JohnDoePassword0!
             Phone = "+1202-555-0125",
             Birthday = new(1990, 1, 1),
-            Height = 180.0,
-            Weight = 82.5,
+            Height = 180m,
+            Weight = 82m,
             Gender = Gender.Male,
             Role = Role.User,
             CreatedAt = DateTime.UtcNow,
@@ -31,8 +31,8 @@ public static class UserMocks
             PasswordHash = "$2a$11$odL3DYVYeOnmMCUzGtVRduW625Zf007zv4E2SP04uiCPmazcrU0he", // JaneSmithPassword0!
             Phone = "+44-7700-900123",
             Birthday = new(1990, 1, 2),
-            Height = 165.0,
-            Weight = 63.5,
+            Height = 165m,
+            Weight = 63m,
             Gender = Gender.Female,
             Role = Role.User,
             CreatedAt = DateTime.UtcNow,

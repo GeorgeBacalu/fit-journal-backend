@@ -33,10 +33,10 @@ public static class ValidationErrors
         public const string AgeRestriction = "You must be at least 13 years old";
 
         public const string HeightRequired = "Height is required";
-        public const string InvalidHeight = "Height must be between {Min} and {Max} cm";
+        public const string HeightOutOfRange = "Height must be between {Min} and {Max} cm";
 
         public const string WeightRequired = "Weight is required";
-        public const string InvalidWeight = "Weight must be between {Min} and {Max} kg";
+        public const string WeightOutOfRange = "Weight must be between {Min} and {Max} kg";
 
         public const string GenderRequired = "Gender is required";
     }
@@ -118,14 +118,14 @@ public static class ValidationErrors
         public const string IdRequired = "Food item ID is required";
         public const string InvalidId = "Invalid food item ID";
 
-        public const string IdsRequired = "Invalid food item ID";
+        public const string IdsRequired = "No food item IDs provided";
         public const string DuplicatedIds = "Duplicated food item IDs provided";
     }
 
     public static class FoodLogs
     {
-        public const string DateRequired = "Date is required";
-        public const string FutureDate = "Date can't be in the future";
+        public const string DateRequired = "Food log date is required";
+        public const string FutureDate = "Food log can't be in the future";
 
         public const string ServingsRequired = "Servings are required";
         public const string InvalidServings = "Servings must be a positive value";
@@ -136,7 +136,34 @@ public static class ValidationErrors
         public const string IdRequired = "Food log ID is required";
         public const string InvalidId = "Invalid food log ID";
 
-        public const string IdsRequired = "Invalid food log ID";
+        public const string IdsRequired = "No food log IDs provided";
         public const string DuplicatedIds = "Duplicated food log IDs provided";
+    }
+
+    public static class MeasurementLogs
+    {
+        public const string DateRequired = "Measurement log date is required";
+        public const string FutureDate = "Measurement log date can't be in the future";
+
+        public const string WeightRequired = "Weight is required";
+        public const string WeightOutOfRange = "Weight must be between {Min} and {Max} kg";
+
+        public const string BodyFatPercentageRequired = "Body fat percentage is required";
+        public const string BodyFatPercentageOutOfRange = "Body fat percentage must be between {Min} and {Max}%";
+
+        public const string WaistCircumferenceRequired = "Waist circumference is required";
+        public const string WaistCircumferenceOutOfRange = "Waist circumference must be between {Min} and {Max} cm";
+
+        public const string ChestCircumferenceRequired = "Chest circumference is required";
+        public const string ChestCircumferenceOutOfRange = "Chest circumference must be between {Min} and {Max} cm";
+
+        public const string ArmsCircumferenceRequired = "Arms circumference is required";
+        public const string ArmsCircumferenceOutOfRange = "Arms circumference must be between {Min} and {Max} cm";
+
+        public const string IdRequired = "Measurement log ID is required";
+        public const string InvalidId = "Invalid measurement log ID";
+
+        public const string IdsRequired = "No measurement log IDs provided";
+        public const string DuplicatedIds = "Duplicated measurement log IDs provided";
     }
 }

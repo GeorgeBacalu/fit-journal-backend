@@ -12,8 +12,8 @@ public record RegisterRequest
     public string? ConfirmedPassword { get; init; }
     public string? Phone { get; init; }
     public DateOnly? Birthday { get; init; }
-    public double? Height { get; init; }
-    public double? Weight { get; init; }
+    public decimal? Height { get; init; }
+    public decimal? Weight { get; init; }
     public Gender? Gender { get; init; }
 }
 
@@ -69,10 +69,10 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.Users.BirthdayRequired)
 
-            .Must(birthday => birthday <= DateOnly.FromDateTime(DateTime.UtcNow))
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage(ValidationErrors.Users.FutureBirthday)
 
-            .Must(birthday => birthday <= DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13))
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13))
             .WithMessage(ValidationErrors.Users.AgeRestriction);
 
         RuleFor(request => request.Height)
@@ -80,14 +80,14 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
             .WithMessage(ValidationErrors.Users.HeightRequired)
 
             .InclusiveBetween(120, 250)
-            .WithMessage(ValidationErrors.Users.InvalidHeight);
+            .WithMessage(ValidationErrors.Users.HeightOutOfRange);
 
         RuleFor(request => request.Weight)
             .NotEmpty()
             .WithMessage(ValidationErrors.Users.WeightRequired)
 
             .InclusiveBetween(25, 250)
-            .WithMessage(ValidationErrors.Users.InvalidWeight);
+            .WithMessage(ValidationErrors.Users.WeightOutOfRange);
 
         RuleFor(request => request.Gender)
             .NotEmpty()

@@ -43,4 +43,11 @@ public static class ResponseMessages
         public const string Edited = "Food log edited successfully";
         public const string RemovedRange = "Food logs removed successfully";
     }
+
+    public static class MeasurementLogs
+    {
+        public const string Added = "Measurement log added successfully";
+        public const string Edited = "Measurement log edited successfully";
+        public const string RemovedRange = "Measurement logs removed successfully";
+    }
 }

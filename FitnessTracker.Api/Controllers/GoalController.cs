@@ -11,13 +11,12 @@ namespace FitnessTracker.Api.Controllers;
 [Route("/api/[controller]")]
 public class GoalController(IGoalService goalService) : BaseController
 {
-    /// <summary>Get all current user's goals by achievement status)</summary>
-    /// <param name="isAchieved">Achievement status</param>
+    /// <summary>Get all current user's goals</summary>
     /// <param name="token">Cancellation token</param>
-    /// <returns>List of all current user's goals by achievement status</returns>
+    /// <returns>List of all current user's goals</returns>
     [HttpGet]
-    public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(bool isAchieved, CancellationToken token = default) =>
-        Ok(await goalService.GetAllByUserAsync(UserId, isAchieved, token));
+    public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(CancellationToken token = default) =>
+        Ok(await goalService.GetAllByUserAsync(UserId, token));
 
     /// <summary>Get goal by ID</summary>
     /// <param name="id">Goal ID to fetch</param>

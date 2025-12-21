@@ -10,7 +10,9 @@ public class FoodLogMapper : Profile
     public FoodLogMapper()
     {
         CreateMap<AddFoodLogRequest, FoodLog>();
+        CreateMap<EditFoodLogRequest, FoodLog>();
 
+        CreateMap<FoodLog, ShortFoodLogResponse>();
         CreateMap<FoodLog, FoodLogResponse>();
     }
 }

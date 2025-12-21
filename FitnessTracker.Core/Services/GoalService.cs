@@ -14,9 +14,9 @@ namespace FitnessTracker.Core.Services;
 
 public class GoalService(IUnitOfWork unitOfWork, IMapper mapper) : IGoalService
 {
-    public async Task<GoalsResponse> GetAllByUserAsync(Guid userId, bool isAchieved, CancellationToken token)
+    public async Task<GoalsResponse> GetAllByUserAsync(Guid userId, CancellationToken token)
     {
-        var goals = await unitOfWork.Goals.GetAllByUserQuery(userId, isAchieved)
+        var goals = await unitOfWork.Goals.GetAllQuery(userId)
             .ProjectTo<ShortGoalResponse>(mapper.ConfigurationProvider)
             .ToListAsync(token);
 
@@ -74,15 +74,12 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper) : IGoalService
 
     public async Task RemoveRangeAsync(RemoveGoalsRequest request, Guid userId, CancellationToken token)
     {
-        var ids = await unitOfWork.Goals.GetExistingIdsAsync(request.Ids, token);
+        var count = await unitOfWork.Goals.CountByIdsAsync(request.Ids, userId, token);
 
-        if (ids.Count() != request.Ids.Count())
+        if (count != request.Ids.Count())
             throw new NotFoundException(ErrorMessages.Goals.IdsNotFound);
 
-        if (await unitOfWork.Goals.AnyAsync(goal => goal.UserId != userId, token))
-            throw new ForbiddenException(ErrorMessages.Goals.UnauthorizedRemove);
-
-        await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
+        await unitOfWork.Goals.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 }

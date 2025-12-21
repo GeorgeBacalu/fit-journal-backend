@@ -2,7 +2,7 @@ namespace FitnessTracker.Core.Dtos.Responses.FoodLogs;
 
 public record FoodLogResponse
 {
-    public DateTime Date { get; set; }
-    public int Servings { get; set; }
-    public int Quantity { get; set; }
+    public DateTime Date { get; init; }
+    public int Servings { get; init; }
+    public int Quantity { get; init; }
 }

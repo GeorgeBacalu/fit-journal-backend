@@ -2,6 +2,6 @@
 
 namespace FitnessTracker.Infra.Repositories.Interfaces;
 
-public interface IWorkoutRepository : IBaseRepository<Workout>
+public interface IWorkoutRepository : IUserOwnedRepository<Workout>
 {
 }

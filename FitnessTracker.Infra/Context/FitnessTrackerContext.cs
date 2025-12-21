@@ -17,6 +17,7 @@ public class FitnessTrackerContext : DbContext
     public virtual DbSet<Goal> Goals => Set<Goal>();
     public virtual DbSet<FoodItem> FoodItems => Set<FoodItem>();
     public virtual DbSet<FoodLog> FoodLogs => Set<FoodLog>();
+    public virtual DbSet<MeasurementLog> MeasurementLogs => Set<MeasurementLog>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

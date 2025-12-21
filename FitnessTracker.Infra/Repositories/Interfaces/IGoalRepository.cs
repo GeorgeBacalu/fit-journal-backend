@@ -2,7 +2,6 @@
 
 namespace FitnessTracker.Infra.Repositories.Interfaces;
 
-public interface IGoalRepository : IBaseRepository<Goal>
+public interface IGoalRepository : IUserOwnedRepository<Goal>
 {
-    IQueryable<Goal> GetAllByUserQuery(Guid userId, bool isAchieved);
 }

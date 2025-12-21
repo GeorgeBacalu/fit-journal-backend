@@ -7,4 +7,6 @@ public class FoodItem : BaseEntity
     public decimal Protein { get; set; }
     public decimal Carbs { get; set; }
     public decimal Fat { get; set; }
+
+    public IEnumerable<FoodLog> FoodLogs { get; } = [];
 }

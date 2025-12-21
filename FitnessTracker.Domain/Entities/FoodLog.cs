@@ -1,6 +1,6 @@
 namespace FitnessTracker.Domain.Entities;
 
-public class FoodLog : BaseEntity
+public class FoodLog : BaseEntity, IUserOwnedEntity
 {
     public DateTime Date { get; set; }
     public int Servings { get; set; }

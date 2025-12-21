@@ -6,8 +6,8 @@ public class WorkoutExercise : BaseEntity
     public int Reps { get; set; }
     public int WeightUsed { get; set; }
 
-    public Guid? WorkoutId { get; set; }
+    public Guid WorkoutId { get; set; }
     public Workout? Workout { get; set; }
-    public Guid? ExerciseId { get; set; }
+    public Guid ExerciseId { get; set; }
     public Exercise? Exercise { get; set; }
 }

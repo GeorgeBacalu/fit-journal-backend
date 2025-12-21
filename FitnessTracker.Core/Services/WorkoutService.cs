@@ -108,12 +108,12 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutSe
 
     public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, Guid userId, CancellationToken token)
     {
-        var ids = await unitOfWork.Workouts.GetExistingIdsAsync(request.Ids, token);
+        var count = await unitOfWork.Workouts.CountByIdsAsync(request.Ids, userId, token);
 
-        if (ids.Count() != request.Ids.Count())
+        if (count != request.Ids.Count())
             throw new NotFoundException(ErrorMessages.Workouts.IdsNotFound);
 
-        await unitOfWork.Workouts.RemoveRangeAsync(ids, request.IsHardDelete, token);
+        await unitOfWork.Workouts.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
         await unitOfWork.CommitAsync(token);
     }
 

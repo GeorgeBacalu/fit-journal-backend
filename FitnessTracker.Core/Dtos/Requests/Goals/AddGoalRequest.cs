@@ -51,7 +51,7 @@ public class AddGoalValidator : AbstractValidator<AddGoalRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.Goals.EndDateRequired)
 
-            .Must(endDate => endDate >= DateOnly.FromDateTime(DateTime.UtcNow))
+            .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage(ValidationErrors.Goals.InvalidEndDate);
     }
 }
