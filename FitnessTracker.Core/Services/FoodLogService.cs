@@ -32,16 +32,43 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodLogSe
 
     public async Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token)
     {
+        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.FoodId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.FoodId));
+
         var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-        ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
 
         if (request.Date < user.CreatedAt)
             throw new BadRequestException(ErrorMessages.FoodLogs.BeforeRegistration);
 
         var foodLog = mapper.Map<FoodLog>(request);
         foodLog.UserId = userId;
+        foodLog.FoodId = foodItem.Id;
 
         await unitOfWork.FoodLogs.AddAsync(foodLog, token);
+        await unitOfWork.CommitAsync(token);
+    }
+
+    public async Task EditAsync(EditFoodLogRequest request, Guid userId, CancellationToken token)
+    {
+        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.FoodId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.FoodId));
+
+        var foodLog = await unitOfWork.FoodLogs.GetByIdAsync(request.Id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.Id));
+
+        if (foodLog.UserId != userId)
+            throw new ForbiddenException(ErrorMessages.FoodLogs.UnauthorizedEdit);
+
+        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+
+        if (request.Date < user.CreatedAt)
+            throw new BadRequestException(ErrorMessages.FoodLogs.BeforeRegistration);
+
+        mapper.Map(request, foodLog);
+        foodLog.FoodId = foodItem.Id;
+
         await unitOfWork.CommitAsync(token);
     }
 }

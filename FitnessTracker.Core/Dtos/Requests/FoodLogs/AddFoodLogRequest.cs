@@ -8,7 +8,7 @@ public record AddFoodLogRequest
     public DateTime? Date { get; init; }
     public int? Servings { get; init; }
     public int? Quantity { get; init; }
-    public Guid? FoodId { get; init; }
+    public Guid FoodId { get; init; }
 }
 
 public class AddFoodLogValidator : AbstractValidator<AddFoodLogRequest>
@@ -37,7 +37,7 @@ public class AddFoodLogValidator : AbstractValidator<AddFoodLogRequest>
             .WithMessage(ValidationErrors.FoodLogs.InvalidQuantity);
 
         RuleFor(request => request.FoodId)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.FoodLogs.FoodIdRequired);
+            .Must(id => id != Guid.Empty)
+            .WithMessage(ValidationErrors.FoodLogs.IdRequired);
     }
 }

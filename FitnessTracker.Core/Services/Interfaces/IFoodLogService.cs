@@ -10,4 +10,6 @@ public interface IFoodLogService
     Task<FoodLogResponse> GetByIdAsync(Guid id, CancellationToken token);
 
     Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token);
+
+    Task EditAsync(EditFoodLogRequest request, Guid userId, CancellationToken token);
 }

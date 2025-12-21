@@ -40,5 +40,6 @@ public static class ResponseMessages
     public static class FoodLogs
     {
         public const string Added = "Food log added successfully";
+        public const string Edited = "Food log edited successfully";
     }
 }

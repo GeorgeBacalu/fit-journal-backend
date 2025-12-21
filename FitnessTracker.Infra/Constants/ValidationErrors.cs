@@ -133,6 +133,7 @@ public static class ValidationErrors
         public const string QuantityRequired = "Quantity is required";
         public const string InvalidQuantity = "Quantity must be between {Min} and {Max} g";
 
-        public const string FoodIdRequired = "Food ID is required";
+        public const string IdRequired = "Food log ID is required";
+        public const string InvalidId = "Invalid food log ID";
     }
 }

@@ -36,4 +36,15 @@ public class FoodLogController(IFoodLogService foodLogService) : BaseController
 
         return Created(string.Empty, new { Message = ResponseMessages.FoodLogs.Added });
     }
+
+    /// <summary>Edit current user's food log</summary>
+    /// <param name="request">Edited food log details</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpPut]
+    public async Task<ActionResult<object>> EditAsync(EditFoodLogRequest request, CancellationToken token = default)
+    {
+        await foodLogService.EditAsync(request, UserId, token);
+        
+        return Ok(new { Message = ResponseMessages.FoodLogs.Edited });
+    }
 }
