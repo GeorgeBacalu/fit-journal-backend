@@ -159,5 +159,8 @@ public static class ValidationErrors
 
         public const string ArmsCircumferenceRequired = "Arms circumference is required";
         public const string ArmsCircumferenceOutOfRange = "Arms circumference must be between {Min} and {Max} cm";
+
+        public const string IdRequired = "Measurement log ID is required";
+        public const string InvalidId = "Invalid measurement log ID";
     }
 }

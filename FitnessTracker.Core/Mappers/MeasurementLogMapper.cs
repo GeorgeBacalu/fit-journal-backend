@@ -10,6 +10,7 @@ public class MeasurementLogMapper : Profile
     public MeasurementLogMapper()
     {
         CreateMap<AddMeasurementLogRequest, MeasurementLog>();
+        CreateMap<EditMeasurementLogRequest, MeasurementLog>();
 
         CreateMap<MeasurementLog, MeasurementLogResponse>();
         CreateMap<MeasurementLog, ShortMeasurementLogResponse>();

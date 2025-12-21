@@ -36,4 +36,15 @@ public class MeasurementLogController(IMeasurementLogService measurementLogServi
 
         return Created(string.Empty, new { Message = ResponseMessages.MeasurementLogs.Added });
     }
+
+    /// <summary>Edit user's measurement log</summary>
+    /// <param name="request">Edited measurement log details</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpPut]
+    public async Task<ActionResult<object>> EditAsync(EditMeasurementLogRequest request, CancellationToken token = default)
+    {
+        await measurementLogService.EditAsyc(request, UserId, token);
+
+        return Ok(new { Message = ResponseMessages.MeasurementLogs.Edited });
+    }
 }

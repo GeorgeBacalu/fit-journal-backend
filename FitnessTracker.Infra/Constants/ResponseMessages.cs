@@ -47,5 +47,6 @@ public static class ResponseMessages
     public static class MeasurementLogs
     {
         public const string Added = "Measurement log added successfully";
+        public const string Edited = "Measurement log edited successfully";
     }
 }

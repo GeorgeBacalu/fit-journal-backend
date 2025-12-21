@@ -10,4 +10,6 @@ public interface IMeasurementLogService
     Task<MeasurementLogService> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
 
     Task AddAsync(AddMeasurementLogRequest request, Guid userId, CancellationToken token);
+
+    Task EditAsyc(EditMeasurementLogRequest request, Guid userId, CancellationToken token);
 }

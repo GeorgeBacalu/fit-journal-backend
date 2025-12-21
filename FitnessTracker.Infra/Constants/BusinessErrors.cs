@@ -65,5 +65,7 @@ public static class ErrorMessages
         public const string IdNotFound = "Measurement log with id {0} not found";
 
         public const string BeforeRegistration = "Measurement log date can't precede registration date";
+
+        public const string UnauthorizedEdit = "Unauthorized to edit another user's measurement log";
     }
 }
