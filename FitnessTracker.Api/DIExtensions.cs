@@ -2,7 +2,7 @@
 
 namespace FitnessTracker.Api;
 
-public static class DIExtensions
+public static class DiExtensions
 {
     public static IServiceCollection AddMiddlewares(this IServiceCollection services) =>
         services.AddTransient<ExceptionMiddleware>()

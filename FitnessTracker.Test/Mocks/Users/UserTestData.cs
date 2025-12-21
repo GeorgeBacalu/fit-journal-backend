@@ -8,9 +8,9 @@ public static class UserTestData
 {
     public static IEnumerable<object[]> InvalidRegisterRequests() =>
     [
-        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.Users.NameRequired }],
+        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.Common.NameRequired }],
 
-        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { ValidationErrors.Users.InvalidNameLength }],
+        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { ValidationErrors.Common.InvalidNameLength }],
 
         [RegisterRequests.NoEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.EmailRequired, ValidationErrors.Users.InvalidEmail }],
 

@@ -15,7 +15,6 @@ public class ExceptionMiddleware : IMiddleware
         }
         catch (Exception exception)
         {
-            var message = exception.InnerException?.Message ?? exception.Message;
             var status = exception switch
             {
                 BadRequestException => StatusCodes.Status400BadRequest,
@@ -29,7 +28,7 @@ public class ExceptionMiddleware : IMiddleware
             context.Response.StatusCode = status;
             await context.Response.WriteAsJsonAsync(new ProblemDetails
             {
-                Detail = message,
+                Detail = exception.InnerException?.Message ?? exception.Message,
                 Status = status
             });
         }

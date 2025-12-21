@@ -40,6 +40,7 @@ public static class GoalMigrationExtensions
             BEGIN
                 THROW 50003, 'Target weight for Weight Loss goals must be less than current user weight', 1;
             END
+
             IF EXISTS (
                 SELECT i.[Id] FROM inserted i
                 WHERE i.[Type] = 'WeightGain' AND i.[TargetWeight] <= (

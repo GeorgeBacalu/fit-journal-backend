@@ -18,10 +18,10 @@ public class AddFoodItemValidator : AbstractValidator<AddFoodItemRequest>
     {
         RuleFor(request => request.Name)
             .NotEmpty()
-            .WithMessage(ValidationErrors.FoodItems.NameRequired)
+            .WithMessage(ValidationErrors.Common.NameRequired)
 
             .MaximumLength(50)
-            .WithMessage(ValidationErrors.FoodItems.InvalidNameLength);
+            .WithMessage(ValidationErrors.Common.InvalidNameLength);
 
         RuleFor(request => request.Calories)
             .NotEmpty()

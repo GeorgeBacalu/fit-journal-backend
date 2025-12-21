@@ -65,7 +65,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Exercises", (string)null);
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.FoodItem", b =>
@@ -75,10 +75,12 @@ namespace FitnessTracker.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Calories")
-                        .HasColumnType("decimal(6, 2)");
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<decimal>("Carbs")
-                        .HasColumnType("decimal(6, 2)");
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -87,7 +89,8 @@ namespace FitnessTracker.Infra.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Fat")
-                        .HasColumnType("decimal(6, 2)");
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -95,7 +98,8 @@ namespace FitnessTracker.Infra.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("Protein")
-                        .HasColumnType("decimal(6, 2)");
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -105,7 +109,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("FoodItems", null, t =>
+                    b.ToTable("FoodItems", t =>
                         {
                             t.HasCheckConstraint("CK_FoodItem_Calories", "[Calories] >= 0");
 
@@ -114,6 +118,52 @@ namespace FitnessTracker.Infra.Migrations
                             t.HasCheckConstraint("CK_FoodItem_Fat", "[Fat] >= 0");
 
                             t.HasCheckConstraint("CK_FoodItem_Protein", "[Protein] >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.FoodLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FoodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Servings")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FoodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FoodLogs", t =>
+                        {
+                            t.HasCheckConstraint("CK_FoodLog_Date", "[Date] <= CURRENT_TIMESTAMP");
+
+                            t.HasCheckConstraint("CK_FoodLog_Quantity", "[Quantity] BETWEEN 100 AND 5000");
+
+                            t.HasCheckConstraint("CK_FoodLog_Servings", "[Servings] > 0");
                         });
                 });
 
@@ -165,7 +215,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Goals", null, t =>
+                    b.ToTable("Goals", t =>
                         {
                             t.HasTrigger("TR_Goals_BeforeUserRegistration");
 
@@ -244,7 +294,7 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Users", null, t =>
+                    b.ToTable("Users", t =>
                         {
                             t.HasCheckConstraint("CK_Users_AgeRestriction", "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
 
@@ -302,7 +352,7 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Workouts", null, t =>
+                    b.ToTable("Workouts", t =>
                         {
                             t.HasTrigger("TR_Goals_BeforeUserRegistration")
                                 .HasDatabaseName("TR_Goals_BeforeUserRegistration1");
@@ -352,12 +402,31 @@ namespace FitnessTracker.Infra.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutExercises", null, t =>
+                    b.ToTable("WorkoutExercises", t =>
                         {
                             t.HasCheckConstraint("CK_WorkoutExercise_Reps", "[Reps] > 0");
 
                             t.HasCheckConstraint("CK_WorkoutExercise_Sets", "[Sets] > 0");
                         });
+                });
+
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.FoodLog", b =>
+                {
+                    b.HasOne("FitnessTracker.Domain.Entities.FoodItem", "Food")
+                        .WithMany()
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitnessTracker.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Food");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FitnessTracker.Domain.Entities.Goal", b =>

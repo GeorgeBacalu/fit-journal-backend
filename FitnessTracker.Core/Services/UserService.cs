@@ -32,7 +32,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
     public async Task EditAsync(EditUserRequest request, Guid id, CancellationToken token)
     {
         if (await unitOfWork.Users.AnyAsync(user => user.Name == request.Name && user.Id != id, token))
-            throw new BadRequestException(ValidationErrors.Users.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         if (await unitOfWork.Users.AnyAsync(user => user.Email == request.Email && user.Id != id, token))
             throw new BadRequestException(ValidationErrors.Users.EmailTaken);

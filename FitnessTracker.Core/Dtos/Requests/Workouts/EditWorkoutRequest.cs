@@ -16,7 +16,7 @@ public class EditWorkoutValidator : AbstractValidator<EditWorkoutRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.Workouts.IdRequired)
 
-            .Must(id => id != default)
+            .Must(id => id != Guid.Empty)
             .WithMessage(ValidationErrors.Workouts.InvalidId);
 
         Include(new AddWorkoutValidator());

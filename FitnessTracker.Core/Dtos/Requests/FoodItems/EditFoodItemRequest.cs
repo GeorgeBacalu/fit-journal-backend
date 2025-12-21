@@ -16,7 +16,7 @@ public class EditFoodItemValidator : AbstractValidator<EditFoodItemRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.FoodItems.IdRequired)
 
-            .Must(id => id != default)
+            .Must(id => id != Guid.Empty)
             .WithMessage(ValidationErrors.FoodItems.InvalidId);
 
         Include(new AddFoodItemValidator());

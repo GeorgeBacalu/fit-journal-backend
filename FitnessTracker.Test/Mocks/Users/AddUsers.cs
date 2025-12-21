@@ -1,5 +1,5 @@
-﻿using FitnessTracker.Domain.Enums;
-using FitnessTracker.Domain.Entities;
+﻿using FitnessTracker.Domain.Entities;
+using FitnessTracker.Domain.Enums;
 
 namespace FitnessTracker.Test.Mocks.Users;
 
@@ -29,21 +29,21 @@ public static class AddUsers
         return user;
     }
 
-    public static User UserInvalidEmail()
-        => With(user => user.Email = "michael.johnson");
+    public static User UserInvalidEmail() =>
+        With(user => user.Email = "michael.johnson");
 
-    public static User UserFutureBirthday()
-        => With(user => user.Birthday = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)));
+    public static User UserFutureBirthday() =>
+        With(user => user.Birthday = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)));
 
-    public static User UserInvalidHeight()
-        => With(user => user.Height = -1);
+    public static User UserInvalidHeight() =>
+        With(user => user.Height = -1);
 
-    public static User UserInvalidWeight()
-        => With(user => user.Weight = -1);
+    public static User UserInvalidWeight() =>
+        With(user => user.Weight = -1);
 
-    public static User UserDuplicatedName(string existingName)
-        => With(user => user.Name = existingName);
+    public static User UserDuplicatedName(string existingName) =>
+        With(user => user.Name = existingName);
 
-    public static User UserDuplicatedEmail(string existingEmail)
-        => With(user => user.Email = existingEmail);
+    public static User UserDuplicatedEmail(string existingEmail) =>
+        With(user => user.Email = existingEmail);
 }

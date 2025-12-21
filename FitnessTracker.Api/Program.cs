@@ -2,7 +2,6 @@ using FitnessTracker.Api;
 using FitnessTracker.Core.Services;
 using FitnessTracker.Infra.Config;
 using FitnessTracker.Infra.Repositories;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,4 +39,4 @@ app.UseSwagger()
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

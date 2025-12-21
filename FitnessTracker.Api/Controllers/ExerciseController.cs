@@ -33,7 +33,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<object>> AddAsync(AddExerciseRequest request, CancellationToken token = default)
     {
         await exerciseService.AddAsync(request, token);
-        
+
         return Created(string.Empty, new { Message = ResponseMessages.Exercises.Added });
     }
 
@@ -44,7 +44,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
         await exerciseService.EditAsync(request, token);
-        
+
         return Ok(new { Message = ResponseMessages.Exercises.Edited });
     }
 
@@ -55,7 +55,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {
         await exerciseService.RemoveRangeAsync(request, token);
-        
+
         return Ok(new { Message = ResponseMessages.Exercises.RemovedRange });
     }
 }

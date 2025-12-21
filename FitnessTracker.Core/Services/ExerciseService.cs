@@ -33,7 +33,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
     public async Task AddAsync(AddExerciseRequest request, CancellationToken token)
     {
         if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name, token))
-            throw new BadRequestException(ValidationErrors.Exercises.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         var exercise = mapper.Map<Exercise>(request);
 
@@ -44,7 +44,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
     public async Task EditAsync(EditExerciseRequest request, CancellationToken token)
     {
         if (await unitOfWork.Exercises.AnyAsync(exercise => exercise.Name == request.Name && exercise.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Exercises.NameTaken);
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
 
         var exercise = await unitOfWork.Exercises.GetByIdAsync(request.Id, token)
             ?? throw new NotFoundException(string.Format(ErrorMessages.Exercises.IdNotFound, request.Id));
@@ -57,7 +57,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : IExercise
     public async Task RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token)
     {
         var ids = await unitOfWork.Exercises.GetExistingIdsAsync(request.Ids, token);
-        
+
         if (ids.Count() != request.Ids.Count())
             throw new NotFoundException(ErrorMessages.Exercises.IdsNotFound);
 

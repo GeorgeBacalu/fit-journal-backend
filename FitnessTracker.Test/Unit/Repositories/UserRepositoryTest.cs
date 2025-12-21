@@ -21,7 +21,7 @@ public class UserRepositoryTest
     }
 
     [Fact]
-    public async Task AddAsync_ShouldAddUserToContext()
+    public async Task AddAsync_ShouldAddUserToContext_WhenUserIsValid()
     {
         // Arrange
         var newUser = AddUsers.NewUser();
@@ -39,7 +39,7 @@ public class UserRepositoryTest
         // Arrange
 
         // Act
-        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.ValidEmail, default);
+        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.Users.ValidEmail, default);
 
         // Assert
         result.Should().Be(UserMocks.Users[0]);
@@ -51,7 +51,7 @@ public class UserRepositoryTest
         // Arrange
 
         // Act
-        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.NonExistingEmail, default);
+        var result = await userRepository.GetAsync(user => user.Email == ValidationSamples.Users.NonExistingEmail, default);
 
         // Assert
         result.Should().BeNull();

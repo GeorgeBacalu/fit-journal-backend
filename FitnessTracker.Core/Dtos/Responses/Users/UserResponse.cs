@@ -12,6 +12,6 @@ public record UserResponse
     public double Height { get; init; }
     public double Weight { get; init; }
     public Gender Gender { get; init; }
-    
+
     public int Age => DateTime.UtcNow.Year - Birthday.Year - (DateTime.UtcNow.DayOfYear < Birthday.DayOfYear ? 1 : 0);
 }

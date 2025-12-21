@@ -18,10 +18,10 @@ public class AddWorkoutValidator : AbstractValidator<AddWorkoutRequest>
     {
         RuleFor(request => request.Name)
             .NotEmpty()
-            .WithMessage(ValidationErrors.Workouts.NameRequired)
+            .WithMessage(ValidationErrors.Common.NameRequired)
 
             .MaximumLength(50)
-            .WithMessage(ValidationErrors.Workouts.InvalidNameLength);
+            .WithMessage(ValidationErrors.Common.InvalidNameLength);
 
         RuleFor(request => request.Description)
             .MaximumLength(250)

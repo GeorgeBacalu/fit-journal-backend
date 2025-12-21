@@ -16,14 +16,18 @@ public class FitnessTrackerContext : DbContext
     public virtual DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public virtual DbSet<Goal> Goals => Set<Goal>();
     public virtual DbSet<FoodItem> FoodItems => Set<FoodItem>();
+    public virtual DbSet<FoodLog> FoodLogs => Set<FoodLog>();
 
-    protected override void ConfigureConventions(ModelConfigurationBuilder builder) =>
-        builder.Properties<Enum>().HaveConversion<string>();
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<decimal>().HavePrecision(6, 2);
+        configurationBuilder.Properties<Enum>().HaveConversion<string>();
+    }
 
-    protected override void OnModelCreating(ModelBuilder builder) =>
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-    public override Task<int> SaveChangesAsync(CancellationToken token)
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
 
@@ -31,6 +35,6 @@ public class FitnessTrackerContext : DbContext
             if (entry.State == EntityState.Modified)
                 entry.Entity.UpdatedAt = now;
 
-        return base.SaveChangesAsync(token);
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

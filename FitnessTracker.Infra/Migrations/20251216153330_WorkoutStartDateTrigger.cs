@@ -9,11 +9,11 @@ namespace FitnessTracker.Infra.Migrations
     public partial class WorkoutStartDateTrigger : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-            => migrationBuilder.AddWorkoutStartDateTrigger();
+        protected override void Up(MigrationBuilder migrationBuilder) =>
+            migrationBuilder.AddWorkoutStartDateTrigger();
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-            => migrationBuilder.DropWorkoutStartDateTrigger();
+        protected override void Down(MigrationBuilder migrationBuilder) =>
+            migrationBuilder.DropWorkoutStartDateTrigger();
     }
 }

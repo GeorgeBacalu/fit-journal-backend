@@ -16,7 +16,7 @@ public class EditGoalValidator : AbstractValidator<EditGoalRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.Goals.IdRequired)
 
-            .Must(id => id != default)
+            .Must(id => id != Guid.Empty)
             .WithMessage(ValidationErrors.Goals.InvalidId);
 
         Include(new AddGoalValidator());

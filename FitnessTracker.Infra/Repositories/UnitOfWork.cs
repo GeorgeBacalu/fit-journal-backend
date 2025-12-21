@@ -10,12 +10,14 @@ public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
     private IExerciseRepository? exercises;
     private IGoalRepository? goals;
     private IFoodItemRepository? foodItems;
+    private IFoodLogRepository? foodLogs;
 
     public IUserRepository Users => users ??= new UserRepository(context);
     public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(context);
     public IExerciseRepository Exercises => exercises ??= new ExerciseRepository(context);
     public IGoalRepository Goals => goals ??= new GoalRepository(context);
     public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(context);
+    public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(context);
 
     public Task<int> CommitAsync(CancellationToken token)
         => context.SaveChangesAsync(token);
