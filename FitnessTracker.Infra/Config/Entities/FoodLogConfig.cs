@@ -16,17 +16,17 @@ internal class FoodLogConfig : IEntityTypeConfiguration<FoodLog>
         builder.ToTable(table =>
         {
             table.HasCheckConstraint(
-                "CK_FoodLog_Date",
+                "CK_FoodLogs_Date",
                 "[Date] <= CURRENT_TIMESTAMP"
             );
 
             table.HasCheckConstraint(
-                "CK_FoodLog_Servings",
+                "CK_FoodLogs_Servings",
                 "[Servings] > 0"
             );
 
             table.HasCheckConstraint(
-                "CK_FoodLog_Quantity",
+                "CK_FoodLogs_Quantity",
                 "[Quantity] BETWEEN 100 AND 5000"
             );
         });

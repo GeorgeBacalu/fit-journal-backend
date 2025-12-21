@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace FitnessTracker.Infra.Extensions.Migrations;
 
-public static class FoodLogMigrationExtensions
+internal static class FoodLogMigrationExtensions
 {
     public static OperationBuilder<SqlOperation> AddFoodLogDateTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"
-        CREATE TRIGGER TR_FoodLog_BeforeUserRegistration ON [FoodLogs]
+        CREATE TRIGGER TR_FoodLogs_BeforeUserRegistration ON [FoodLogs]
         AFTER INSERT, UPDATE
         AS BEGIN
             SET NOCOUNT ON;
@@ -25,6 +25,6 @@ public static class FoodLogMigrationExtensions
 
     public static OperationBuilder<SqlOperation> DropFoodLogDateTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"
-        IF OBJECT_ID('TR_FoodLog_BeforeUserRegistration', 'TR') IS NOT NULL
-        DROP TRIGGER TR_FoodLog_BeforeUserRegistration;");
+        IF OBJECT_ID('TR_FoodLogs_BeforeUserRegistration', 'TR') IS NOT NULL
+        DROP TRIGGER TR_FoodLogs_BeforeUserRegistration;");
 }

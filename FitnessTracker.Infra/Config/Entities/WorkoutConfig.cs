@@ -21,19 +21,22 @@ internal class WorkoutConfig : IEntityTypeConfiguration<Workout>
         builder.Property(workout => workout.Notes)
             .HasMaxLength(250);
 
-        builder.HasQueryFilter(workout => workout.DeletedAt == null);
+        builder.HasQueryFilter(workout =>
+            workout.DeletedAt == null &&
+            workout.User != null &&
+            workout.User.DeletedAt == null);
 
         builder.ToTable(table =>
         {
             table.HasCheckConstraint(
-                "CK_Workout_DurationMinutes",
+                "CK_Workouts_DurationMinutes",
                 "[DurationMinutes] BETWEEN 5 AND 300");
-
+                
             table.HasCheckConstraint(
-                "CK_Workout_StartedAt",
+                "CK_Workouts_StartedAt",
                 "[StartedAt] <= CURRENT_TIMESTAMP");
 
-            table.HasTrigger("TR_Goals_BeforeUserRegistration");
+            table.HasTrigger("TR_Workouts_BeforeUserRegistration");
         });
     }
 }

@@ -12,8 +12,8 @@ public record RegisterRequest
     public string? ConfirmedPassword { get; init; }
     public string? Phone { get; init; }
     public DateOnly? Birthday { get; init; }
-    public double? Height { get; init; }
-    public double? Weight { get; init; }
+    public decimal? Height { get; init; }
+    public decimal? Weight { get; init; }
     public Gender? Gender { get; init; }
 }
 

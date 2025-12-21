@@ -13,8 +13,8 @@ public static class RegisterRequests
         ConfirmedPassword = "MichaelJohnsonPassword0!",
         Phone = "+61-402-555-0836",
         Birthday = new DateOnly(1988, 2, 14),
-        Height = 178.0,
-        Weight = 79.1,
+        Height = 178m,
+        Weight = 79m,
         Gender = Gender.Male
     };
 

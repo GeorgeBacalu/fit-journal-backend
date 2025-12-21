@@ -4,6 +4,7 @@ using FitnessTracker.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessTracker.Infra.Migrations
 {
     [DbContext(typeof(FitnessTrackerContext))]
-    partial class FitnessTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20251221141911_MeasurementLogs")]
+    partial class MeasurementLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,10 +372,6 @@ namespace FitnessTracker.Infra.Migrations
                             t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
 
                             t.HasCheckConstraint("CK_Users_Email", "[Email] LIKE '%_@__%.__%'");
-
-                            t.HasCheckConstraint("CK_Users_Height", "[Height] BETWEEN 120 AND 250");
-
-                            t.HasCheckConstraint("CK_Users_Weight", "[Weight] BETWEEN 25 AND 250");
                         });
                 });
 

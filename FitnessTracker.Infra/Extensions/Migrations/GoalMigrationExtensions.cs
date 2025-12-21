@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace FitnessTracker.Infra.Extensions.Migrations;
 
-public static class GoalMigrationExtensions
+internal static class GoalMigrationExtensions
 {
     public static OperationBuilder<SqlOperation> AddGoalStartDateTrigger(this MigrationBuilder builder) =>
         builder.Sql(@"

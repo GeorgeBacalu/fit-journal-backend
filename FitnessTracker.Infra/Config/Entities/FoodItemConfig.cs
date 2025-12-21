@@ -20,19 +20,19 @@ internal class FoodItemConfig : IEntityTypeConfiguration<FoodItem>
         builder.ToTable(table =>
         {
             table.HasCheckConstraint(
-                "CK_FoodItem_Calories",
+                "CK_FoodItems_Calories",
                 "[Calories] >= 0");
 
             table.HasCheckConstraint(
-                "CK_FoodItem_Protein",
+                "CK_FoodItems_Protein",
                 "[Protein] >= 0");
 
             table.HasCheckConstraint(
-                "CK_FoodItem_Carbs",
+                "CK_FoodItems_Carbs",
                 "[Carbs] >= 0");
 
             table.HasCheckConstraint(
-                "CK_FoodItem_Fat",
+                "CK_FoodItems_Fat",
                 "[Fat] >= 0");
         });
     }

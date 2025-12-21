@@ -9,8 +9,8 @@ public record UserResponse
     public required string Email { get; init; }
     public required string Phone { get; init; }
     public DateOnly Birthday { get; init; }
-    public double Height { get; init; }
-    public double Weight { get; init; }
+    public decimal Height { get; init; }
+    public decimal Weight { get; init; }
     public Gender Gender { get; init; }
 
     public int Age => DateTime.UtcNow.Year - Birthday.Year - (DateTime.UtcNow.DayOfYear < Birthday.DayOfYear ? 1 : 0);
