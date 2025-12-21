@@ -1,4 +1,5 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.FoodLogs;
+using FitnessTracker.Core.Dtos.Responses.FoodLogs;
 using FitnessTracker.Core.Services.Interfaces;
 using FitnessTracker.Infra.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,13 @@ namespace FitnessTracker.Api.Controllers;
 [Route("api/[controller]")]
 public class FoodLogController(IFoodLogService foodLogService) : BaseController
 {
+    /// <summary>Get all user food logs</summary>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>All user food logs</returns>
+    [HttpGet]
+    public async Task<ActionResult<FoodLogsResponse>> GetAllAsync(CancellationToken token = default) =>
+        Ok(await foodLogService.GetAllByUserAsync(UserId, token));
+
     /// <summary>Add new food log</summary>
     /// <param name="request">Added food log details</param>
     /// <param name="token">Cancellation token</param>
