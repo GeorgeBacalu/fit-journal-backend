@@ -50,10 +50,10 @@ public class EditUserValidator : AbstractValidator<EditUserRequest>
             .NotEmpty()
             .WithMessage(ValidationErrors.Users.BirthdayRequired)
 
-            .Must(birthday => birthday <= DateOnly.FromDateTime(DateTime.UtcNow))
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage(ValidationErrors.Users.FutureBirthday)
 
-            .Must(birthday => birthday <= DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13))
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13))
             .WithMessage(ValidationErrors.Users.AgeRestriction);
 
         RuleFor(request => request.Height)

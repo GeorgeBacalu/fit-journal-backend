@@ -8,6 +8,7 @@ public interface IUnitOfWork
     IGoalRepository Goals { get; }
     IFoodItemRepository FoodItems { get; }
     IFoodLogRepository FoodLogs { get; }
+    IMeasurementLogRepository MeasurementLogs { get; }
 
     Task<int> CommitAsync(CancellationToken token);
 }

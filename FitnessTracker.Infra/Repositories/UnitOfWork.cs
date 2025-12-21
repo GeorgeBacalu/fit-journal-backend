@@ -11,6 +11,7 @@ public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
     private IGoalRepository? goals;
     private IFoodItemRepository? foodItems;
     private IFoodLogRepository? foodLogs;
+    private IMeasurementLogRepository? measurementLogs;
 
     public IUserRepository Users => users ??= new UserRepository(context);
     public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(context);
@@ -18,7 +19,8 @@ public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
     public IGoalRepository Goals => goals ??= new GoalRepository(context);
     public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(context);
     public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(context);
+    public IMeasurementLogRepository MeasurementLogs => measurementLogs ??= new MeasurementLogRepository(context);
 
-    public Task<int> CommitAsync(CancellationToken token)
-        => context.SaveChangesAsync(token);
+    public Task<int> CommitAsync(CancellationToken token) =>
+        context.SaveChangesAsync(token);
 }
