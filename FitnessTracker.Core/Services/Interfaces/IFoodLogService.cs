@@ -12,4 +12,6 @@ public interface IFoodLogService
     Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token);
 
     Task EditAsync(EditFoodLogRequest request, Guid userId, CancellationToken token);
+
+    Task RemoveRangeAsync(RemoveFoodLogsRequest request, Guid userId, CancellationToken token);
 }

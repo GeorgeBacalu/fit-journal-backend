@@ -135,5 +135,8 @@ public static class ValidationErrors
 
         public const string IdRequired = "Food log ID is required";
         public const string InvalidId = "Invalid food log ID";
+
+        public const string IdsRequired = "Invalid food log ID";
+        public const string DuplicatedIds = "Duplicated food log IDs provided";
     }
 }

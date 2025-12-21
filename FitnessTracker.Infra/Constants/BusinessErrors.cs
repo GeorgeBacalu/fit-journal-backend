@@ -51,10 +51,12 @@ public static class ErrorMessages
 
     public static class FoodLogs
     {
+        public const string IdNotFound = "Food log with id {0} not found";
+        public const string IdsNotFound = "Invalid food log IDs found";
+
         public const string BeforeRegistration = "Food log date can't precede registration date";
 
-        public const string IdNotFound = "Food log with id {0} not found";
-
         public const string UnauthorizedEdit = "Unauthorized to edit another user's food log";
+        public const string UnauthorizedRemove = "Unauthorized to remove another user's food log";
     }
 }

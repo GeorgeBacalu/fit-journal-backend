@@ -44,7 +44,18 @@ public class FoodLogController(IFoodLogService foodLogService) : BaseController
     public async Task<ActionResult<object>> EditAsync(EditFoodLogRequest request, CancellationToken token = default)
     {
         await foodLogService.EditAsync(request, UserId, token);
-        
+
         return Ok(new { Message = ResponseMessages.FoodLogs.Edited });
+    }
+
+    /// <summary>Remove existing food log</summary>
+    /// <param name="request">Removed food log IDs</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpDelete]
+    public async Task<ActionResult<object>> RemoveRangeAsync(RemoveFoodLogsRequest request, CancellationToken token = default)
+    {
+        await foodLogService.RemoveRangeAsync(request, UserId, token);
+
+        return Ok(new { Message = ResponseMessages.FoodLogs.RemovedRange });
     }
 }

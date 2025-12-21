@@ -71,4 +71,18 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodLogSe
 
         await unitOfWork.CommitAsync(token);
     }
+
+    public async Task RemoveRangeAsync(RemoveFoodLogsRequest request, Guid userId, CancellationToken token)
+    {
+        var ids = await unitOfWork.FoodLogs.GetExistingIdsAsync(request.Ids, token);
+
+        if (ids.Count() != request.Ids.Count())
+            throw new NotFoundException(ErrorMessages.FoodLogs.IdsNotFound);
+
+        if (await unitOfWork.FoodLogs.AnyAsync(foodLog => foodLog.UserId != userId, token))
+            throw new ForbiddenException(ErrorMessages.FoodLogs.UnauthorizedRemove);
+
+        await unitOfWork.FoodLogs.RemoveRangeAsync(ids, request.HardDelete, token);
+        await unitOfWork.CommitAsync(token);
+    }
 }
