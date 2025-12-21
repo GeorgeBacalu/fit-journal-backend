@@ -52,5 +52,7 @@ public static class ErrorMessages
     public static class FoodLogs
     {
         public const string BeforeRegistration = "Food log date can't precede registration date";
+
+        public const string IdNotFound = "Food log with id {0} not found";
     }
 }

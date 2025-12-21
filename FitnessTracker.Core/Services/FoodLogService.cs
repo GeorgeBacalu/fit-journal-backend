@@ -22,6 +22,14 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodLogSe
         };
     }
 
+    public async Task<FoodLogResponse> GetByIdAsync(Guid id, CancellationToken token)
+    {
+        var foodLog = await unitOfWork.FoodLogs.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, id));
+
+        return mapper.Map<FoodLogResponse>(foodLog);
+    }
+
     public async Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token)
     {
         var user = await unitOfWork.Users.GetByIdAsync(userId, token)

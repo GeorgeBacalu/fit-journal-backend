@@ -18,6 +18,14 @@ public class FoodLogController(IFoodLogService foodLogService) : BaseController
     public async Task<ActionResult<FoodLogsResponse>> GetAllAsync(CancellationToken token = default) =>
         Ok(await foodLogService.GetAllByUserAsync(UserId, token));
 
+    /// <summary>Get food log by ID</summary>
+    /// <param name="id">Given food log ID</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Food log with given ID</returns>
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<FoodLogResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
+        Ok(await foodLogService.GetByIdAsync(id, token));
+
     /// <summary>Add new food log</summary>
     /// <param name="request">Added food log details</param>
     /// <param name="token">Cancellation token</param>

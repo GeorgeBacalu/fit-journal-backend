@@ -7,5 +7,7 @@ public interface IFoodLogService
 {
     Task<FoodLogsResponse> GetAllByUserAsync(Guid userId, CancellationToken token);
 
+    Task<FoodLogResponse> GetByIdAsync(Guid id, CancellationToken token);
+
     Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token);
 }
