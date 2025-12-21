@@ -17,7 +17,7 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodItem
 
         return new()
         {
-            FoodItems = mapper.Map<IEnumerable<FoodItemResponse>>(foodItems),
+            FoodItems = mapper.Map<IEnumerable<ShortFoodItemResponse>>(foodItems),
             TotalCount = foodItems.Count()
         };
     }

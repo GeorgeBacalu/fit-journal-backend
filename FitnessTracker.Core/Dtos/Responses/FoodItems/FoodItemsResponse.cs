@@ -2,6 +2,6 @@
 
 public record FoodItemsResponse
 {
-    public IEnumerable<FoodItemResponse> FoodItems { get; init; } = [];
+    public IEnumerable<ShortFoodItemResponse> FoodItems { get; init; } = [];
     public int TotalCount { get; init; }
 }

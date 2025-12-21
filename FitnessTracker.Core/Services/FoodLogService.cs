@@ -17,7 +17,7 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodLogSe
 
         return new()
         {
-            FoodLogs = mapper.Map<IEnumerable<FoodLogResponse>>(foodLogs),
+            FoodLogs = mapper.Map<IEnumerable<ShortFoodLogResponse>>(foodLogs),
             TotalCount = foodLogs.Count()
         };
     }
