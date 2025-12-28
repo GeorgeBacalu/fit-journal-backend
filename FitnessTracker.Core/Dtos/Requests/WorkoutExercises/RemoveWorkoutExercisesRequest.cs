@@ -15,11 +15,11 @@ public class RemoveWorkoutExerciseValidator : AbstractValidator<RemoveWorkoutExe
     public RemoveWorkoutExerciseValidator()
     {
         RuleFor(x => x.WorkoutId)
-            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Workouts.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Workouts.InvalidId.Message);
 
         RuleFor(x => x.ExerciseIds)
-            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdsRequired)
-            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Exercises.DuplicatedIds);
+            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdsRequired.Message)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Exercises.DuplicatedIds.Message);
     }
 }

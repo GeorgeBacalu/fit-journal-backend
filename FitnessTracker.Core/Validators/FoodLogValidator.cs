@@ -20,10 +20,10 @@ public class FoodLogValidator(IUnitOfWork unitOfWork, IMapper mapper)
     private async Task ValidateAsync(AddFoodLogRequest request, Guid userId, CancellationToken token)
     {
         if (await _unitOfWork.FoodItems.GetByIdTrackedAsync(request.FoodId, token) == null)
-            throw new NotFoundException(string.Format(BusinessErrors.FoodLogs.IdNotFound, request.FoodId));
+            throw new NotFoundException(BusinessErrors.FoodLogs.IdNotFound(request.FoodId));
 
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, userId));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(userId));
 
         if (request.Date < user.CreatedAt)
             throw new BadRequestException(ValidationErrors.FoodLogs.BeforeRegistration);

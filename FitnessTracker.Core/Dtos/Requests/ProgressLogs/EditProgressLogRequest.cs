@@ -13,8 +13,8 @@ public class EditProgressLogValidator : AbstractValidator<EditProgressLogRequest
     public EditProgressLogValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.ProgressLogs.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.ProgressLogs.InvalidId.Message);
 
         Include(new AddProgressLogValidator());
     }

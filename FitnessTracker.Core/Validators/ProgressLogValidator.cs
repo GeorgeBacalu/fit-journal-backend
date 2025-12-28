@@ -20,7 +20,7 @@ public class ProgressLogValidator(IUnitOfWork unitOfWork, IMapper mapper)
     private async Task ValidateAsync(AddProgressLogRequest request, Guid userId, Guid? excludeId, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, userId));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(userId));
 
         if (request.Date < DateOnly.FromDateTime(user.CreatedAt))
             throw new BadRequestException(ValidationErrors.ProgressLogs.BeforeRegistration);

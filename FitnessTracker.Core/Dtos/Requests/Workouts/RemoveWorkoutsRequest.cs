@@ -14,7 +14,7 @@ public class RemoveWorkoutsValidator : AbstractValidator<RemoveWorkoutsRequest>
     public RemoveWorkoutsValidator()
     {
         RuleFor(x => x.Ids)
-            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdsRequired)
-            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Workouts.DuplicatedIds);
+            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdsRequired.Message)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Workouts.DuplicatedIds.Message);
     }
 }

@@ -14,7 +14,7 @@ public class RemoveGoalsValidator : AbstractValidator<RemoveGoalsRequest>
     public RemoveGoalsValidator()
     {
         RuleFor(x => x.Ids)
-            .NotEmpty().WithMessage(ValidationErrors.Goals.IdsRequired)
-            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Goals.DuplicatedIds);
+            .NotEmpty().WithMessage(ValidationErrors.Goals.IdsRequired.Message)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Goals.DuplicatedIds.Message);
     }
 }

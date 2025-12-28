@@ -13,8 +13,8 @@ public class EditFoodItemValidator : AbstractValidator<EditFoodItemRequest>
     public EditFoodItemValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodItems.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodItems.InvalidId.Message);
 
         Include(new AddFoodItemValidator());
     }

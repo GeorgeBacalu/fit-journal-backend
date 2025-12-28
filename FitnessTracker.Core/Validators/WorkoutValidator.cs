@@ -20,7 +20,7 @@ public class WorkoutValidator(IUnitOfWork unitOfWork, IMapper mapper)
     private async Task ValidateAsync(AddWorkoutRequest request, Guid userId, Guid? excludeId, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, userId));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(userId));
 
         if (request.StartedAt < user.CreatedAt)
             throw new BadRequestException(ValidationErrors.Workouts.BeforeRegistration);

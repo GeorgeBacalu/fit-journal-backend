@@ -29,7 +29,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper, IWorkoutVali
     public async Task<WorkoutResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
         var workout = await _unitOfWork.Workouts.GetByIdAsync(id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(id));
 
         return _mapper.Map<WorkoutResponse>(workout);
     }
@@ -50,7 +50,7 @@ public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper, IWorkoutVali
         await _workoutValidator.ValidateEditAsync(request, userId, token);
 
         var workout = await _unitOfWork.Workouts.GetByIdTrackedAsync(request.Id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.Id));
 
         _mapper.Map(request, workout);
         await _unitOfWork.CommitAsync(token);

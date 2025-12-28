@@ -28,7 +28,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
     public async Task<UserResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
 
         return _mapper.Map<UserResponse>(user);
     }
@@ -38,7 +38,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
         await _userValidator.ValidateEditAsync(request, id, token);
 
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
 
         _mapper.Map(request, user);
         await _unitOfWork.CommitAsync(token);

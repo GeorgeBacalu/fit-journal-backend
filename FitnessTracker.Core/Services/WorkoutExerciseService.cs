@@ -17,7 +17,7 @@ public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     public async Task<WorkoutExercisesResponse> GetAllAsync(Guid workoutId, Guid userId, CancellationToken token)
     {
         var workout = await _unitOfWork.Workouts.GetByIdAsync(workoutId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, workoutId));
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(workoutId));
 
         if (workout.UserId != userId)
             throw new ForbiddenException(BusinessErrors.WorkoutExercises.UnauthorizedAccess);
@@ -32,7 +32,7 @@ public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     public async Task<WorkoutExerciseResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
         var workoutExercise = await _unitOfWork.WorkoutExercises.GetByIdAsync(id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.WorkoutExercises.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.WorkoutExercises.IdNotFound(id));
 
         return _mapper.Map<WorkoutExerciseResponse>(workoutExercise);
     }
@@ -40,10 +40,10 @@ public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     public async Task AddAsync(AddWorkoutExerciseRequest request, Guid userId, CancellationToken token)
     {
         if (!await _unitOfWork.Workouts.AnyAsync(w => w.UserId == userId && w.Id == request.WorkoutId, token))
-            throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, request.WorkoutId));
+            throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.WorkoutId));
 
         if (!await _unitOfWork.Exercises.AnyAsync(e => e.Id == request.ExerciseId, token))
-            throw new NotFoundException(string.Format(BusinessErrors.Exercises.IdNotFound, request.ExerciseId));
+            throw new NotFoundException(BusinessErrors.Exercises.IdNotFound(request.ExerciseId));
 
         if (await _unitOfWork.WorkoutExercises.AnyAsync(we => we.WorkoutId == request.WorkoutId && we.ExerciseId == request.ExerciseId, token))
             throw new BadRequestException(ValidationErrors.WorkoutExercises.AlreadyAdded);
@@ -57,13 +57,13 @@ public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     public async Task EditAsync(EditWorkoutExerciseRequest request, Guid userId, CancellationToken token)
     {
         if (!await _unitOfWork.Workouts.AnyAsync(w => w.UserId == userId && w.Id == request.WorkoutId, token))
-            throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, request.WorkoutId));
+            throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.WorkoutId));
 
         if (!await _unitOfWork.Exercises.AnyAsync(e => e.Id == request.ExerciseId, token))
-            throw new NotFoundException(string.Format(BusinessErrors.Exercises.IdNotFound, request.ExerciseId));
+            throw new NotFoundException(BusinessErrors.Exercises.IdNotFound(request.ExerciseId));
 
         var workoutExercise = await _unitOfWork.WorkoutExercises.GetByIdTrackedAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.WorkoutExercises.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.WorkoutExercises.IdNotFound(request.Id));
 
         if (workoutExercise.WorkoutId != request.WorkoutId || workoutExercise.ExerciseId != request.ExerciseId)
             throw new BadRequestException(ValidationErrors.WorkoutExercises.ExerciseNotInWorkout);
@@ -75,7 +75,7 @@ public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     public async Task RemoveRangeAsync(RemoveWorkoutExercisesRequest request, Guid userId, CancellationToken token)
     {
         if (!await _unitOfWork.Workouts.AnyAsync(w => w.UserId == userId && w.Id == request.WorkoutId, token))
-            throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, request.WorkoutId));
+            throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.WorkoutId));
 
         if (await _unitOfWork.WorkoutExercises.CountByIdsAsync(request.ExerciseIds, request.WorkoutId, token) != request.ExerciseIds.Count())
             throw new NotFoundException(BusinessErrors.WorkoutExercises.IdsNotFound);

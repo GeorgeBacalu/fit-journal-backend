@@ -29,7 +29,7 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper, IFoodLogVali
     public async Task<FoodLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
         var foodLog = await _unitOfWork.FoodLogs.GetByIdAsync(id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodLogs.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.FoodLogs.IdNotFound(id));
 
         return _mapper.Map<FoodLogResponse>(foodLog);
     }
@@ -50,7 +50,7 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper, IFoodLogVali
         await _foodLogValidator.ValidateEditAsync(request, userId, token);
 
         var foodLog = await _unitOfWork.FoodLogs.GetByIdTrackedAsync(request.Id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodLogs.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.FoodLogs.IdNotFound(request.Id));
 
         _mapper.Map(request, foodLog);
         await _unitOfWork.CommitAsync(token);

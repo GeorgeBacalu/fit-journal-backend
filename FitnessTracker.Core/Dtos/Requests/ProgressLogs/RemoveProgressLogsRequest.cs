@@ -14,7 +14,7 @@ public class RemoveProgressLogsValidator : AbstractValidator<RemoveProgressLogsR
     public RemoveProgressLogsValidator()
     {
         RuleFor(x => x.Ids)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.IdsRequired)
-            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.ProgressLogs.DuplicatedIds);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.IdsRequired.Message)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.ProgressLogs.DuplicatedIds.Message);
     }
 }

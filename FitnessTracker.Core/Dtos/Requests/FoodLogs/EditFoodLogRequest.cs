@@ -13,8 +13,8 @@ public class EditFoodLogValidator : AbstractValidator<EditFoodLogRequest>
     public EditFoodLogValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodLogs.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodLogs.InvalidId.Message);
 
         Include(new AddFoodLogValidator());
     }

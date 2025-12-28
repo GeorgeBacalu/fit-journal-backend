@@ -29,7 +29,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper, IExerciseVa
     public async Task<ExerciseResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var exercise = await _unitOfWork.Exercises.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Exercises.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Exercises.IdNotFound(id));
 
         return _mapper.Map<ExerciseResponse>(exercise);
     }
@@ -49,7 +49,7 @@ public class ExerciseService(IUnitOfWork unitOfWork, IMapper mapper, IExerciseVa
         await _exerciseValidator.ValidateEditAsync(request, token);
 
         var exercise = await _unitOfWork.Exercises.GetByIdTrackedAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Exercises.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.Exercises.IdNotFound(request.Id));
 
         _mapper.Map(request, exercise);
         await _unitOfWork.CommitAsync(token);

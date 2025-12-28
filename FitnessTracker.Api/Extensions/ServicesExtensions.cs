@@ -5,7 +5,6 @@ using FitnessTracker.Core.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
@@ -39,15 +38,13 @@ public static class ServicesExtensions
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new()
             {
                 Type = SecuritySchemeType.Http,
-                In = ParameterLocation.Header,
-                Name = HeaderNames.Authorization,
                 Scheme = JwtBearerDefaults.AuthenticationScheme.ToLower(),
                 BearerFormat = "JWT"
             });
 
             options.AddSecurityRequirement(new()
             {
-                {
+                [
                     new()
                     {
                         Reference = new()
@@ -55,9 +52,8 @@ public static class ServicesExtensions
                             Type = ReferenceType.SecurityScheme,
                             Id = JwtBearerDefaults.AuthenticationScheme
                         }
-                    },
-                    []
-                }
+                    }
+                ] = []
             });
 
             options.IncludeXmlComments($"{AppContext.BaseDirectory}{Assembly.GetExecutingAssembly().GetName().Name}.xml");
@@ -83,16 +79,14 @@ public static class ServicesExtensions
                 {
                     OnTokenValidated = async context =>
                     {
-                        if (!Guid.TryParse(context.Principal?.FindFirstValue("userId"), out var userId))
+                        if (!Guid.TryParse(context.Principal?.FindFirstValue("userId"), out var id))
                         {
                             context.Fail("Invalid token");
                             return;
                         }
 
                         var unitOfWork = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
-                        var user = await unitOfWork.Users.GetByIdAsync(userId, context.HttpContext.RequestAborted);
-
-                        if (user == null)
+                        if (await unitOfWork.Users.GetByIdAsync(id, context.HttpContext.RequestAborted) == null)
                             context.Fail("User is inactive");
                     }
                 };

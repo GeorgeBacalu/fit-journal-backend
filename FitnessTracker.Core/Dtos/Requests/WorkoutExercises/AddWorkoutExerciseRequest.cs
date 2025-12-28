@@ -18,23 +18,23 @@ public class AddWorkoutExerciseValidator : AbstractValidator<AddWorkoutExerciseR
     public AddWorkoutExerciseValidator()
     {
         RuleFor(x => x.WorkoutId)
-            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Workouts.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Workouts.InvalidId.Message);
 
         RuleFor(x => x.ExerciseId)
-            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Exercises.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Exercises.InvalidId.Message);
 
         RuleFor(x => x.Sets)
-            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.SetsRequired)
-            .InclusiveBetween(1, 10).WithMessage(ValidationErrors.WorkoutExercises.SetsOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.SetsRequired.Message)
+            .InclusiveBetween(1, 10).WithMessage(ValidationErrors.WorkoutExercises.SetsOutOfRange.Message);
 
         RuleFor(x => x.Reps)
-            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.RepsRequired)
-            .InclusiveBetween(1, 50).WithMessage(ValidationErrors.WorkoutExercises.RepsOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.RepsRequired.Message)
+            .InclusiveBetween(1, 50).WithMessage(ValidationErrors.WorkoutExercises.RepsOutOfRange.Message);
 
         RuleFor(x => x.WeightUsed)
-            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.WeightUsedRequired)
-            .InclusiveBetween(0, 500).WithMessage(ValidationErrors.WorkoutExercises.WeightUsedOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.WorkoutExercises.WeightUsedRequired.Message)
+            .InclusiveBetween(0, 500).WithMessage(ValidationErrors.WorkoutExercises.WeightUsedOutOfRange.Message);
     }
 }

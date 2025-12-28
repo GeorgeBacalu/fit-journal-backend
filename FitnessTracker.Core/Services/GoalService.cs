@@ -29,7 +29,7 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper, IGoalValidator 
     public async Task<GoalResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
         var goal = await _unitOfWork.Goals.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Goals.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Goals.IdNotFound(id));
 
         return _mapper.Map<GoalResponse>(goal);
     }
@@ -50,7 +50,7 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper, IGoalValidator 
         await _goalValidator.ValidateEditAsync(request, userId, token);
 
         var goal = await _unitOfWork.Goals.GetByIdTrackedAsync(request.Id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Goals.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.Goals.IdNotFound(request.Id));
 
         _mapper.Map(request, goal);
         await _unitOfWork.CommitAsync(token);

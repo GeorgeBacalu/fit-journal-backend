@@ -20,31 +20,31 @@ public class AddFoodItemValidator : AbstractValidator<AddFoodItemRequest>
     public AddFoodItemValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired)
-            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong);
+            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired.Message)
+            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong.Message);
 
         RuleFor(x => x.Calories)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CaloriesRequired)
-            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidCalories);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CaloriesRequired.Message)
+            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidCalories.Message);
 
         RuleFor(x => x.Protein)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.ProteinRequired)
-            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidProtein);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.ProteinRequired.Message)
+            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidProtein.Message);
 
         RuleFor(x => x.Carbs)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CarbsRequired)
-            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidCarbs);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CarbsRequired.Message)
+            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidCarbs.Message);
 
         RuleFor(x => x.Fat)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.FatRequired)
-            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidFat);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.FatRequired.Message)
+            .GreaterThan(0).WithMessage(ValidationErrors.FoodItems.InvalidFat.Message);
 
         RuleFor(x => x.Category)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CategoryRequired)
-            .IsInEnum().WithMessage(ValidationErrors.FoodItems.InvalidCategory);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.CategoryRequired.Message)
+            .IsInEnum().WithMessage(ValidationErrors.FoodItems.InvalidCategory.Message);
 
         RuleFor(x => x.Brand)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.BrandRequired)
-            .IsInEnum().WithMessage(ValidationErrors.FoodItems.InvalidBrand);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.BrandRequired.Message)
+            .IsInEnum().WithMessage(ValidationErrors.FoodItems.InvalidBrand.Message);
     }
 }

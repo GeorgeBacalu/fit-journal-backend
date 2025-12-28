@@ -14,11 +14,11 @@ public class LoginValidator : AbstractValidator<LoginRequest>
     public LoginValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage(ValidationErrors.Users.EmailRequired)
-            .EmailAddress().WithMessage(ValidationErrors.Users.InvalidEmail)
-            .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong);
+            .NotEmpty().WithMessage(ValidationErrors.Users.EmailRequired.Message)
+            .EmailAddress().WithMessage(ValidationErrors.Users.InvalidEmail.Message)
+            .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong.Message);
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage(ValidationErrors.Users.PasswordRequired);
+            .NotEmpty().WithMessage(ValidationErrors.Users.PasswordRequired.Message);
     }
 }

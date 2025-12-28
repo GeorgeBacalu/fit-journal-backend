@@ -37,7 +37,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
     public async Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetAsync(u => u.Email == request.Email, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.EmailNotFound, request.Email));
+            ?? throw new NotFoundException(BusinessErrors.Users.EmailNotFound(request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new BadRequestException(BusinessErrors.Users.InvalidCredentials);
@@ -52,7 +52,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
     public async Task DeleteAsync(Guid id, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
 
         await _unitOfWork.Users.RemoveAsync(user, hardDelete: false, token);
         await _unitOfWork.CommitAsync(token);

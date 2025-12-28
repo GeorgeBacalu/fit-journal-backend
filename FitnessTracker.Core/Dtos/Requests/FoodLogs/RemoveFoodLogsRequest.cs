@@ -14,7 +14,7 @@ public class RemoveFoodLogsValidator : AbstractValidator<RemoveFoodLogsRequest>
     public RemoveFoodLogsValidator()
     {
         RuleFor(x => x.Ids)
-            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.IdsRequired)
-            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.FoodLogs.DuplicatedIds);
+            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.IdsRequired.Message)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.FoodLogs.DuplicatedIds.Message);
     }
 }

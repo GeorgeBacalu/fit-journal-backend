@@ -1,5 +1,5 @@
-﻿namespace FitnessTracker.Core.Exceptions;
+﻿using FitnessTracker.Core.Results;
 
-public class BadRequestException(string message) : Exception(message)
-{
-}
+namespace FitnessTracker.Core.Exceptions;
+
+public class BadRequestException(Error error) : AppException(error);

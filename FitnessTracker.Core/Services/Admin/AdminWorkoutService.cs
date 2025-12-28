@@ -30,7 +30,7 @@ public class AdminWorkoutService(IUnitOfWork unitOfWork, IMapper mapper, IWorkou
         await _workoutValidator.ValidateEditAsync(request, userId, token);
 
         var workout = await _unitOfWork.Workouts.GetByIdTrackedAsync(request.Id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.Workouts.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.Id));
 
         _mapper.Map(request, workout);
         await _unitOfWork.CommitAsync(token);

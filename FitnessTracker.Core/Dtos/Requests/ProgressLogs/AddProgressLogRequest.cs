@@ -18,27 +18,27 @@ public class AddProgressLogValidator : AbstractValidator<AddProgressLogRequest>
     public AddProgressLogValidator()
     {
         RuleFor(x => x.Date)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.DateRequired)
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.ProgressLogs.FutureDate);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.DateRequired.Message)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.ProgressLogs.FutureDate.Message);
 
         RuleFor(x => x.Weight)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.WeightRequired)
-            .InclusiveBetween(25, 250).WithMessage(ValidationErrors.ProgressLogs.WeightOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.WeightRequired.Message)
+            .InclusiveBetween(25, 250).WithMessage(ValidationErrors.ProgressLogs.WeightOutOfRange.Message);
 
         RuleFor(x => x.BodyFat)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.BodyFatRequired)
-            .InclusiveBetween(2, 60).WithMessage(ValidationErrors.ProgressLogs.BodyFatOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.BodyFatRequired.Message)
+            .InclusiveBetween(2, 60).WithMessage(ValidationErrors.ProgressLogs.BodyFatOutOfRange.Message);
 
         RuleFor(x => x.WaistCm)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.WaistCmRequired)
-            .InclusiveBetween(30, 250).WithMessage(ValidationErrors.ProgressLogs.WaistCmOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.WaistCmRequired.Message)
+            .InclusiveBetween(30, 250).WithMessage(ValidationErrors.ProgressLogs.WaistCmOutOfRange.Message);
 
         RuleFor(x => x.ChestCm)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.ChestCmRequired)
-            .InclusiveBetween(30, 200).WithMessage(ValidationErrors.ProgressLogs.ChestCmOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.ChestCmRequired.Message)
+            .InclusiveBetween(30, 200).WithMessage(ValidationErrors.ProgressLogs.ChestCmOutOfRange.Message);
 
         RuleFor(x => x.ArmsCm)
-            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.ArmsCmRequired)
-            .InclusiveBetween(10, 100).WithMessage(ValidationErrors.ProgressLogs.ArmsCmOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.ProgressLogs.ArmsCmRequired.Message)
+            .InclusiveBetween(10, 100).WithMessage(ValidationErrors.ProgressLogs.ArmsCmOutOfRange.Message);
     }
 }

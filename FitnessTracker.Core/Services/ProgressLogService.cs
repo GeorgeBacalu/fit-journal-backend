@@ -29,7 +29,7 @@ public class ProgressLogService(IUnitOfWork unitOfWork, IMapper mapper, IProgres
     public async Task<ProgressLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
         var progressLog = await _unitOfWork.ProgressLogs.GetByIdAsync(id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.ProgressLogs.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.ProgressLogs.IdNotFound(id));
 
         return _mapper.Map<ProgressLogResponse>(progressLog);
     }
@@ -50,7 +50,7 @@ public class ProgressLogService(IUnitOfWork unitOfWork, IMapper mapper, IProgres
         await _progressLogValidator.ValidateEditAsync(request, userId, token);
 
         var progressLog = await _unitOfWork.ProgressLogs.GetByIdTrackedAsync(request.Id, userId, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.ProgressLogs.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.ProgressLogs.IdNotFound(request.Id));
 
         _mapper.Map(request, progressLog);
         await _unitOfWork.CommitAsync(token);

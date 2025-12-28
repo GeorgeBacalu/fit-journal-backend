@@ -1,5 +1,5 @@
-﻿namespace FitnessTracker.Core.Exceptions;
+﻿using FitnessTracker.Core.Results;
 
-public class ForbiddenException(string message) : Exception(message)
-{
-}
+namespace FitnessTracker.Core.Exceptions;
+
+public class ForbiddenException(Error error) : AppException(error);

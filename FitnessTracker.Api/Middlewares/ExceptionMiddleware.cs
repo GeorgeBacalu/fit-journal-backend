@@ -24,10 +24,11 @@ public class ExceptionMiddleware : IMiddleware
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            await context.Response.WriteAsJsonAsync(new ProblemDetails
-            {
-                Detail = exception.InnerException?.Message ?? exception.Message
-            });
+            ProblemDetails problem = exception is AppException app
+                ? new() { Title = app.Error.Code, Detail = app.Error.Message }
+                : new() { Title = "UnhandledError", Detail = exception.InnerException?.Message ?? exception.Message };
+
+            await context.Response.WriteAsJsonAsync(problem);
         }
     }
 }

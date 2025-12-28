@@ -17,19 +17,19 @@ public class AddFoodLogValidator : AbstractValidator<AddFoodLogRequest>
     public AddFoodLogValidator()
     {
         RuleFor(x => x.Date)
-            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.DateRequired)
-            .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(ValidationErrors.FoodLogs.FutureDate);
+            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.DateRequired.Message)
+            .LessThanOrEqualTo(DateTime.UtcNow).WithMessage(ValidationErrors.FoodLogs.FutureDate.Message);
 
         RuleFor(x => x.Servings)
-            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.ServingsRequired)
-            .GreaterThan(0).WithMessage(ValidationErrors.FoodLogs.InvalidServings);
+            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.ServingsRequired.Message)
+            .GreaterThan(0).WithMessage(ValidationErrors.FoodLogs.InvalidServings.Message);
 
         RuleFor(x => x.Quantity)
-            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.QuantityRequired)
-            .InclusiveBetween(100, 5000).WithMessage(ValidationErrors.FoodLogs.QuantityOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.FoodLogs.QuantityRequired.Message)
+            .InclusiveBetween(100, 5000).WithMessage(ValidationErrors.FoodLogs.QuantityOutOfRange.Message);
 
         RuleFor(x => x.FoodId)
-            .NotEmpty().WithMessage(ValidationErrors.FoodItems.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodLogs.IdRequired);
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodLogs.IdRequired.Message);
     }
 }

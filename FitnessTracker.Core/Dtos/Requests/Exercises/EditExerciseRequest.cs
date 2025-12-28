@@ -13,8 +13,8 @@ public class EditExerciseValidator : AbstractValidator<EditExerciseRequest>
     public EditExerciseValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdRequired)
-            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Exercises.InvalidId);
+            .NotEmpty().WithMessage(ValidationErrors.Exercises.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Exercises.InvalidId.Message);
 
         Include(new AddExerciseValidator());
     }

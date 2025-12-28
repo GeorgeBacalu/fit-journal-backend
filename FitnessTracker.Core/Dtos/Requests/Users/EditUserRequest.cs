@@ -20,33 +20,33 @@ public class EditUserValidator : AbstractValidator<EditUserRequest>
     public EditUserValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired)
-            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong);
+            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired.Message)
+            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong.Message);
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage(ValidationErrors.Users.EmailRequired)
-            .EmailAddress().WithMessage(ValidationErrors.Users.InvalidEmail)
-            .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong);
+            .NotEmpty().WithMessage(ValidationErrors.Users.EmailRequired.Message)
+            .EmailAddress().WithMessage(ValidationErrors.Users.InvalidEmail.Message)
+            .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong.Message);
 
         RuleFor(x => x.Phone)
-            .NotEmpty().WithMessage(ValidationErrors.Users.PhoneRequired)
-            .Matches(ValidationRules.Users.PhoneRegex).WithMessage(ValidationErrors.Users.InvalidPhone)
-            .MaximumLength(20).WithMessage(ValidationErrors.Users.PhoneTooLong);
+            .NotEmpty().WithMessage(ValidationErrors.Users.PhoneRequired.Message)
+            .Matches(ValidationRules.Users.PhoneRegex).WithMessage(ValidationErrors.Users.InvalidPhone.Message)
+            .MaximumLength(20).WithMessage(ValidationErrors.Users.PhoneTooLong.Message);
 
         RuleFor(x => x.Birthday)
-            .NotEmpty().WithMessage(ValidationErrors.Users.BirthdayRequired)
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.Users.FutureBirthday)
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13)).WithMessage(ValidationErrors.Users.AgeRestriction);
+            .NotEmpty().WithMessage(ValidationErrors.Users.BirthdayRequired.Message)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.Users.FutureBirthday.Message)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13)).WithMessage(ValidationErrors.Users.AgeRestriction.Message);
 
         RuleFor(x => x.Height)
-            .NotEmpty().WithMessage(ValidationErrors.Users.HeightRequired)
-            .InclusiveBetween(120, 250).WithMessage(ValidationErrors.Users.HeightOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.Users.HeightRequired.Message)
+            .InclusiveBetween(120, 250).WithMessage(ValidationErrors.Users.HeightOutOfRange.Message);
 
         RuleFor(x => x.Weight)
-            .NotEmpty().WithMessage(ValidationErrors.Users.WeightRequired)
-            .InclusiveBetween(25, 250).WithMessage(ValidationErrors.Users.WeightOutOfRange);
+            .NotEmpty().WithMessage(ValidationErrors.Users.WeightRequired.Message)
+            .InclusiveBetween(25, 250).WithMessage(ValidationErrors.Users.WeightOutOfRange.Message);
 
         RuleFor(x => x.Gender)
-            .NotEmpty().WithMessage(ValidationErrors.Users.GenderRequired);
+            .NotEmpty().WithMessage(ValidationErrors.Users.GenderRequired.Message);
     }
 }

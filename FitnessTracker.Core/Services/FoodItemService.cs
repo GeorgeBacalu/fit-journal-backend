@@ -29,7 +29,7 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper, IFoodItemVa
     public async Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token)
     {
         var foodItem = await _unitOfWork.FoodItems.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodItems.IdNotFound, id));
+            ?? throw new NotFoundException(BusinessErrors.FoodItems.IdNotFound(id));
 
         return _mapper.Map<FoodItemResponse>(foodItem);
     }
@@ -49,7 +49,7 @@ public class FoodItemService(IUnitOfWork unitOfWork, IMapper mapper, IFoodItemVa
         await _foodItemValidator.ValidateEditAsync(request, token);
 
         var foodItem = await _unitOfWork.FoodItems.GetByIdTrackedAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodItems.IdNotFound, request.Id));
+            ?? throw new NotFoundException(BusinessErrors.FoodItems.IdNotFound(request.Id));
 
         _mapper.Map(request, foodItem);
         await _unitOfWork.CommitAsync(token);
