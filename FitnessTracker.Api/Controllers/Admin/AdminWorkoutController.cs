@@ -1,15 +1,16 @@
-﻿using FitnessTracker.Core.Dtos.Requests.Workouts;
-using FitnessTracker.Core.Interfaces.Services;
-using FitnessTracker.Domain.Enums;
+﻿using Asp.Versioning;
 using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.Workouts;
+using FitnessTracker.Core.Interfaces.Services.Admin;
+using FitnessTracker.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FitnessTracker.Core.Interfaces.Services.Admin;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
 [Authorize(Roles = nameof(Role.Admin))]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class AdminWorkoutController(IAdminWorkoutService adminWorkoutService) : BaseController
 {
     private readonly IAdminWorkoutService _adminWorkoutService = adminWorkoutService;

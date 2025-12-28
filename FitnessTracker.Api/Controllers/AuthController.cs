@@ -1,4 +1,5 @@
-﻿using FitnessTracker.Core.Constants;
+﻿using Asp.Versioning;
+using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Auth;
 using FitnessTracker.Core.Dtos.Responses.Auth;
 using FitnessTracker.Core.Interfaces.Services;
@@ -7,7 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
-[Route("/api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class AuthController(IAuthService authService) : BaseController
 {
     private readonly IAuthService _authService = authService;

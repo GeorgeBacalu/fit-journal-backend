@@ -1,4 +1,5 @@
-﻿using FitnessTracker.Core.Constants;
+﻿using Asp.Versioning;
+using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.ProgressLogs;
 using FitnessTracker.Core.Dtos.Responses.ProgressLogs;
 using FitnessTracker.Core.Interfaces.Services;
@@ -8,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class ProgressLogController(IProgressLogService progressLogService) : BaseController
 {
     private readonly IProgressLogService _progressLogService = progressLogService;

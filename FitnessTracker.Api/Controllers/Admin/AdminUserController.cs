@@ -1,14 +1,16 @@
-﻿using FitnessTracker.Core.Dtos.Requests.Users;
+﻿using Asp.Versioning;
+using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.Users;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Domain.Enums;
-using FitnessTracker.Core.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
 [Authorize(Roles = nameof(Role.Admin))]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class AdminUserController(IUserService userService) : BaseController
 {
     private readonly IUserService _userService = userService;

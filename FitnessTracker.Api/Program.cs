@@ -1,3 +1,4 @@
+using Asp.Versioning.ApiExplorer;
 using FitnessTracker.Api;
 using FitnessTracker.Api.Extensions;
 using FitnessTracker.Core;
@@ -12,8 +13,8 @@ builder.Services
     .AddCorsPolicy()
     .AddAutoMapper()
     .AddSwagger()
+    .AddApiVersions()
     .AddAuth()
-
     .AddInfra()
     .AddCore()
     .AddValidators()
@@ -25,11 +26,14 @@ builder.Host.AddSerilog();
 var app = builder.Build();
 
 app.UseSwagger()
-   .UseSwaggerUI()
-
+   .UseSwaggerUI(options =>
+   {
+       var descriptions = app.Services.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions;
+       foreach (var groupName in descriptions.Select(description => description.GroupName))
+           options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", $"Fitness Tracker API {groupName.ToUpperInvariant()}");
+   })
    .UseCors("AllowAll")
    .UseHttpsRedirection()
-
    .UseMiddlewares()
    .UseAuthentication()
    .UseAuthorization();

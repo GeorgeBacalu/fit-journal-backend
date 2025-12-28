@@ -9,8 +9,8 @@ public static class AppConfig
 
     public static void Init(IConfiguration config)
     {
-        ConnectionStrings = config.GetSection(nameof(ConnectionStrings)).Get<ConnectionStrings>()!;
-        Auth = config.GetSection(nameof(Auth)).Get<Auth>()!;
+        ConnectionStrings = config.GetRequiredSection(nameof(ConnectionStrings)).Get<ConnectionStrings>()!;
+        Auth = config.GetRequiredSection(nameof(Auth)).Get<Auth>()!;
     }
 }
 

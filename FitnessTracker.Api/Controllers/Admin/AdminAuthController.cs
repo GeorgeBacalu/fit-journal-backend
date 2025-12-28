@@ -1,13 +1,15 @@
-﻿using FitnessTracker.Core.Interfaces.Services.Admin;
-using FitnessTracker.Domain.Enums;
+﻿using Asp.Versioning;
 using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Interfaces.Services.Admin;
+using FitnessTracker.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
 [Authorize(Roles = nameof(Role.Admin))]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class AdminAuthController(IAdminAuthService adminAuthService) : BaseController
 {
     /// <summary>Deactivate user account (admin)</summary>

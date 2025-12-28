@@ -1,4 +1,5 @@
 ﻿using FitnessTracker.Api.Extensions;
+using FitnessTracker.Api.OpenApi;
 using FitnessTracker.Core.Config;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Mappers;
@@ -28,13 +29,6 @@ public static class ServicesExtensions
     public static IServiceCollection AddSwagger(this IServiceCollection services) =>
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new()
-            {
-                Title = "Fitness Tracker API",
-                Description = "Health platform with real-time activity insights for accessible fitness progress",
-                Version = "v1"
-            });
-
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new()
             {
                 Type = SecuritySchemeType.Http,
@@ -44,20 +38,34 @@ public static class ServicesExtensions
 
             options.AddSecurityRequirement(new()
             {
-                [
-                    new()
+                [new()
+                {
+                    Reference = new()
                     {
-                        Reference = new()
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = JwtBearerDefaults.AuthenticationScheme
-                        }
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme
                     }
-                ] = []
+                }] = []
             });
 
             options.IncludeXmlComments($"{AppContext.BaseDirectory}{Assembly.GetExecutingAssembly().GetName().Name}.xml");
         });
+
+    public static IServiceCollection AddApiVersions(this IServiceCollection services)
+    {
+        services.AddApiVersioning(options =>
+        {
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.DefaultApiVersion = new(1, 0);
+            options.ReportApiVersions = true;
+        }).AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+
+        return services.ConfigureOptions<SwaggerConfigOptions>();
+    }
 
     public static IServiceCollection AddAuth(this IServiceCollection services)
     {

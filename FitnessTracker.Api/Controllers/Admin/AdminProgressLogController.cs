@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Asp.Versioning;
+using FitnessTracker.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AdminProgressLogController : ControllerBase
+[Authorize(Roles = nameof(Role.Admin))]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
+public class AdminProgressLogController : BaseController
 {
 }
