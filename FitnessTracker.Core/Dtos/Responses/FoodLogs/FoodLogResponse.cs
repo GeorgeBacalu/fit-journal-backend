@@ -1,8 +1,8 @@
+using FitnessTracker.Core.Dtos.Common.FoodItems;
+
 namespace FitnessTracker.Core.Dtos.Responses.FoodLogs;
 
-public record FoodLogResponse
+public record FoodLogResponse : ShortFoodLogResponse
 {
-    public DateTime Date { get; init; }
-    public int Servings { get; init; }
-    public int Quantity { get; init; }
+    public FoodItemDto? FoodItem { get; init; }
 }

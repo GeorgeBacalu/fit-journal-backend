@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FitnessTracker.Infra.Constants;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
@@ -6,25 +7,22 @@ namespace FitnessTracker.Infra.Extensions.Migrations;
 
 internal static class WorkoutMigrationExtensions
 {
-    public static OperationBuilder<SqlOperation> AddWorkoutStartDateTrigger(this MigrationBuilder builder) =>
-        builder.Sql(@"
-        CREATE TRIGGER TR_Workouts_BeforeUserRegistration ON [Workouts]
+    internal static OperationBuilder<SqlOperation> AddWorkoutBeforeRegistrationTrigger(this MigrationBuilder builder) =>
+        builder.Sql($@"
+        CREATE TRIGGER {DbTriggers.WorkoutsBeforeRegistration} ON [dbo].[Workouts]
         AFTER INSERT, UPDATE
         AS BEGIN
             SET NOCOUNT ON;
             
             IF EXISTS (
-                SELECT i.[Id] FROM inserted i
-                JOIN [Users] u ON u.[Id] = i.[UserId]
-                WHERE i.[StartedAt] < u.[CreatedAt]
-            )
-            BEGIN
-                THROW 50001, 'Workout start date can''t be before user registration date', 1;
-            END
+                SELECT 1 FROM inserted i
+                JOIN [dbo].[Users] u ON u.[Id] = i.[UserId]
+                WHERE i.[DeletedAt] IS NULL AND u.[DeletedAt] IS NULL AND i.[StartedAt] < u.[CreatedAt]
+            ) THROW 50001, {DbErrors.Workouts.TriggerBeforeRegistration}, 1;
         END;");
 
-    public static OperationBuilder<SqlOperation> DropWorkoutStartDateTrigger(this MigrationBuilder builder) =>
-        builder.Sql(@"
-        IF OBJECT_ID('TR_Workouts_BeforeUserRegistration', 'TR') IS NOT NULL
-        DROP TRIGGER TR_Workouts_BeforeUserRegistration;");
+    internal static OperationBuilder<SqlOperation> DropWorkoutBeforeRegistrationTrigger(this MigrationBuilder builder) =>
+        builder.Sql($@"
+        IF OBJECT_ID('{DbTriggers.WorkoutsBeforeRegistration}', 'TR') IS NOT NULL
+        DROP TRIGGER {DbTriggers.WorkoutsBeforeRegistration};");
 }

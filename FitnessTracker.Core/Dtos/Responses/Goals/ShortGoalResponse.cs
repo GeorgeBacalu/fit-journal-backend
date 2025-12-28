@@ -9,4 +9,5 @@ public record ShortGoalResponse
     public GoalType Type { get; init; }
     public DateOnly StartDate { get; init; }
     public DateOnly EndDate { get; init; }
+    public bool IsAchieved { get; init; }
 }

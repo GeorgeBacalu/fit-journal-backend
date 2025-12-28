@@ -1,77 +1,52 @@
-﻿using FitnessTracker.Domain.Enums;
-using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
+using FitnessTracker.Domain.Enums;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Users;
 
-public record EditUserRequest
+public record EditUserRequest : IUserRequest
 {
-    public string? Name { get; init; }
-    public string? Email { get; init; }
-    public string? Phone { get; init; }
-    public DateOnly? Birthday { get; init; }
-    public decimal? Height { get; init; }
-    public decimal? Weight { get; init; }
-    public Gender? Gender { get; init; }
+    public required string Name { get; init; }
+    public required string Email { get; init; }
+    public required string Phone { get; init; }
+    public DateOnly Birthday { get; init; }
+    public decimal Height { get; init; }
+    public decimal Weight { get; init; }
+    public Gender Gender { get; init; }
 }
 
 public class EditUserValidator : AbstractValidator<EditUserRequest>
 {
     public EditUserValidator()
     {
-        RuleFor(request => request.Name)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Common.NameRequired)
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired)
+            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong);
 
-            .MaximumLength(50)
-            .WithMessage(ValidationErrors.Common.InvalidNameLength);
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage(ValidationErrors.Users.EmailRequired)
+            .EmailAddress().WithMessage(ValidationErrors.Users.InvalidEmail)
+            .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong);
 
-        RuleFor(request => request.Email)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.EmailRequired)
+        RuleFor(x => x.Phone)
+            .NotEmpty().WithMessage(ValidationErrors.Users.PhoneRequired)
+            .Matches(ValidationRules.Users.PhoneRegex).WithMessage(ValidationErrors.Users.InvalidPhone)
+            .MaximumLength(20).WithMessage(ValidationErrors.Users.PhoneTooLong);
 
-            .EmailAddress()
-            .WithMessage(ValidationErrors.Users.InvalidEmail)
+        RuleFor(x => x.Birthday)
+            .NotEmpty().WithMessage(ValidationErrors.Users.BirthdayRequired)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.Users.FutureBirthday)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13)).WithMessage(ValidationErrors.Users.AgeRestriction);
 
-            .MaximumLength(50)
-            .WithMessage(ValidationErrors.Users.InvalidEmailLength);
+        RuleFor(x => x.Height)
+            .NotEmpty().WithMessage(ValidationErrors.Users.HeightRequired)
+            .InclusiveBetween(120, 250).WithMessage(ValidationErrors.Users.HeightOutOfRange);
 
-        RuleFor(request => request.Phone)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.PhoneRequired)
+        RuleFor(x => x.Weight)
+            .NotEmpty().WithMessage(ValidationErrors.Users.WeightRequired)
+            .InclusiveBetween(25, 250).WithMessage(ValidationErrors.Users.WeightOutOfRange);
 
-            .Matches(ValidationRules.Users.PhoneRegex)
-            .WithMessage(ValidationErrors.Users.InvalidPhone)
-
-            .MaximumLength(20)
-            .WithMessage(ValidationErrors.Users.InvalidPhoneLength);
-
-        RuleFor(request => request.Birthday)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.BirthdayRequired)
-
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage(ValidationErrors.Users.FutureBirthday)
-
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13))
-            .WithMessage(ValidationErrors.Users.AgeRestriction);
-
-        RuleFor(request => request.Height)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.HeightRequired)
-
-            .InclusiveBetween(120, 250)
-            .WithMessage(ValidationErrors.Users.HeightOutOfRange);
-
-        RuleFor(request => request.Weight)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.WeightRequired)
-
-            .InclusiveBetween(25, 250)
-            .WithMessage(ValidationErrors.Users.WeightOutOfRange);
-
-        RuleFor(request => request.Gender)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Users.GenderRequired);
+        RuleFor(x => x.Gender)
+            .NotEmpty().WithMessage(ValidationErrors.Users.GenderRequired);
     }
 }

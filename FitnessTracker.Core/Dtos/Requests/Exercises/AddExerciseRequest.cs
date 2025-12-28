@@ -1,43 +1,38 @@
-﻿using FitnessTracker.Domain.Enums;
-using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
+using FitnessTracker.Domain.Enums;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Exercises;
 
 public record AddExerciseRequest
 {
-    public string? Name { get; init; }
+    public required string Name { get; init; }
     public string? Description { get; init; }
     public string? Notes { get; init; }
-    public MuscleGroup? MuscleGroup { get; init; }
-    public DifficultyLevel? DifficultyLevel { get; init; }
+    public MuscleGroup MuscleGroup { get; init; }
+    public DifficultyLevel DifficultyLevel { get; init; }
 }
 
 public class AddExerciseValidator : AbstractValidator<AddExerciseRequest>
 {
     public AddExerciseValidator()
     {
-        RuleFor(request => request.Name)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Common.NameRequired)
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage(ValidationErrors.Common.NameRequired)
+            .MaximumLength(50).WithMessage(ValidationErrors.Common.NameTooLong);
 
-            .MaximumLength(50)
-            .WithMessage(ValidationErrors.Common.InvalidNameLength);
+        RuleFor(x => x.Description)
+            .MaximumLength(250).WithMessage(ValidationErrors.Exercises.InvalidDescriptionLength);
 
-        RuleFor(request => request.Description)
-            .MaximumLength(250)
-            .WithMessage(ValidationErrors.Exercises.InvalidDescriptionLength);
+        RuleFor(x => x.Notes)
+            .MaximumLength(250).WithMessage(ValidationErrors.Exercises.InvalidNotesLength);
 
-        RuleFor(request => request.Notes)
-            .MaximumLength(250)
-            .WithMessage(ValidationErrors.Exercises.InvalidNotesLength);
+        RuleFor(x => x.MuscleGroup)
+            .NotEmpty().WithMessage(ValidationErrors.Exercises.MuscleGroupRequired)
+            .IsInEnum().WithMessage(ValidationErrors.Exercises.InvalidMuscleGroup);
 
-        RuleFor(request => request.MuscleGroup)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Exercises.MuscleGroupRequired);
-
-        RuleFor(request => request.DifficultyLevel)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Exercises.DifficultyLevelRequired);
+        RuleFor(x => x.DifficultyLevel)
+            .NotEmpty().WithMessage(ValidationErrors.Exercises.DifficultyLevelRequired)
+            .IsInEnum().WithMessage(ValidationErrors.Exercises.InvalidDifficultyLevel);
     }
 }

@@ -1,7 +1,7 @@
-﻿using FitnessTracker.Core.Dtos.Requests.Exercises;
+﻿using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.Exercises;
 using FitnessTracker.Core.Dtos.Responses.Exercises;
-using FitnessTracker.Core.Services.Interfaces;
-using FitnessTracker.Infra.Constants;
+using FitnessTracker.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,20 +11,22 @@ namespace FitnessTracker.Api.Controllers;
 [Route("/api/[controller]")]
 public class ExerciseController(IExerciseService exerciseService) : BaseController
 {
+    private readonly IExerciseService _exerciseService = exerciseService;
+
     /// <summary>Get all exercises</summary>
     /// <param name="token">Cancellation token</param>
-    /// <returns>List of all exercises</returns>
+    /// <returns>All exercises</returns>
     [HttpGet]
     public async Task<ActionResult<ExercisesResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await exerciseService.GetAllAsync(token));
+        Ok(await _exerciseService.GetAllAsync(token));
 
     /// <summary>Get exercise by ID</summary>
-    /// <param name="id">Exercise ID to fetch</param>
+    /// <param name="id">Given exercise ID</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>Exercise with given ID</returns>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ExerciseResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
-        Ok(await exerciseService.GetByIdAsync(id, token));
+        Ok(await _exerciseService.GetByIdAsync(id, token));
 
     /// <summary>Add new exercise</summary>
     /// <param name="request">Added exercise details</param>
@@ -32,9 +34,9 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddExerciseRequest request, CancellationToken token = default)
     {
-        await exerciseService.AddAsync(request, token);
+        await _exerciseService.AddAsync(request, token);
 
-        return Created(string.Empty, new { Message = ResponseMessages.Exercises.Added });
+        return Created(string.Empty, new { Message = SuccessMessages.Exercises.Added });
     }
 
     /// <summary>Edit existing exercise</summary>
@@ -43,9 +45,9 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
-        await exerciseService.EditAsync(request, token);
+        await _exerciseService.EditAsync(request, token);
 
-        return Ok(new { Message = ResponseMessages.Exercises.Edited });
+        return Ok(new { Message = SuccessMessages.Exercises.Edited });
     }
 
     /// <summary>Delete existing exercises</summary>
@@ -54,8 +56,8 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {
-        await exerciseService.RemoveRangeAsync(request, token);
+        await _exerciseService.RemoveRangeAsync(request, token);
 
-        return Ok(new { Message = ResponseMessages.Exercises.RemovedRange });
+        return Ok(new { Message = SuccessMessages.Exercises.RemovedRange });
     }
 }

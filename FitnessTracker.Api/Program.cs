@@ -1,7 +1,8 @@
 using FitnessTracker.Api;
-using FitnessTracker.Core.Services;
-using FitnessTracker.Infra.Config;
-using FitnessTracker.Infra.Repositories;
+using FitnessTracker.Api.Extensions;
+using FitnessTracker.Core;
+using FitnessTracker.Core.Config;
+using FitnessTracker.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,18 +10,14 @@ AppConfig.Init(builder.Configuration);
 
 builder.Services
     .AddCorsPolicy()
-
-    .AddDbContext()
     .AddAutoMapper()
-    .AddInfra()
-
-    .AddCore()
-    .AddValidators()
-    .AddMiddlewares()
-
     .AddSwagger()
     .AddAuth()
 
+    .AddInfra()
+    .AddCore()
+    .AddValidators()
+    .AddMiddlewares()
     .AddControllers();
 
 builder.Host.AddSerilog();

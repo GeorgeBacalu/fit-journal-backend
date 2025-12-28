@@ -1,10 +1,10 @@
-﻿using FitnessTracker.Domain.Entities;
+﻿using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infra.Context;
-using FitnessTracker.Infra.Repositories.Interfaces;
 
 namespace FitnessTracker.Infra.Repositories;
 
-public class UserRepository(FitnessTrackerContext context)
-    : BaseRepository<User>(context), IUserRepository
+public class UserRepository(AppDbContext db)
+    : BaseRepository<User>(db), IUserRepository
 {
 }

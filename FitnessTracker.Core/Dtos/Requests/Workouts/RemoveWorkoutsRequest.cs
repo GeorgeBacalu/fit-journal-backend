@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Workouts;
@@ -13,11 +13,8 @@ public class RemoveWorkoutsValidator : AbstractValidator<RemoveWorkoutsRequest>
 {
     public RemoveWorkoutsValidator()
     {
-        RuleFor(request => request.Ids)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Workouts.IdsRequired)
-
-            .Must(ids => ids.Distinct().Count() == ids.Count())
-            .WithMessage(ValidationErrors.Workouts.DuplicatedIds);
+        RuleFor(x => x.Ids)
+            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdsRequired)
+            .Must(ids => ids.Distinct().Count() == ids.Count()).WithMessage(ValidationErrors.Workouts.DuplicatedIds);
     }
 }

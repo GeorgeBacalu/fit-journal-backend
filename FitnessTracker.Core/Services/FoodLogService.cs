@@ -1,85 +1,67 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.FoodLogs;
 using FitnessTracker.Core.Dtos.Responses.FoodLogs;
-using FitnessTracker.Core.Services.Interfaces;
+using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infra.Constants;
-using FitnessTracker.Infra.Exceptions;
-using FitnessTracker.Infra.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Core.Services;
 
-public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper) : IFoodLogService
+public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper, IFoodLogValidator foodLogValidator)
+    : BusinessService(unitOfWork, mapper), IFoodLogService
 {
-    public async Task<FoodLogsResponse> GetAllByUserAsync(Guid userId, CancellationToken token)
-    {
-        var foodLogs = await unitOfWork.FoodLogs.GetAllAsync(token);
+    private readonly IFoodLogValidator _foodLogValidator = foodLogValidator;
 
-        return new()
-        {
-            FoodLogs = mapper.Map<IEnumerable<ShortFoodLogResponse>>(foodLogs),
-            TotalCount = foodLogs.Count()
-        };
+    public async Task<FoodLogsResponse> GetAllAsync(Guid userId, CancellationToken token)
+    {
+        var foodLogs = await _unitOfWork.FoodLogs.GetAllQuery()
+            .ProjectTo<ShortFoodLogResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync(token);
+
+        return new() { FoodLogs = foodLogs, TotalCount = foodLogs.Count };
     }
 
-    public async Task<FoodLogResponse> GetByIdAsync(Guid id, CancellationToken token)
+    public async Task<FoodLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
-        var foodLog = await unitOfWork.FoodLogs.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, id));
+        var foodLog = await _unitOfWork.FoodLogs.GetByIdAsync(id, userId, token)
+            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodLogs.IdNotFound, id));
 
-        return mapper.Map<FoodLogResponse>(foodLog);
+        return _mapper.Map<FoodLogResponse>(foodLog);
     }
 
     public async Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token)
     {
-        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.FoodId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.FoodId));
+        await _foodLogValidator.ValidateAddAsync(request, userId, token);
 
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
-
-        if (request.Date < user.CreatedAt)
-            throw new BadRequestException(ErrorMessages.FoodLogs.BeforeRegistration);
-
-        var foodLog = mapper.Map<FoodLog>(request);
+        var foodLog = _mapper.Map<FoodLog>(request);
         foodLog.UserId = userId;
-        foodLog.FoodId = foodItem.Id;
 
-        await unitOfWork.FoodLogs.AddAsync(foodLog, token);
-        await unitOfWork.CommitAsync(token);
+        await _unitOfWork.FoodLogs.AddAsync(foodLog, token);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditFoodLogRequest request, Guid userId, CancellationToken token)
     {
-        var foodItem = await unitOfWork.FoodItems.GetByIdAsync(request.FoodId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.FoodId));
+        await _foodLogValidator.ValidateEditAsync(request, userId, token);
 
-        var foodLog = await unitOfWork.FoodLogs.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.FoodLogs.IdNotFound, request.Id));
+        var foodLog = await _unitOfWork.FoodLogs.GetByIdTrackedAsync(request.Id, userId, token)
+            ?? throw new NotFoundException(string.Format(BusinessErrors.FoodLogs.IdNotFound, request.Id));
 
-        if (foodLog.UserId != userId)
-            throw new ForbiddenException(ErrorMessages.FoodLogs.UnauthorizedEdit);
-
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
-
-        if (request.Date < user.CreatedAt)
-            throw new BadRequestException(ErrorMessages.FoodLogs.BeforeRegistration);
-
-        mapper.Map(request, foodLog);
-        foodLog.FoodId = foodItem.Id;
-
-        await unitOfWork.CommitAsync(token);
+        _mapper.Map(request, foodLog);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task RemoveRangeAsync(RemoveFoodLogsRequest request, Guid userId, CancellationToken token)
     {
-        var count = await unitOfWork.FoodLogs.CountByIdsAsync(request.Ids, userId, token);
+        if (await _unitOfWork.FoodLogs.CountByIdsAsync(request.Ids, userId, token) != request.Ids.Count())
+            throw new NotFoundException(BusinessErrors.FoodLogs.IdsNotFound);
 
-        if (count != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.FoodLogs.IdsNotFound);
-
-        await unitOfWork.MeasurementLogs.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
-        await unitOfWork.CommitAsync(token);
+        await _unitOfWork.FoodLogs.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
+        await _unitOfWork.CommitAsync(token);
     }
 }

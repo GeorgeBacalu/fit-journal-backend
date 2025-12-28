@@ -1,85 +1,67 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Goals;
 using FitnessTracker.Core.Dtos.Responses.Goals;
-using FitnessTracker.Core.Services.Interfaces;
+using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Domain.Enums;
-using FitnessTracker.Infra.Constants;
-using FitnessTracker.Infra.Exceptions;
-using FitnessTracker.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Core.Services;
 
-public class GoalService(IUnitOfWork unitOfWork, IMapper mapper) : IGoalService
+public class GoalService(IUnitOfWork unitOfWork, IMapper mapper, IGoalValidator goalValidator)
+    : BusinessService(unitOfWork, mapper), IGoalService
 {
-    public async Task<GoalsResponse> GetAllByUserAsync(Guid userId, CancellationToken token)
+    private readonly IGoalValidator _goalValidator = goalValidator;
+
+    public async Task<GoalsResponse> GetAllAsync(Guid userId, CancellationToken token)
     {
-        var goals = await unitOfWork.Goals.GetAllQuery(userId)
-            .ProjectTo<ShortGoalResponse>(mapper.ConfigurationProvider)
+        var goals = await _unitOfWork.Goals.GetAllQuery(userId)
+            .ProjectTo<ShortGoalResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
 
-        return new()
-        {
-            Goals = goals,
-            TotalCount = goals.Count
-        };
+        return new() { Goals = goals, TotalCount = goals.Count };
     }
 
-    public async Task<GoalResponse> GetByIdAsync(Guid id, CancellationToken token)
+    public async Task<GoalResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
-        var goal = await unitOfWork.Goals.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Goals.IdNotFound, id));
+        var goal = await _unitOfWork.Goals.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(string.Format(BusinessErrors.Goals.IdNotFound, id));
 
-        return mapper.Map<GoalResponse>(goal);
+        return _mapper.Map<GoalResponse>(goal);
     }
 
     public async Task AddAsync(AddGoalRequest request, Guid userId, CancellationToken token)
     {
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+        await _goalValidator.ValidateAddAsync(request, userId, token);
 
-        if (request.StartDate < DateOnly.FromDateTime(user.CreatedAt))
-            throw new BadRequestException(ErrorMessages.Goals.BeforeRegistration);
-
-        var goal = mapper.Map<Goal>(request);
+        var goal = _mapper.Map<Goal>(request);
         goal.UserId = userId;
 
-        await unitOfWork.Goals.AddAsync(goal, token);
-        await unitOfWork.CommitAsync(token);
+        await _unitOfWork.Goals.AddAsync(goal, token);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditGoalRequest request, Guid userId, CancellationToken token)
     {
-        var goal = await unitOfWork.Goals.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Goals.IdNotFound, request.Id));
+        await _goalValidator.ValidateEditAsync(request, userId, token);
 
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+        var goal = await _unitOfWork.Goals.GetByIdTrackedAsync(request.Id, userId, token)
+            ?? throw new NotFoundException(string.Format(BusinessErrors.Goals.IdNotFound, request.Id));
 
-        if (user.Role != Role.Admin && goal.UserId != userId)
-            throw new ForbiddenException(ErrorMessages.Goals.UnauthorizedEdit);
-
-        var owner = await unitOfWork.Users.GetByIdAsync(goal.UserId, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, goal.UserId));
-
-        if (request.StartDate < DateOnly.FromDateTime(owner.CreatedAt))
-            throw new BadRequestException(ErrorMessages.Goals.BeforeRegistration);
-
-        mapper.Map(request, goal);
-
-        await unitOfWork.CommitAsync(token);
+        _mapper.Map(request, goal);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task RemoveRangeAsync(RemoveGoalsRequest request, Guid userId, CancellationToken token)
     {
-        var count = await unitOfWork.Goals.CountByIdsAsync(request.Ids, userId, token);
+        if (await _unitOfWork.Goals.CountByIdsAsync(request.Ids, userId, token) != request.Ids.Count())
+            throw new NotFoundException(BusinessErrors.Goals.IdsNotFound);
 
-        if (count != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.Goals.IdsNotFound);
-
-        await unitOfWork.Goals.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
-        await unitOfWork.CommitAsync(token);
+        await _unitOfWork.Goals.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
+        await _unitOfWork.CommitAsync(token);
     }
 }

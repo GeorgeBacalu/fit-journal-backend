@@ -1,0 +1,36 @@
+using AutoMapper;
+using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.Workouts;
+using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Core.Interfaces.Validators;
+using FitnessTracker.Core.Services;
+
+namespace FitnessTracker.Core.Validators;
+
+public class WorkoutValidator(IUnitOfWork unitOfWork, IMapper mapper)
+    : BusinessService(unitOfWork, mapper), IWorkoutValidator
+{
+    public async Task ValidateAddAsync(AddWorkoutRequest request, Guid userId, CancellationToken token) =>
+        await ValidateAsync(request, userId, excludeId: null, token);
+
+    public async Task ValidateEditAsync(EditWorkoutRequest request, Guid userId, CancellationToken token) =>
+        await ValidateAsync(request, userId, excludeId: request.Id, token);
+
+    private async Task ValidateAsync(AddWorkoutRequest request, Guid userId, Guid? excludeId, CancellationToken token)
+    {
+        var user = await _unitOfWork.Users.GetByIdTrackedAsync(userId, token)
+            ?? throw new NotFoundException(string.Format(BusinessErrors.Users.IdNotFound, userId));
+
+        if (request.StartedAt < user.CreatedAt)
+            throw new BadRequestException(ValidationErrors.Workouts.BeforeRegistration);
+
+        if (await _unitOfWork.Workouts.AnyAsync(w => w.UserId == userId && w.Name == request.Name && (excludeId == null || w.Id != excludeId), token))
+            throw new BadRequestException(ValidationErrors.Common.NameTaken);
+
+        var start = request.StartedAt.AddTicks(-(request.StartedAt.Ticks % TimeSpan.TicksPerMinute));
+
+        if (await _unitOfWork.Workouts.AnyAsync(w => w.UserId == userId && w.StartedAt >= start && w.StartedAt < start.AddMinutes(1) && (excludeId == null || w.Id != excludeId), token))
+            throw new BadRequestException(ValidationErrors.Workouts.DuplicatedStartedAt);
+    }
+}

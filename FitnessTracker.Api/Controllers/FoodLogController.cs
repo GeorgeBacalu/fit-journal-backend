@@ -1,7 +1,7 @@
-﻿using FitnessTracker.Core.Dtos.Requests.FoodLogs;
+﻿using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.FoodLogs;
 using FitnessTracker.Core.Dtos.Responses.FoodLogs;
-using FitnessTracker.Core.Services.Interfaces;
-using FitnessTracker.Infra.Constants;
+using FitnessTracker.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,51 +11,53 @@ namespace FitnessTracker.Api.Controllers;
 [Route("api/[controller]")]
 public class FoodLogController(IFoodLogService foodLogService) : BaseController
 {
+    private readonly IFoodLogService _foodLogService = foodLogService;
+
     /// <summary>Get all user food logs</summary>
     /// <param name="token">Cancellation token</param>
     /// <returns>All user food logs</returns>
     [HttpGet]
     public async Task<ActionResult<FoodLogsResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await foodLogService.GetAllByUserAsync(UserId, token));
+        Ok(await _foodLogService.GetAllAsync(UserId, token));
 
-    /// <summary>Get food log by ID</summary>
-    /// <param name="id">Given food log ID</param>
+    /// <summary>Get user food log by ID</summary>
+    /// <param name="id">Given user food log ID</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>Food log with given ID</returns>
+    /// <returns>User food log with given ID</returns>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<FoodLogResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
-        Ok(await foodLogService.GetByIdAsync(id, token));
+        Ok(await _foodLogService.GetByIdAsync(id, UserId, token));
 
-    /// <summary>Add new food log</summary>
-    /// <param name="request">Added food log details</param>
+    /// <summary>Add new user food log</summary>
+    /// <param name="request">Added user food log details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddFoodLogRequest request, CancellationToken token = default)
     {
-        await foodLogService.AddAsync(request, UserId, token);
+        await _foodLogService.AddAsync(request, UserId, token);
 
-        return Created(string.Empty, new { Message = ResponseMessages.FoodLogs.Added });
+        return Created(string.Empty, new { Message = SuccessMessages.FoodLogs.Added });
     }
 
-    /// <summary>Edit current user's food log</summary>
-    /// <param name="request">Edited food log details</param>
+    /// <summary>Edit existing user food log</summary>
+    /// <param name="request">Edited user food log details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditFoodLogRequest request, CancellationToken token = default)
     {
-        await foodLogService.EditAsync(request, UserId, token);
+        await _foodLogService.EditAsync(request, UserId, token);
 
-        return Ok(new { Message = ResponseMessages.FoodLogs.Edited });
+        return Ok(new { Message = SuccessMessages.FoodLogs.Edited });
     }
 
-    /// <summary>Remove existing food log</summary>
-    /// <param name="request">Removed food log IDs</param>
+    /// <summary>Remove existing user food logs</summary>
+    /// <param name="request">Removed user food log IDs</param>
     /// <param name="token">Cancellation token</param>
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveFoodLogsRequest request, CancellationToken token = default)
     {
-        await foodLogService.RemoveRangeAsync(request, UserId, token);
+        await _foodLogService.RemoveRangeAsync(request, UserId, token);
 
-        return Ok(new { Message = ResponseMessages.FoodLogs.RemovedRange });
+        return Ok(new { Message = SuccessMessages.FoodLogs.RemovedRange });
     }
 }
