@@ -10,17 +10,18 @@ namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
 [ApiVersion("1.0")]
-[Route("/api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class GoalController(IGoalService goalService) : BaseController
 {
     private readonly IGoalService _goalService = goalService;
 
     /// <summary>Get all user goals</summary>
+    /// <param name="request">User goal pagination info</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>All user goals</returns>
-    [HttpGet]
-    public async Task<ActionResult<GoalsResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await _goalService.GetAllAsync(UserId, token));
+    [HttpPost("all")]
+    public async Task<ActionResult<GoalsResponse>> GetAllAsync(GoalPaginationRequest request, CancellationToken token = default) =>
+        Ok(await _goalService.GetAllAsync(request, UserId, token));
 
     /// <summary>Get user goal by ID</summary>
     /// <param name="id">Given user goal ID</param>

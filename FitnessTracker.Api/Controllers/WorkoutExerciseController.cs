@@ -10,18 +10,18 @@ namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
 [ApiVersion("1.0")]
-[Route("/api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class WorkoutExerciseController(IWorkoutExerciseService workoutExerciseService) : BaseController
 {
     private readonly IWorkoutExerciseService _workoutExerciseService = workoutExerciseService;
 
     /// <summary>Get all workout exercises</summary>
-    /// <param name="workoutId">Given workout ID</param>
+    /// <param name="request">Workout exercise pagination info</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>All workout exercises from workout</returns>
-    [HttpGet("all/{workoutId:guid}")]
-    public async Task<ActionResult<WorkoutsResponse>> GetAllAsync(Guid workoutId, CancellationToken token = default) =>
-        Ok(await _workoutExerciseService.GetAllAsync(workoutId, UserId, token));
+    [HttpPost("all")]
+    public async Task<ActionResult<WorkoutsResponse>> GetAllAsync(WorkoutExercisePaginationRequest request, CancellationToken token = default) =>
+        Ok(await _workoutExerciseService.GetAllAsync(request, UserId, token));
 
     /// <summary>Get workout exercise by ID</summary>
     /// <param name="id">Given workout exercise ID</param>

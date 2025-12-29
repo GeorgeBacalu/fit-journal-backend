@@ -5,7 +5,7 @@ namespace FitnessTracker.Core.Interfaces.Services;
 
 public interface IFoodItemService : IBusinessService
 {
-    Task<FoodItemsResponse> GetAllAsync(CancellationToken token);
+    Task<FoodItemsResponse> GetAllAsync(FoodItemPaginationRequest request, CancellationToken token);
 
     Task<FoodItemResponse> GetByIdAsync(Guid id, CancellationToken token);
 

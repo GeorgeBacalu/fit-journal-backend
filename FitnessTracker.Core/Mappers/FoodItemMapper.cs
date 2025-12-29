@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FitnessTracker.Core.Dtos.Common.FoodItems;
 using FitnessTracker.Core.Dtos.Requests.FoodItems;
 using FitnessTracker.Core.Dtos.Responses.FoodItems;
 using FitnessTracker.Domain.Entities;
@@ -14,5 +15,6 @@ public class FoodItemMapper : Profile
 
         CreateMap<FoodItem, ShortFoodItemResponse>();
         CreateMap<FoodItem, FoodItemResponse>();
+        CreateMap<FoodItem, FoodItemDto>();
     }
 }

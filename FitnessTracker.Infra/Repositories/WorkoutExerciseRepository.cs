@@ -11,7 +11,7 @@ public class WorkoutExerciseRepository(AppDbContext db)
     public async Task<IEnumerable<WorkoutExercise>> GetAllAsync(Guid workoutId, CancellationToken token) =>
         await _db.WorkoutExercises.Where(we => we.WorkoutId == workoutId).ToListAsync(token);
 
-    public IQueryable GetAllQuery(Guid workoutId) =>
+    public IQueryable<WorkoutExercise> GetAllQuery(Guid workoutId) =>
         _db.WorkoutExercises.Where(we => we.WorkoutId == workoutId);
 
     public async Task<WorkoutExercise?> GetByIdAsync(Guid id, Guid userId, CancellationToken token) =>

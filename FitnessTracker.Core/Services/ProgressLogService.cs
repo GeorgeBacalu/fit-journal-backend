@@ -4,6 +4,7 @@ using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.ProgressLogs;
 using FitnessTracker.Core.Dtos.Responses.ProgressLogs;
 using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
@@ -17,13 +18,18 @@ public class ProgressLogService(IUnitOfWork unitOfWork, IMapper mapper, IProgres
 {
     private readonly IProgressLogValidator _progressLogValidator = progressLogValidator;
 
-    public async Task<ProgressLogsResponse> GetAllAsync(Guid userId, CancellationToken token)
+    public async Task<ProgressLogsResponse> GetAllAsync(ProgressLogPaginationRequest request, Guid userId, CancellationToken token)
     {
-        var progressLogs = await _unitOfWork.ProgressLogs.GetAllQuery(userId)
+        var baseQuery = _unitOfWork.ProgressLogs.GetAllQuery(userId).AddFilters(request);
+
+        var progressLogs = await baseQuery
+            .AddSorting(request)
+            .AddPaging(request)
             .ProjectTo<ShortProgressLogResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
+        var totalCount = await baseQuery.CountAsync(token);
 
-        return new() { ProgressLogs = progressLogs, TotalCount = progressLogs.Count };
+        return new() { ProgressLogs = progressLogs, TotalCount = totalCount };
     }
 
     public async Task<ProgressLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
