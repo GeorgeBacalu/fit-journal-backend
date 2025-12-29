@@ -1,61 +1,65 @@
-﻿using FitnessTracker.Core.Dtos.Requests.Goals;
+﻿using Asp.Versioning;
+using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.Goals;
 using FitnessTracker.Core.Dtos.Responses.Goals;
-using FitnessTracker.Core.Services.Interfaces;
-using FitnessTracker.Infra.Constants;
+using FitnessTracker.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[Route("/api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class GoalController(IGoalService goalService) : BaseController
 {
-    /// <summary>Get all current user's goals</summary>
-    /// <param name="token">Cancellation token</param>
-    /// <returns>List of all current user's goals</returns>
-    [HttpGet]
-    public async Task<ActionResult<GoalsResponse>> GetAllByUserAsync(CancellationToken token = default) =>
-        Ok(await goalService.GetAllByUserAsync(UserId, token));
+    private readonly IGoalService _goalService = goalService;
 
-    /// <summary>Get goal by ID</summary>
-    /// <param name="id">Goal ID to fetch</param>
+    /// <summary>Get all user goals</summary>
     /// <param name="token">Cancellation token</param>
-    /// <returns>Goal with given ID</returns>
+    /// <returns>All user goals</returns>
+    [HttpGet]
+    public async Task<ActionResult<GoalsResponse>> GetAllAsync(CancellationToken token = default) =>
+        Ok(await _goalService.GetAllAsync(UserId, token));
+
+    /// <summary>Get user goal by ID</summary>
+    /// <param name="id">Given user goal ID</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>User goal with given ID</returns>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GoalResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
-        Ok(await goalService.GetByIdAsync(id, token));
+        Ok(await _goalService.GetByIdAsync(id, UserId, token));
 
-    /// <summary>Add new goal for current user</summary>
-    /// <param name="request">Added goal details</param>
+    /// <summary>Add new user goal</summary>
+    /// <param name="request">Added user goal details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddGoalRequest request, CancellationToken token = default)
     {
-        await goalService.AddAsync(request, UserId, token);
+        await _goalService.AddAsync(request, UserId, token);
 
-        return Created(string.Empty, new { Message = ResponseMessages.Goals.Added });
+        return Created(string.Empty, new { Message = SuccessMessages.Goals.Added });
     }
 
-    /// <summary>Edit current user's goal</summary>
-    /// <param name="request">Edited goals details</param>
+    /// <summary>Edit existing user goal</summary>
+    /// <param name="request">Edited user goal details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditGoalRequest request, CancellationToken token = default)
     {
-        await goalService.EditAsync(request, UserId, token);
+        await _goalService.EditAsync(request, UserId, token);
 
-        return Ok(new { Message = ResponseMessages.Goals.Edited });
+        return Ok(new { Message = SuccessMessages.Goals.Edited });
     }
 
-    /// <summary>Remove existing workouts</summary>
-    /// <param name="request">Removed workouts IDs</param>
+    /// <summary>Remove existing user goal</summary>
+    /// <param name="request">Removed user goal IDs</param>
     /// <param name="token">Cancellation token</param>
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveGoalsRequest request, CancellationToken token = default)
     {
-        await goalService.RemoveRangeAsync(request, UserId, token);
+        await _goalService.RemoveRangeAsync(request, UserId, token);
 
-        return Ok(new { Message = ResponseMessages.Goals.RemovedRange });
+        return Ok(new { Message = SuccessMessages.Goals.RemovedRange });
     }
 }

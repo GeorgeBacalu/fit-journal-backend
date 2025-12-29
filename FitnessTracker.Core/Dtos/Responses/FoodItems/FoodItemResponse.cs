@@ -1,9 +1,7 @@
 ﻿namespace FitnessTracker.Core.Dtos.Responses.FoodItems;
 
-public class FoodItemResponse
+public record FoodItemResponse : ShortFoodItemResponse
 {
-    public Guid Id { get; init; }
-    public required string Name { get; init; }
     public decimal Calories { get; init; }
     public decimal Protein { get; init; }
     public decimal Carbs { get; init; }

@@ -1,30 +1,34 @@
-﻿using FitnessTracker.Core.Dtos.Requests.FoodItems;
+﻿using Asp.Versioning;
+using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Dtos.Requests.FoodItems;
 using FitnessTracker.Core.Dtos.Responses.FoodItems;
-using FitnessTracker.Core.Services.Interfaces;
-using FitnessTracker.Infra.Constants;
+using FitnessTracker.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[Route("/api/[controller]")]
+[ApiVersion("1.0")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public class FoodItemController(IFoodItemService foodItemService) : BaseController
 {
+    private readonly IFoodItemService _foodItemService = foodItemService;
+
     /// <summary>Get all food items</summary>
     /// <param name="token">Cancellation token</param>
-    /// <returns>List of all food items</returns>
+    /// <returns>All food items</returns>
     [HttpGet]
     public async Task<ActionResult<FoodItemsResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await foodItemService.GetAllAsync(token));
+        Ok(await _foodItemService.GetAllAsync(token));
 
     /// <summary>Get food item by ID</summary>
-    /// <param name="id">Food item ID to fetch</param>
+    /// <param name="id">Given food item ID</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>Food item with given ID</returns>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<FoodItemResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
-        Ok(await foodItemService.GetByIdAsync(id, token));
+        Ok(await _foodItemService.GetByIdAsync(id, token));
 
     /// <summary>Add new food item</summary>
     /// <param name="request">Added food item details</param>
@@ -32,9 +36,9 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddFoodItemRequest request, CancellationToken token = default)
     {
-        await foodItemService.AddAsync(request, token);
+        await _foodItemService.AddAsync(request, token);
 
-        return Created(string.Empty, new { Message = ResponseMessages.FoodItems.Added });
+        return Created(string.Empty, new { Message = SuccessMessages.FoodItems.Added });
     }
 
     /// <summary>Edit existing food item</summary>
@@ -43,9 +47,9 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditFoodItemRequest request, CancellationToken token = default)
     {
-        await foodItemService.EditAsync(request, token);
+        await _foodItemService.EditAsync(request, token);
 
-        return Ok(new { Message = ResponseMessages.FoodItems.Edited });
+        return Ok(new { Message = SuccessMessages.FoodItems.Edited });
     }
 
     /// <summary>Delete existing food items</summary>
@@ -54,8 +58,8 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default)
     {
-        await foodItemService.RemoveRangeAsync(request, token);
+        await _foodItemService.RemoveRangeAsync(request, token);
 
-        return Ok(new { Message = ResponseMessages.FoodItems.RemovedRange });
+        return Ok(new { Message = SuccessMessages.FoodItems.RemovedRange });
     }
 }

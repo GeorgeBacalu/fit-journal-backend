@@ -10,5 +10,5 @@ public class Exercise : BaseEntity
     public MuscleGroup MuscleGroup { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
 
-    public IEnumerable<WorkoutExercise> WorkoutExercises { get; set; } = [];
+    public ICollection<WorkoutExercise> WorkoutExercises { get; } = [];
 }

@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.FoodItems;
@@ -12,12 +12,9 @@ public class EditFoodItemValidator : AbstractValidator<EditFoodItemRequest>
 {
     public EditFoodItemValidator()
     {
-        RuleFor(request => request.Id)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.FoodItems.IdRequired)
-
-            .Must(id => id != Guid.Empty)
-            .WithMessage(ValidationErrors.FoodItems.InvalidId);
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage(ValidationErrors.FoodItems.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.FoodItems.InvalidId.Message);
 
         Include(new AddFoodItemValidator());
     }

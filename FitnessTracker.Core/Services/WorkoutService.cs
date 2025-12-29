@@ -1,124 +1,68 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Core.Dtos.Responses.Workouts;
-using FitnessTracker.Core.Services.Interfaces;
+using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infra.Constants;
-using FitnessTracker.Infra.Exceptions;
-using FitnessTracker.Infra.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Core.Services;
 
-public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper) : IWorkoutService
+public class WorkoutService(IUnitOfWork unitOfWork, IMapper mapper, IWorkoutValidator workoutValidator)
+    : BusinessService(unitOfWork, mapper), IWorkoutService
 {
-    public async Task<WorkoutsResponse> GetAllAsync(CancellationToken token)
-    {
-        var workouts = await unitOfWork.Workouts.GetAllAsync(token);
+    private readonly IWorkoutValidator _workoutValidator = workoutValidator;
 
-        return new()
-        {
-            Workouts = mapper.Map<IEnumerable<ShortWorkoutResponse>>(workouts),
-            TotalCount = workouts.Count()
-        };
+    public async Task<WorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token)
+    {
+        var workouts = await _unitOfWork.Workouts.GetAllQuery(userId)
+            .ProjectTo<ShortWorkoutResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync(token);
+
+        return new() { Workouts = workouts, TotalCount = workouts.Count };
     }
 
-    public async Task<WorkoutResponse> GetByIdAsync(Guid id, CancellationToken token)
+    public async Task<WorkoutResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
     {
-        var workout = await unitOfWork.Workouts.GetByIdAsync(id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Workouts.IdNotFound, id));
+        var workout = await _unitOfWork.Workouts.GetByIdAsync(id, userId, token)
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(id));
 
-        return mapper.Map<WorkoutResponse>(workout);
+        return _mapper.Map<WorkoutResponse>(workout);
     }
 
     public async Task AddAsync(AddWorkoutRequest request, Guid userId, CancellationToken token)
     {
-        var user = await unitOfWork.Users.GetByIdAsync(userId, token)
-        ?? throw new NotFoundException(string.Format(ErrorMessages.Users.IdNotFound, userId));
+        await _workoutValidator.ValidateAddAsync(request, userId, token);
 
-        if (request.StartedAt < user.CreatedAt)
-            throw new BadRequestException(ErrorMessages.Workouts.BeforeRegistration);
-
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.Name == request.Name &&
-            workout.UserId == userId, token))
-            throw new BadRequestException(ValidationErrors.Common.NameTaken);
-
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.StartedAt.Date == request.StartedAt.Date &&
-            workout.StartedAt.Hour == request.StartedAt.Hour &&
-            workout.StartedAt.Minute == request.StartedAt.Minute &&
-            workout.UserId == userId, token))
-            throw new BadRequestException(ValidationErrors.Workouts.DuplicatedStartTime);
-
-        var workout = mapper.Map<Workout>(request);
+        var workout = _mapper.Map<Workout>(request);
         workout.UserId = userId;
 
-        await unitOfWork.Workouts.AddAsync(workout, token);
-        await unitOfWork.CommitAsync(token);
+        await _unitOfWork.Workouts.AddAsync(workout, token);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task EditAsync(EditWorkoutRequest request, Guid userId, CancellationToken token)
     {
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.Name == request.Name &&
-            workout.UserId == userId &&
-            workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Common.NameTaken);
+        await _workoutValidator.ValidateEditAsync(request, userId, token);
 
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.StartedAt.Date == request.StartedAt.Date &&
-            workout.StartedAt.Hour == request.StartedAt.Hour &&
-            workout.StartedAt.Minute == request.StartedAt.Minute &&
-            workout.UserId == userId &&
-            workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Workouts.DuplicatedStartTime);
+        var workout = await _unitOfWork.Workouts.GetByIdTrackedAsync(request.Id, userId, token)
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.Id));
 
-        var workout = await unitOfWork.Workouts.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Workouts.IdNotFound, request.Id));
-
-        if (workout.UserId != userId)
-            throw new ForbiddenException(ErrorMessages.Workouts.UnauthorizedEdit);
-
-        mapper.Map(request, workout);
-
-        await unitOfWork.CommitAsync(token);
-    }
-
-    public async Task AdminEditAsync(EditWorkoutRequest request, CancellationToken token)
-    {
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.Name == request.Name &&
-            workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Common.NameTaken);
-
-        if (await unitOfWork.Workouts.AnyAsync(workout =>
-            workout.StartedAt.Date == request.StartedAt.Date &&
-            workout.StartedAt.Hour == request.StartedAt.Hour &&
-            workout.StartedAt.Minute == request.StartedAt.Minute &&
-            workout.Id != request.Id, token))
-            throw new BadRequestException(ValidationErrors.Workouts.DuplicatedStartTime);
-
-        var workout = await unitOfWork.Workouts.GetByIdAsync(request.Id, token)
-            ?? throw new NotFoundException(string.Format(ErrorMessages.Workouts.IdNotFound, request.Id));
-
-        mapper.Map(request, workout);
-
-        await unitOfWork.CommitAsync(token);
+        _mapper.Map(request, workout);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task RemoveRangeAsync(RemoveWorkoutsRequest request, Guid userId, CancellationToken token)
     {
-        var count = await unitOfWork.Workouts.CountByIdsAsync(request.Ids, userId, token);
+        if (await _unitOfWork.Workouts.CountByIdsAsync(request.Ids, userId, token) != request.Ids.Count())
+            throw new NotFoundException(BusinessErrors.Workouts.IdsNotFound);
 
-        if (count != request.Ids.Count())
-            throw new NotFoundException(ErrorMessages.Workouts.IdsNotFound);
-
-        await unitOfWork.Workouts.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
-        await unitOfWork.CommitAsync(token);
-    }
-
-    public Task AdminRemoveRangeAsync(RemoveWorkoutsRequest request, CancellationToken token)
-    {
-        throw new NotImplementedException();
+        await _unitOfWork.WorkoutExercises.RemoveRangeWorkoutsAsync(request.Ids, request.HardDelete, token);
+        await _unitOfWork.Workouts.RemoveRangeAsync(request.Ids, userId, request.HardDelete, token);
+        await _unitOfWork.CommitAsync(token);
     }
 }

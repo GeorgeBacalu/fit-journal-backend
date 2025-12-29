@@ -2,6 +2,7 @@
 
 public enum GoalType
 {
+    Unknown,
     EnduranceGain,
     MuscleGain,
     StrengthGain,

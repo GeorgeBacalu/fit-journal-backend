@@ -11,5 +11,5 @@ public class Workout : BaseEntity, IUserOwnedEntity
     public Guid UserId { get; set; }
     public User? User { get; set; }
 
-    public IEnumerable<WorkoutExercise> WorkoutExercises { get; set; } = [];
+    public ICollection<WorkoutExercise> WorkoutExercises { get; } = [];
 }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FitnessTracker.Test.Integration": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Test"
+      }
+    }
+  }
+}

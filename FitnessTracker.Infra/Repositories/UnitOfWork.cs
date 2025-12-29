@@ -1,26 +1,28 @@
-﻿using FitnessTracker.Infra.Context;
-using FitnessTracker.Infra.Repositories.Interfaces;
+﻿using FitnessTracker.Core.Interfaces.Repositories;
+using FitnessTracker.Infra.Context;
 
 namespace FitnessTracker.Infra.Repositories;
 
-public class UnitOfWork(FitnessTrackerContext context) : IUnitOfWork
+public class UnitOfWork(AppDbContext db) : IUnitOfWork
 {
     private IUserRepository? users;
     private IWorkoutRepository? workouts;
     private IExerciseRepository? exercises;
+    private IWorkoutExerciseRepository? workoutExercises;
     private IGoalRepository? goals;
     private IFoodItemRepository? foodItems;
     private IFoodLogRepository? foodLogs;
-    private IMeasurementLogRepository? measurementLogs;
+    private IProgressLogRepository? progressLogs;
 
-    public IUserRepository Users => users ??= new UserRepository(context);
-    public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(context);
-    public IExerciseRepository Exercises => exercises ??= new ExerciseRepository(context);
-    public IGoalRepository Goals => goals ??= new GoalRepository(context);
-    public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(context);
-    public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(context);
-    public IMeasurementLogRepository MeasurementLogs => measurementLogs ??= new MeasurementLogRepository(context);
+    public IUserRepository Users => users ??= new UserRepository(db);
+    public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(db);
+    public IExerciseRepository Exercises => exercises ??= new ExerciseRepository(db);
+    public IWorkoutExerciseRepository WorkoutExercises => workoutExercises ??= new WorkoutExerciseRepository(db);
+    public IGoalRepository Goals => goals ??= new GoalRepository(db);
+    public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(db);
+    public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(db);
+    public IProgressLogRepository ProgressLogs => progressLogs ??= new ProgressLogRepository(db);
 
-    public Task<int> CommitAsync(CancellationToken token) =>
-        context.SaveChangesAsync(token);
+    public async Task<int> CommitAsync(CancellationToken token) =>
+        await db.SaveChangesAsync(token);
 }

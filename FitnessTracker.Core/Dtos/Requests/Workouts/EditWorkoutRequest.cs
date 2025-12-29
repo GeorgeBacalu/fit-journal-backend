@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Workouts;
@@ -12,12 +12,9 @@ public class EditWorkoutValidator : AbstractValidator<EditWorkoutRequest>
 {
     public EditWorkoutValidator()
     {
-        RuleFor(request => request.Id)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Workouts.IdRequired)
-
-            .Must(id => id != Guid.Empty)
-            .WithMessage(ValidationErrors.Workouts.InvalidId);
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage(ValidationErrors.Workouts.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Workouts.InvalidId.Message);
 
         Include(new AddWorkoutValidator());
     }

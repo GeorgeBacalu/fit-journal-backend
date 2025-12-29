@@ -14,8 +14,8 @@ public class User : BaseEntity
     public Gender Gender { get; set; }
     public Role Role { get; set; }
 
-    public IEnumerable<Workout> Workouts { get; } = [];
-    public IEnumerable<Goal> Goals { get; } = [];
-    public IEnumerable<FoodLog> FoodLogs { get; } = [];
-    public IEnumerable<MeasurementLog> MeasurementLogs { get; } = [];
+    public ICollection<Workout> Workouts { get; } = [];
+    public ICollection<Goal> Goals { get; } = [];
+    public ICollection<FoodLog> FoodLogs { get; } = [];
+    public ICollection<ProgressLog> ProgressLogs { get; } = [];
 }

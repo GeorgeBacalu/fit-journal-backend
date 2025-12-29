@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Infra.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Goals;
@@ -12,12 +12,9 @@ public class EditGoalValidator : AbstractValidator<EditGoalRequest>
 {
     public EditGoalValidator()
     {
-        RuleFor(request => request.Id)
-            .NotEmpty()
-            .WithMessage(ValidationErrors.Goals.IdRequired)
-
-            .Must(id => id != Guid.Empty)
-            .WithMessage(ValidationErrors.Goals.InvalidId);
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage(ValidationErrors.Goals.IdRequired.Message)
+            .Must(id => id != Guid.Empty).WithMessage(ValidationErrors.Goals.InvalidId.Message);
 
         Include(new AddGoalValidator());
     }

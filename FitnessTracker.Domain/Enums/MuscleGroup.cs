@@ -2,6 +2,7 @@
 
 public enum MuscleGroup
 {
+    Unknown,
     Abdomen,
     Arms,
     Back,

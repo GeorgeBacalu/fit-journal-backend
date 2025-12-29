@@ -1,3 +1,4 @@
+using FitnessTracker.Infra.Constants;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
@@ -6,25 +7,22 @@ namespace FitnessTracker.Infra.Extensions.Migrations;
 
 internal static class FoodLogMigrationExtensions
 {
-    public static OperationBuilder<SqlOperation> AddFoodLogDateTrigger(this MigrationBuilder builder) =>
-        builder.Sql(@"
-        CREATE TRIGGER TR_FoodLogs_BeforeUserRegistration ON [FoodLogs]
+    internal static OperationBuilder<SqlOperation> AddFoodLogBeforeRegistrationTrigger(this MigrationBuilder builder) =>
+        builder.Sql($@"
+        CREATE TRIGGER {DbTriggers.FoodLogsBeforeRegistration} ON [dbo].[FoodLogs]
         AFTER INSERT, UPDATE
         AS BEGIN
             SET NOCOUNT ON;
             
             IF EXISTS (
                 SELECT i.[Id] FROM inserted i
-                JOIN [Users] u ON u.[Id] = i.[UserId]
-                WHERE i.[Date] < u.[CreatedAt]
-            )
-            BEGIN
-                THROW 50006, 'Food log date can''t be before user registration date', 1;
-            END
+                JOIN [dbo].[Users] u ON u.[Id] = i.[UserId]
+                WHERE i.[DeletedAt] IS NULL AND u.[DeletedAt] IS NULL AND i.[Date] < u.[CreatedAt]
+            ) THROW 50005, {DbErrors.FoodLogs.TriggerBeforeRegistration}, 1;
         END;");
 
-    public static OperationBuilder<SqlOperation> DropFoodLogDateTrigger(this MigrationBuilder builder) =>
-        builder.Sql(@"
-        IF OBJECT_ID('TR_FoodLogs_BeforeUserRegistration', 'TR') IS NOT NULL
-        DROP TRIGGER TR_FoodLogs_BeforeUserRegistration;");
+    internal static OperationBuilder<SqlOperation> DropFoodLogBeforeRegistrationTrigger(this MigrationBuilder builder) =>
+        builder.Sql($@"
+        IF OBJECT_ID('{DbTriggers.FoodLogsBeforeRegistration}', 'TR') IS NOT NULL
+        DROP TRIGGER {DbTriggers.FoodLogsBeforeRegistration};");
 }
