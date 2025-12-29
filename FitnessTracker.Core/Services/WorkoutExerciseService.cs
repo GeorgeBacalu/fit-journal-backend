@@ -8,25 +8,31 @@ using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using FitnessTracker.Core.Extensions.Pagination;
 
 namespace FitnessTracker.Core.Services;
 
 public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     : BusinessService(unitOfWork, mapper), IWorkoutExerciseService
 {
-    public async Task<WorkoutExercisesResponse> GetAllAsync(Guid workoutId, Guid userId, CancellationToken token)
+    public async Task<WorkoutExercisesResponse> GetAllAsync(WorkoutExercisePaginationRequest request, Guid userId, CancellationToken token)
     {
-        var workout = await _unitOfWork.Workouts.GetByIdAsync(workoutId, token)
-            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(workoutId));
+        var workout = await _unitOfWork.Workouts.GetByIdAsync(request.WorkoutId, token)
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.WorkoutId));
 
         if (workout.UserId != userId)
             throw new ForbiddenException(BusinessErrors.WorkoutExercises.UnauthorizedAccess);
 
-        var workoutExercises = await _unitOfWork.WorkoutExercises.GetAllQuery(workoutId)
+        var baseQuery = _unitOfWork.WorkoutExercises.GetAllQuery(request.WorkoutId).AddFilters(request);
+
+        var workoutExercises = await baseQuery
+            .AddSorting(request)
+            .AddPaging(request)
             .ProjectTo<ShortWorkoutExerciseResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
+        var totalCount = await baseQuery.CountAsync(token);
 
-        return new() { WorkoutExercises = workoutExercises, TotalCount = workoutExercises.Count };
+        return new() { WorkoutExercises = workoutExercises, TotalCount = totalCount };
     }
 
     public async Task<WorkoutExerciseResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)

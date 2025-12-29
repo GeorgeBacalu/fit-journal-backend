@@ -6,7 +6,7 @@ public interface IWorkoutExerciseRepository : IBaseRepository<WorkoutExercise>
 {
     Task<IEnumerable<WorkoutExercise>> GetAllAsync(Guid workoutId, CancellationToken token);
 
-    IQueryable GetAllQuery(Guid workoutId);
+    IQueryable<WorkoutExercise> GetAllQuery(Guid workoutId);
 
     Task<WorkoutExercise?> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
 

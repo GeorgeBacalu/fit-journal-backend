@@ -1,4 +1,5 @@
 using AutoMapper;
+using FitnessTracker.Core.Dtos.Common.WorkoutExercises;
 using FitnessTracker.Core.Dtos.Requests.WorkoutExercises;
 using FitnessTracker.Core.Dtos.Responses.WorkoutExercises;
 using FitnessTracker.Domain.Entities;
@@ -16,5 +17,6 @@ public class WorkoutExerciseMapper : Profile
 
         CreateMap<WorkoutExercise, ShortWorkoutExerciseResponse>();
         CreateMap<WorkoutExercise, WorkoutExerciseResponse>();
+        CreateMap<WorkoutExercise, WorkoutExerciseDto>();
     }
 }

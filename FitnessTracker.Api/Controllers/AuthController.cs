@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessTracker.Api.Controllers;
 
 [ApiVersion("1.0")]
-[Route("/api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class AuthController(IAuthService authService) : BaseController
 {
     private readonly IAuthService _authService = authService;

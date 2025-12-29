@@ -5,7 +5,7 @@ namespace FitnessTracker.Core.Interfaces.Services;
 
 public interface IWorkoutService : IBusinessService
 {
-    Task<WorkoutsResponse> GetAllAsync(Guid userId, CancellationToken token);
+    Task<WorkoutsResponse> GetAllAsync(WorkoutPaginationRequest request, Guid userId, CancellationToken token);
 
     Task<WorkoutResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
 

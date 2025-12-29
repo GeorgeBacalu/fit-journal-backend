@@ -10,17 +10,18 @@ namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
 [ApiVersion("1.0")]
-[Route("/api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class ProgressLogController(IProgressLogService progressLogService) : BaseController
 {
     private readonly IProgressLogService _progressLogService = progressLogService;
 
     /// <summary>Get all user progress logs</summary>
+    /// <param name="request">User progress log pagination info</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>All user progress logs</returns>
-    [HttpGet]
-    public async Task<ActionResult<ProgressLogsResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await _progressLogService.GetAllAsync(UserId, token));
+    [HttpPost("all")]
+    public async Task<ActionResult<ProgressLogsResponse>> GetAllAsync(ProgressLogPaginationRequest request, CancellationToken token = default) =>
+        Ok(await _progressLogService.GetAllAsync(request, UserId, token));
 
     /// <summary>Get user progress log by ID</summary>
     /// <param name="id">Given user progress log ID</param>

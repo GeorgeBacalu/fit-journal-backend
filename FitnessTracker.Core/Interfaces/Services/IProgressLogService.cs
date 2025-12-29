@@ -5,7 +5,7 @@ namespace FitnessTracker.Core.Interfaces.Services;
 
 public interface IProgressLogService : IBusinessService
 {
-    Task<ProgressLogsResponse> GetAllAsync(Guid userId, CancellationToken token);
+    Task<ProgressLogsResponse> GetAllAsync(ProgressLogPaginationRequest request, Guid userId, CancellationToken token);
 
     Task<ProgressLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
 

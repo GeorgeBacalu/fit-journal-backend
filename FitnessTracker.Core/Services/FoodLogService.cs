@@ -4,6 +4,7 @@ using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.FoodLogs;
 using FitnessTracker.Core.Dtos.Responses.FoodLogs;
 using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
@@ -17,13 +18,18 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper, IFoodLogVali
 {
     private readonly IFoodLogValidator _foodLogValidator = foodLogValidator;
 
-    public async Task<FoodLogsResponse> GetAllAsync(Guid userId, CancellationToken token)
+    public async Task<FoodLogsResponse> GetAllAsync(FoodLogPaginationRequest request, Guid userId, CancellationToken token)
     {
-        var foodLogs = await _unitOfWork.FoodLogs.GetAllQuery()
+        var baseQuery = _unitOfWork.FoodLogs.GetAllQuery(userId).AddFilters(request);
+
+        var foodLogs = await baseQuery
+            .AddSorting(request)
+            .AddPaging(request)
             .ProjectTo<ShortFoodLogResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
+        var totalCount = await baseQuery.CountAsync(token);
 
-        return new() { FoodLogs = foodLogs, TotalCount = foodLogs.Count };
+        return new() { FoodLogs = foodLogs, TotalCount = totalCount };
     }
 
     public async Task<FoodLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)

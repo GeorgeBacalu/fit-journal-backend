@@ -4,6 +4,7 @@ using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Goals;
 using FitnessTracker.Core.Dtos.Responses.Goals;
 using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
@@ -17,13 +18,18 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper, IGoalValidator 
 {
     private readonly IGoalValidator _goalValidator = goalValidator;
 
-    public async Task<GoalsResponse> GetAllAsync(Guid userId, CancellationToken token)
+    public async Task<GoalsResponse> GetAllAsync(GoalPaginationRequest request, Guid userId, CancellationToken token)
     {
-        var goals = await _unitOfWork.Goals.GetAllQuery(userId)
+        var baseQuery = _unitOfWork.Goals.GetAllQuery(userId).AddFilters(request);
+
+        var goals = await baseQuery
+            .AddSorting(request)
+            .AddPaging(request)
             .ProjectTo<ShortGoalResponse>(_mapper.ConfigurationProvider)
             .ToListAsync(token);
+        var totalCount = await baseQuery.CountAsync(token);
 
-        return new() { Goals = goals, TotalCount = goals.Count };
+        return new() { Goals = goals, TotalCount = totalCount };
     }
 
     public async Task<GoalResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)

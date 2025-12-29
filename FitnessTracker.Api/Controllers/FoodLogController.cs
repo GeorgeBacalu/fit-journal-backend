@@ -10,17 +10,18 @@ namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
 [ApiVersion("1.0")]
-[Route("/api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class FoodLogController(IFoodLogService foodLogService) : BaseController
 {
     private readonly IFoodLogService _foodLogService = foodLogService;
 
     /// <summary>Get all user food logs</summary>
+    /// <param name="request">User food log pagination info</param>
     /// <param name="token">Cancellation token</param>
     /// <returns>All user food logs</returns>
-    [HttpGet]
-    public async Task<ActionResult<FoodLogsResponse>> GetAllAsync(CancellationToken token = default) =>
-        Ok(await _foodLogService.GetAllAsync(UserId, token));
+    [HttpPost("all")]
+    public async Task<ActionResult<FoodLogsResponse>> GetAllAsync(FoodLogPaginationRequest request, CancellationToken token = default) =>
+        Ok(await _foodLogService.GetAllAsync(request, UserId, token));
 
     /// <summary>Get user food log by ID</summary>
     /// <param name="id">Given user food log ID</param>
