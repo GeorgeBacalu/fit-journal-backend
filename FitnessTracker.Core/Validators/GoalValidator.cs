@@ -5,7 +5,7 @@ using FitnessTracker.Core.Exceptions;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Core.Services;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Goals;
 
 namespace FitnessTracker.Core.Validators;
 

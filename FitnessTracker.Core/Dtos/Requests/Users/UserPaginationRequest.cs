@@ -1,5 +1,5 @@
 using FitnessTracker.Core.Dtos.Requests.Pagination;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Users;
 
 namespace FitnessTracker.Core.Dtos.Requests.Users;
 

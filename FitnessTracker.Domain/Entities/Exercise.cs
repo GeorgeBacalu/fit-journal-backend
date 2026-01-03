@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Domain.Enums;
+﻿using FitnessTracker.Domain.Enums.Exercises;
 
 namespace FitnessTracker.Domain.Entities;
 

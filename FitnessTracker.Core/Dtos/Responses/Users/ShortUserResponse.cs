@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Domain.Enums;
+﻿using FitnessTracker.Domain.Enums.Users;
 
 namespace FitnessTracker.Core.Dtos.Responses.Users;
 

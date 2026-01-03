@@ -1,15 +1,14 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.FoodItems;
 using FitnessTracker.Core.Dtos.Responses.FoodItems;
 using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class FoodItemController(IFoodItemService foodItemService) : BaseController
 {
@@ -34,6 +33,7 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     /// <summary>Add new food item</summary>
     /// <param name="request">Added food item details</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddFoodItemRequest request, CancellationToken token = default)
     {
@@ -45,6 +45,7 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     /// <summary>Edit existing food item</summary>
     /// <param name="request">Edited food item details</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditFoodItemRequest request, CancellationToken token = default)
     {
@@ -56,6 +57,7 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
     /// <summary>Delete existing food items</summary>
     /// <param name="request">Deleted food items IDs</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveFoodItemsRequest request, CancellationToken token = default)
     {

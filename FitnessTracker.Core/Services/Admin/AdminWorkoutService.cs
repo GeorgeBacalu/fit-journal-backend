@@ -1,11 +1,15 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Workouts;
+using FitnessTracker.Core.Dtos.Responses.Workouts;
 using FitnessTracker.Core.Exceptions;
+using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services.Admin;
 using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Core.Services.Admin;
 
@@ -13,6 +17,28 @@ public class AdminWorkoutService(IUnitOfWork unitOfWork, IMapper mapper, IWorkou
     : BusinessService(unitOfWork, mapper), IAdminWorkoutService
 {
     private readonly IWorkoutValidator _workoutValidator = workoutValidator;
+
+    public async Task<WorkoutsResponse> GetAllAsync(WorkoutPaginationRequest request, CancellationToken token)
+    {
+        var baseQuery = _unitOfWork.Workouts.GetAllQuery().AddFilters(request);
+
+        var workouts = await baseQuery
+            .AddSorting(request)
+            .AddPaging(request)
+            .ProjectTo<WorkoutResponse>(_mapper.ConfigurationProvider)
+            .ToListAsync(token);
+        var totalCount = await baseQuery.CountAsync(token);
+
+        return new() { Workouts = workouts, TotalCount = totalCount };
+    }
+
+    public async Task<WorkoutResponse> GetByIdAsync(Guid id, CancellationToken token)
+    {
+        var workout = await _unitOfWork.Workouts.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(id));
+
+        return _mapper.Map<WorkoutResponse>(workout);
+    }
 
     public async Task AddAsync(AddWorkoutRequest request, Guid userId, CancellationToken token)
     {

@@ -1,5 +1,5 @@
 ﻿using FitnessTracker.Core.Constants;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Goals;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Goals;

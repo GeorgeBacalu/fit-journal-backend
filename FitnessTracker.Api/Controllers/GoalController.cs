@@ -1,5 +1,4 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Goals;
 using FitnessTracker.Core.Dtos.Responses.Goals;
 using FitnessTracker.Core.Interfaces.Services;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class GoalController(IGoalService goalService) : BaseController
 {

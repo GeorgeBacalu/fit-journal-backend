@@ -1,15 +1,14 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Exercises;
 using FitnessTracker.Core.Dtos.Responses.Exercises;
 using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class ExerciseController(IExerciseService exerciseService) : BaseController
 {
@@ -34,6 +33,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <summary>Add new exercise</summary>
     /// <param name="request">Added exercise details</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpPost]
     public async Task<ActionResult<object>> AddAsync(AddExerciseRequest request, CancellationToken token = default)
     {
@@ -45,6 +45,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <summary>Edit existing exercise</summary>
     /// <param name="request">Edited exercise details</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpPut]
     public async Task<ActionResult<object>> EditAsync(EditExerciseRequest request, CancellationToken token = default)
     {
@@ -56,6 +57,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
     /// <summary>Delete existing exercises</summary>
     /// <param name="request">Deleted exercises IDs</param>
     /// <param name="token">Cancellation token</param>
+    [Authorize(Roles = nameof(Role.Admin))]
     [HttpDelete]
     public async Task<ActionResult<object>> RemoveRangeAsync(RemoveExercisesRequest request, CancellationToken token = default)
     {

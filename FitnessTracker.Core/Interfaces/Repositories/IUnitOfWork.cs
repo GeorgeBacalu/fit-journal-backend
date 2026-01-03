@@ -10,6 +10,7 @@ public interface IUnitOfWork
     IFoodItemRepository FoodItems { get; }
     IFoodLogRepository FoodLogs { get; }
     IProgressLogRepository ProgressLogs { get; }
+    IRequestLogRepository RequestLogs { get; }
 
     Task<int> CommitAsync(CancellationToken token);
 }

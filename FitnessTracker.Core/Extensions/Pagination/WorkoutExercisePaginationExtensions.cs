@@ -1,7 +1,7 @@
 using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Core.Dtos.Requests.WorkoutExercises;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Exercises;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Core.Extensions.Pagination;

@@ -1,4 +1,4 @@
-﻿namespace FitnessTracker.Domain.Enums;
+﻿namespace FitnessTracker.Domain.Enums.Goals;
 
 public enum GoalType
 {

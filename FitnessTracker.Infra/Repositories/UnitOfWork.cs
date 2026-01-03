@@ -13,6 +13,7 @@ public class UnitOfWork(AppDbContext db) : IUnitOfWork
     private IFoodItemRepository? foodItems;
     private IFoodLogRepository? foodLogs;
     private IProgressLogRepository? progressLogs;
+    private IRequestLogRepository? requestLogs;
 
     public IUserRepository Users => users ??= new UserRepository(db);
     public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(db);
@@ -22,6 +23,7 @@ public class UnitOfWork(AppDbContext db) : IUnitOfWork
     public IFoodItemRepository FoodItems => foodItems ??= new FoodItemRepository(db);
     public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(db);
     public IProgressLogRepository ProgressLogs => progressLogs ??= new ProgressLogRepository(db);
+    public IRequestLogRepository RequestLogs => requestLogs ??= new RequestLogRepository(db);
 
     public async Task<int> CommitAsync(CancellationToken token) =>
         await db.SaveChangesAsync(token);

@@ -1,5 +1,4 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Users;
 using FitnessTracker.Core.Dtos.Responses.Users;
 using FitnessTracker.Core.Interfaces.Services;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessTracker.Api.Controllers;
 
 [Authorize]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class UserController(IUserService userService) : BaseController
 {

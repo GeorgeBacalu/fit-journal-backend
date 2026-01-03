@@ -1,5 +1,5 @@
 ﻿using FitnessTracker.Core.Dtos.Requests.Auth;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Users;
 
 namespace FitnessTracker.Test.Common.Mocks.Auth;
 
