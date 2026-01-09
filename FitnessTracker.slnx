@@ -1,9 +1,0 @@
-<Solution>
-  <Project Path="FitnessTracker.Api/FitnessTracker.Api.csproj" />
-  <Project Path="FitnessTracker.Core/FitnessTracker.Core.csproj" Id="d9d30ed0-bbd1-4b26-810f-ca1e9ebb6b76" />
-  <Project Path="FitnessTracker.Domain/FitnessTracker.Domain.csproj" />
-  <Project Path="FitnessTracker.Infra/FitnessTracker.Infra.csproj" />
-  <Project Path="FitnessTracker.Test.Common/FitnessTracker.Test.Common.csproj" Id="a1803736-1b05-446d-aa64-3146c60f9c51" />
-  <Project Path="FitnessTracker.Test.Integration/FitnessTracker.Test.Integration.csproj" Id="2bb4850c-245f-495f-a471-6b243bcde45a" />
-  <Project Path="FitnessTracker.Test.Unit/FitnessTracker.Test.Unit.csproj" Id="17f37725-b288-49ee-b064-7f22f77d74af" />
-</Solution>
