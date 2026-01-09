@@ -1,0 +1,7 @@
+﻿namespace FitJournal.Core.Dtos.Responses.Workouts;
+
+public record WorkoutsResponse : IWorkoutsResponse
+{
+    public IEnumerable<ShortWorkoutResponse> Workouts { get; init; } = [];
+    public int TotalCount { get; init; }
+}
