@@ -4,7 +4,6 @@ using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Goals;
 using FitnessTracker.Core.Dtos.Responses.Goals;
 using FitnessTracker.Core.Exceptions;
-using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
@@ -18,23 +17,43 @@ public class GoalService(IUnitOfWork unitOfWork, IMapper mapper, IGoalValidator 
 {
     private readonly IGoalValidator _goalValidator = goalValidator;
 
-    public async Task<GoalsResponse> GetAllAsync(GoalPaginationRequest request, Guid userId, CancellationToken token)
+    public async Task<IGoalsResponse> GetAllAsync(GoalPaginationRequest request, Guid? userId, CancellationToken token)
     {
-        var baseQuery = _unitOfWork.Goals.GetAllQuery(userId).AddFilters(request);
+        var totalCount = await _unitOfWork.Goals.GetAllBaseQuery(request, userId).CountAsync(token);
 
-        var goals = await baseQuery
-            .AddSorting(request)
-            .AddPaging(request)
-            .ProjectTo<ShortGoalResponse>(_mapper.ConfigurationProvider)
-            .ToListAsync(token);
-        var totalCount = await baseQuery.CountAsync(token);
+        if (userId != null)
+            return new GoalsResponse
+            {
+                TotalCount = totalCount,
+                Goals = await _unitOfWork.Goals.GetAllQuery(request, userId)
+                    .ProjectTo<ShortGoalResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync(token)
+            };
 
-        return new() { Goals = goals, TotalCount = totalCount };
+        var rows = await _unitOfWork.Goals.GetAllQuery(request, userId)
+            .Select(g => new
+            {
+                g.UserId,
+                UserName = g.User != null ? g.User.Name : null,
+                Goal = _mapper.Map<ShortGoalResponse>(g)
+            }).ToListAsync(token);
+
+        var users = rows.GroupBy(r => new { r.UserId, r.UserName })
+            .Select(g => new UserGoalsResponse
+            {
+                UserId = g.Key.UserId,
+                UserName = g.Key.UserName,
+                Goals = [.. g.Select(x => x.Goal)]
+            }).ToList();
+
+        return new UsersGoalsResponse { TotalCount = totalCount, Users = users };
     }
 
-    public async Task<GoalResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
+    public async Task<GoalResponse> GetByIdAsync(Guid id, Guid? userId, CancellationToken token)
     {
-        var goal = await _unitOfWork.Goals.GetByIdAsync(id, token)
+        var goal = (userId != null
+            ? await _unitOfWork.Goals.GetByIdAsync(id, userId.Value, token)
+            : await _unitOfWork.Goals.GetByIdAsync(id, token))
             ?? throw new NotFoundException(BusinessErrors.Goals.IdNotFound(id));
 
         return _mapper.Map<GoalResponse>(goal);

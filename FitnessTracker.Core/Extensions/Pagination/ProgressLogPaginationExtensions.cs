@@ -1,6 +1,7 @@
 using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Core.Dtos.Requests.ProgressLogs;
 using FitnessTracker.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -24,10 +25,7 @@ public static class ProgressLogPaginationExtensions
 
             ordered = sort.Field switch
             {
-                ProgressLogSortField.Date => ordered == null
-                    ? (desc ? query.OrderByDescending(pl => pl.Date) : query.OrderBy(pl => pl.Date))
-                    : (desc ? ordered.ThenByDescending(pl => pl.Date) : ordered.ThenBy(pl => pl.Date)),
-
+                ProgressLogSortField.Date => Sort(ordered, query, pl => pl.Date, desc),
                 _ => ordered
             };
         }
@@ -37,4 +35,12 @@ public static class ProgressLogPaginationExtensions
 
     public static IQueryable<ProgressLog> AddPaging(this IQueryable<ProgressLog> query, ProgressLogPaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<ProgressLog> Sort<TKey>(
+        IOrderedQueryable<ProgressLog>? ordered,
+        IQueryable<ProgressLog> query,
+        Expression<Func<ProgressLog, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

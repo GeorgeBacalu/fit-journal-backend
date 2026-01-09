@@ -26,7 +26,7 @@ public class ExceptionMiddleware : IMiddleware
 
             ProblemDetails problem = exception is AppException app
                 ? new() { Title = app.Error.Code, Detail = app.Error.Message }
-                : new() { Title = "UnhandledError", Detail = exception.InnerException?.Message ?? exception.Message };
+                : new() { Title = nameof(Exception), Detail = exception.InnerException?.Message ?? exception.Message };
 
             await context.Response.WriteAsJsonAsync(problem);
         }

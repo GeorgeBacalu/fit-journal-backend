@@ -2,6 +2,7 @@ using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Core.Dtos.Requests.Workouts;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -30,18 +31,9 @@ public static class WorkoutPaginationExtensions
 
             ordered = sort.Field switch
             {
-                WorkoutSortField.Name => ordered == null
-                    ? (desc ? query.OrderByDescending(w => w.Name) : query.OrderBy(w => w.Name))
-                    : (desc ? ordered.ThenByDescending(w => w.Name) : ordered.ThenBy(w => w.Name)),
-
-                WorkoutSortField.DurationMinutes => ordered == null
-                    ? (desc ? query.OrderByDescending(w => w.DurationMinutes) : query.OrderBy(w => w.DurationMinutes))
-                    : (desc ? ordered.ThenByDescending(w => w.DurationMinutes) : ordered.ThenBy(w => w.DurationMinutes)),
-
-                WorkoutSortField.StartedAt => ordered == null
-                    ? (desc ? query.OrderByDescending(w => w.StartedAt) : query.OrderBy(w => w.StartedAt))
-                    : (desc ? ordered.ThenByDescending(w => w.StartedAt) : ordered.ThenBy(w => w.StartedAt)),
-
+                WorkoutSortField.Name => Sort(ordered, query, w => w.Name, desc),
+                WorkoutSortField.DurationMinutes => Sort(ordered, query, w => w.DurationMinutes, desc),
+                WorkoutSortField.StartedAt => Sort(ordered, query, w => w.StartedAt, desc),
                 _ => ordered
             };
         }
@@ -51,4 +43,12 @@ public static class WorkoutPaginationExtensions
 
     public static IQueryable<Workout> AddPaging(this IQueryable<Workout> query, WorkoutPaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<Workout> Sort<TKey>(
+        IOrderedQueryable<Workout>? ordered,
+        IQueryable<Workout> query,
+        Expression<Func<Workout, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

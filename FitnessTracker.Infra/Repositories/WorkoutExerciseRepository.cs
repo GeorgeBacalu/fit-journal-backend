@@ -1,3 +1,5 @@
+using FitnessTracker.Core.Dtos.Requests.WorkoutExercises;
+using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infra.Context;
@@ -8,11 +10,11 @@ namespace FitnessTracker.Infra.Repositories;
 public class WorkoutExerciseRepository(AppDbContext db)
     : BaseRepository<WorkoutExercise>(db), IWorkoutExerciseRepository
 {
-    public async Task<IEnumerable<WorkoutExercise>> GetAllAsync(Guid workoutId, CancellationToken token) =>
-        await _db.WorkoutExercises.Where(we => we.WorkoutId == workoutId).ToListAsync(token);
+    public IQueryable<WorkoutExercise> GetAllBaseQuery(WorkoutExercisePaginationRequest request, Guid? userId) =>
+        _db.WorkoutExercises.Where(we => we.WorkoutId == request.WorkoutId && (userId != null || (we.Workout != null && we.Workout.UserId == userId))).AddFilters(request);
 
-    public IQueryable<WorkoutExercise> GetAllQuery(Guid workoutId) =>
-        _db.WorkoutExercises.Where(we => we.WorkoutId == workoutId);
+    public IQueryable<WorkoutExercise> GetAllQuery(WorkoutExercisePaginationRequest request, Guid? userId) =>
+        GetAllBaseQuery(request, userId).AddSorting(request).AddPaging(request);
 
     public async Task<WorkoutExercise?> GetByIdAsync(Guid id, Guid userId, CancellationToken token) =>
         await _db.WorkoutExercises.FirstOrDefaultAsync(we => we.Workout != null && we.Workout.UserId == userId && we.Id == id, token);

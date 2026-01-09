@@ -52,7 +52,7 @@ public class AuthServiceTest
         var action = () => _authService.RegisterAsync(RegisterRequests.Under13, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.Users.AgeRestriction);
+        await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.Users.AgeRestriction.Message);
 
         _userRepositoryMock.Verify(mock => mock.AddAsync(It.IsAny<User>(), default), Times.Never);
         _unitOfWorkMock.Verify(mock => mock.CommitAsync(default), Times.Never);
@@ -84,7 +84,7 @@ public class AuthServiceTest
         var action = () => _authService.LoginAsync(LoginRequests.NonExistingEmail, default);
 
         // Assert
-        await action.Should().ThrowAsync<NotFoundException>(string.Format(BusinessErrors.Users.EmailNotFound, ValidationSamples.Users.NonExistingEmail));
+        await action.Should().ThrowAsync<NotFoundException>(BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Message);
     }
 
     [Fact]
@@ -97,6 +97,6 @@ public class AuthServiceTest
         var action = () => _authService.LoginAsync(LoginRequests.WrongPassword, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Users.InvalidCredentials);
+        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Users.InvalidCredentials.Message);
     }
 }

@@ -2,6 +2,7 @@ using FitnessTracker.Core.Dtos.Requests.FoodItems;
 using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -36,34 +37,13 @@ public static class FoodItemPaginationExtensions
 
             ordered = sort.Field switch
             {
-                FoodItemSortField.Name => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Name) : query.OrderBy(fi => fi.Name))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Name) : ordered.ThenBy(fi => fi.Name)),
-
-                FoodItemSortField.Category => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Category) : query.OrderBy(fi => fi.Category))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Category) : ordered.ThenBy(fi => fi.Category)),
-
-                FoodItemSortField.Brand => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Brand) : query.OrderBy(fi => fi.Brand))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Brand) : ordered.ThenBy(fi => fi.Brand)),
-
-                FoodItemSortField.Calories => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Calories) : query.OrderBy(fi => fi.Calories))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Calories) : ordered.ThenBy(fi => fi.Calories)),
-
-                FoodItemSortField.Protein => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Protein) : query.OrderBy(fi => fi.Protein))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Protein) : ordered.ThenBy(fi => fi.Protein)),
-
-                FoodItemSortField.Carbs => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Carbs) : query.OrderBy(fi => fi.Carbs))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Carbs) : ordered.ThenBy(fi => fi.Carbs)),
-
-                FoodItemSortField.Fat => ordered == null
-                    ? (desc ? query.OrderByDescending(fi => fi.Fat) : query.OrderBy(fi => fi.Fat))
-                    : (desc ? ordered.ThenByDescending(fi => fi.Fat) : ordered.ThenBy(fi => fi.Fat)),
-
+                FoodItemSortField.Name => Sort(ordered, query, fi => fi.Name, desc),
+                FoodItemSortField.Category => Sort(ordered, query, fi => fi.Category, desc),
+                FoodItemSortField.Brand => Sort(ordered, query, fi => fi.Brand, desc),
+                FoodItemSortField.Calories => Sort(ordered, query, fi => fi.Calories, desc),
+                FoodItemSortField.Protein => Sort(ordered, query, fi => fi.Protein, desc),
+                FoodItemSortField.Carbs => Sort(ordered, query, fi => fi.Carbs, desc),
+                FoodItemSortField.Fat => Sort(ordered, query, fi => fi.Fat, desc),
                 _ => ordered
             };
         }
@@ -73,4 +53,12 @@ public static class FoodItemPaginationExtensions
 
     public static IQueryable<FoodItem> AddPaging(this IQueryable<FoodItem> query, FoodItemPaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<FoodItem> Sort<TKey>(
+        IOrderedQueryable<FoodItem>? ordered,
+        IQueryable<FoodItem> query,
+        Expression<Func<FoodItem, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

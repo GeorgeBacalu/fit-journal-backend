@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Users;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Users;
 using FluentValidation;
 
 namespace FitnessTracker.Core.Dtos.Requests.Auth;

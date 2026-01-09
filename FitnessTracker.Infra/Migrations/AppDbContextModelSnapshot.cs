@@ -316,6 +316,131 @@ namespace FitnessTracker.Infra.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.RequestLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Duration")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("ExceptionStackTrace")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExceptionType")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Host")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("InnerExceptionMessage")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("InnerExceptionStackTrace")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InnerExceptionType")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Ip")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("Method")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("QueryString")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<long>("RemoteIp")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RequestBody")
+                        .IsRequired()
+                        .HasMaxLength(10240)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RequestBodySize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestHeader")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResponseBody")
+                        .IsRequired()
+                        .HasMaxLength(10240)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResponseBodySize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResponseHeader")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResponseStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Duration");
+
+                    b.HasIndex("ResponseStatus");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Method", "Path");
+
+                    b.ToTable("RequestLogs", t =>
+                        {
+                            t.HasCheckConstraint("CK_RequestLogs_Duration", "[Duration] >= 0");
+
+                            t.HasCheckConstraint("CK_RequestLogs_RequestBodySize", "[RequestBodySize] >= 0");
+
+                            t.HasCheckConstraint("CK_RequestLogs_ResponseBodySize", "[ResponseBodySize] >= 0");
+
+                            t.HasCheckConstraint("CK_RequestLogs_ResponseStatus", "[ResponseStatus] BETWEEN 100 AND 599");
+                        });
+                });
+
             modelBuilder.Entity("FitnessTracker.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -538,6 +663,16 @@ namespace FitnessTracker.Infra.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FitnessTracker.Domain.Entities.RequestLog", b =>
+                {
+                    b.HasOne("FitnessTracker.Domain.Entities.User", "User")
+                        .WithMany("RequestLogs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FitnessTracker.Domain.Entities.Workout", b =>
                 {
                     b.HasOne("FitnessTracker.Domain.Entities.User", "User")
@@ -585,6 +720,8 @@ namespace FitnessTracker.Infra.Migrations
                     b.Navigation("Goals");
 
                     b.Navigation("ProgressLogs");
+
+                    b.Navigation("RequestLogs");
 
                     b.Navigation("Workouts");
                 });

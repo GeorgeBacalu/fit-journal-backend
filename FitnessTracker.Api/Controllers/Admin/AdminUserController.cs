@@ -1,15 +1,13 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
+﻿using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.Users;
 using FitnessTracker.Core.Interfaces.Services;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
 [Authorize(Roles = nameof(Role.Admin))]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class AdminUserController(IUserService userService) : BaseController
 {
@@ -20,10 +18,13 @@ public class AdminUserController(IUserService userService) : BaseController
     /// <param name="id">Edited user ID</param> 
     /// <param name="token">Cancellation token</param>
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<object>> EditAsync(EditUserRequest request, Guid id, CancellationToken token = default)
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> EditAsync(EditUserRequest request, Guid id, CancellationToken token = default)
     {
         await _userService.EditAsync(request, id, token);
 
-        return Ok(new { Message = SuccessMessages.Users.Edited });
+        return Ok(new MessageResponse(SuccessMessages.Users.Edited));
     }
 }

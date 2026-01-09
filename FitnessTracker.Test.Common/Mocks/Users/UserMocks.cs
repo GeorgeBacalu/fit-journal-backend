@@ -1,5 +1,5 @@
 ﻿using FitnessTracker.Domain.Entities;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Users;
 
 namespace FitnessTracker.Test.Common.Mocks.Users;
 

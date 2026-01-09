@@ -8,7 +8,7 @@ using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.Auth;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -25,7 +25,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token)
     {
-        await _userValidator.ValidateAddAsync(request, token);
+        await _userValidator.ValidateRegisterAsync(request, token);
 
         var user = _mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

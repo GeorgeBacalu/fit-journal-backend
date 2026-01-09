@@ -2,6 +2,7 @@ using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Core.Dtos.Requests.Users;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -33,22 +34,10 @@ public static class UserPaginationExtensions
 
             ordered = sort.Field switch
             {
-                UserSortField.Name => ordered == null
-                    ? (desc ? query.OrderByDescending(u => u.Name) : query.OrderBy(u => u.Name))
-                    : (desc ? ordered.ThenByDescending(u => u.Name) : ordered.ThenBy(u => u.Name)),
-
-                UserSortField.Birthday => ordered == null
-                    ? (desc ? query.OrderByDescending(u => u.Birthday) : query.OrderBy(u => u.Birthday))
-                    : (desc ? ordered.ThenByDescending(u => u.Birthday) : ordered.ThenBy(u => u.Birthday)),
-
-                UserSortField.Height => ordered == null
-                    ? (desc ? query.OrderByDescending(u => u.Height) : query.OrderBy(u => u.Height))
-                    : (desc ? ordered.ThenByDescending(u => u.Height) : ordered.ThenBy(u => u.Height)),
-
-                UserSortField.Weight => ordered == null
-                    ? (desc ? query.OrderByDescending(u => u.Weight) : query.OrderBy(u => u.Weight))
-                    : (desc ? ordered.ThenByDescending(u => u.Weight) : ordered.ThenBy(u => u.Weight)),
-
+                UserSortField.Name => Sort(ordered, query, u => u.Name, desc),
+                UserSortField.Birthday => Sort(ordered, query, u => u.Birthday, desc),
+                UserSortField.Height => Sort(ordered, query, u => u.Height, desc),
+                UserSortField.Weight => Sort(ordered, query, u => u.Weight, desc),
                 _ => ordered
             };
         }
@@ -58,4 +47,12 @@ public static class UserPaginationExtensions
 
     public static IQueryable<User> AddPaging(this IQueryable<User> query, UserPaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<User> Sort<TKey>(
+        IOrderedQueryable<User>? ordered,
+        IQueryable<User> query,
+        Expression<Func<User, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

@@ -71,7 +71,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = ValidationErrors.Users.AgeRestriction,
+                Detail = ValidationErrors.Users.AgeRestriction.Message,
                 Status = StatusCodes.Status400BadRequest
             });
         });
@@ -145,7 +145,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = string.Format(BusinessErrors.Users.EmailNotFound, ValidationSamples.Users.NonExistingEmail),
+                Detail = BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Message,
                 Status = StatusCodes.Status404NotFound
             });
         });
@@ -164,7 +164,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = BusinessErrors.Users.InvalidCredentials,
+                Detail = BusinessErrors.Users.InvalidCredentials.Message,
                 Status = StatusCodes.Status400BadRequest
             });
         });

@@ -1,6 +1,7 @@
 using FitnessTracker.Core.Dtos.Requests.FoodLogs;
 using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -28,17 +29,9 @@ public static class FoodLogPaginationExtensions
 
             ordered = sort.Field switch
             {
-                FoodLogSortField.Date => ordered == null
-                    ? (desc ? query.OrderByDescending(fl => fl.Date) : query.OrderBy(fl => fl.Date))
-                    : (desc ? ordered.ThenByDescending(fl => fl.Date) : ordered.ThenBy(fl => fl.Date)),
-
-                FoodLogSortField.Servings => ordered == null
-                    ? (desc ? query.OrderByDescending(fl => fl.Servings) : query.OrderBy(fl => fl.Servings))
-                    : (desc ? ordered.ThenByDescending(fl => fl.Servings) : ordered.ThenBy(fl => fl.Servings)),
-
-                FoodLogSortField.Quantity => ordered == null
-                    ? (desc ? query.OrderByDescending(fl => fl.Quantity) : query.OrderBy(fl => fl.Quantity))
-                    : (desc ? ordered.ThenByDescending(fl => fl.Quantity) : ordered.ThenBy(fl => fl.Quantity)),
+                FoodLogSortField.Date => Sort(ordered, query, fl => fl.Date, desc),
+                FoodLogSortField.Servings => Sort(ordered, query, fl => fl.Servings, desc),
+                FoodLogSortField.Quantity => Sort(ordered, query, fl => fl.Quantity, desc),
                 _ => ordered
             };
         }
@@ -48,4 +41,12 @@ public static class FoodLogPaginationExtensions
 
     public static IQueryable<FoodLog> AddPaging(this IQueryable<FoodLog> query, FoodLogPaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<FoodLog> Sort<TKey>(
+        IOrderedQueryable<FoodLog>? ordered,
+        IQueryable<FoodLog> query,
+        Expression<Func<FoodLog, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

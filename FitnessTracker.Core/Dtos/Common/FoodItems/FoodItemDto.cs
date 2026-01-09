@@ -1,4 +1,4 @@
-using FitnessTracker.Domain.Enums;
+using FitnessTracker.Domain.Enums.FoodItems;
 
 namespace FitnessTracker.Core.Dtos.Common.FoodItems;
 

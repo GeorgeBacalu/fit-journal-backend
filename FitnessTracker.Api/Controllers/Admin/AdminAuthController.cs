@@ -1,25 +1,27 @@
-﻿using Asp.Versioning;
-using FitnessTracker.Core.Constants;
-using FitnessTracker.Core.Interfaces.Services.Admin;
-using FitnessTracker.Domain.Enums;
+﻿using FitnessTracker.Core.Constants;
+using FitnessTracker.Core.Interfaces.Services;
+using FitnessTracker.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.Api.Controllers.Admin;
 
 [Authorize(Roles = nameof(Role.Admin))]
-[ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class AdminAuthController(IAdminAuthService adminAuthService) : BaseController
+public class AdminAuthController(IAuthService authService) : BaseController
 {
+    private readonly IAuthService _authService = authService;
+
     /// <summary>Deactivate user account (admin)</summary>
     /// <param name="id">Deactivated user ID</param> 
     /// <param name="token">Cancellation token</param>
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult<object>> DeleteAsync(Guid id, CancellationToken token = default)
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> DeleteAsync(Guid id, CancellationToken token = default)
     {
-        await adminAuthService.DeleteAsync(id, token);
+        await _authService.DeleteAsync(id, token);
 
-        return Ok(new { Message = SuccessMessages.Users.AccountDeactivated });
+        return Ok(new MessageResponse(SuccessMessages.Users.AccountDeactivated));
     }
 }

@@ -4,6 +4,7 @@ using FitnessTracker.Api.Extensions;
 using FitnessTracker.Core;
 using FitnessTracker.Core.Config;
 using FitnessTracker.Infra;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ app.UseSwagger()
            options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", $"Fitness Tracker API {groupName.ToUpperInvariant()}");
    })
    .UseCors("AllowAll")
+   .UseSerilogRequestLogging(options => options.MessageTemplate = "{RequestMethod} {RequestPath} {StatusCode} ({Elapsed:0.00} ms)")
    .UseHttpsRedirection()
    .UseMiddlewares()
    .UseAuthentication()

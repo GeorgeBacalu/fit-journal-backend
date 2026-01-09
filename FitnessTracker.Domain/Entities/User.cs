@@ -1,4 +1,4 @@
-﻿using FitnessTracker.Domain.Enums;
+﻿using FitnessTracker.Domain.Enums.Users;
 
 namespace FitnessTracker.Domain.Entities;
 
@@ -18,4 +18,5 @@ public class User : BaseEntity
     public ICollection<Goal> Goals { get; } = [];
     public ICollection<FoodLog> FoodLogs { get; } = [];
     public ICollection<ProgressLog> ProgressLogs { get; } = [];
+    public ICollection<RequestLog> RequestLogs { get; } = [];
 }
