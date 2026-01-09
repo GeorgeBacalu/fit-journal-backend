@@ -2,6 +2,7 @@ using FitnessTracker.Core.Dtos.Requests.Exercises;
 using FitnessTracker.Core.Dtos.Requests.Pagination;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -28,18 +29,9 @@ public static class ExercisePaginationExtensions
 
             ordered = sort.Field switch
             {
-                ExerciseSortField.Name => ordered == null
-                    ? (desc ? query.OrderByDescending(e => e.Name) : query.OrderBy(e => e.Name))
-                    : (desc ? ordered.ThenByDescending(e => e.Name) : ordered.ThenBy(e => e.Name)),
-
-                ExerciseSortField.MuscleGroup => ordered == null
-                    ? (desc ? query.OrderByDescending(e => e.MuscleGroup) : query.OrderBy(e => e.MuscleGroup))
-                    : (desc ? ordered.ThenByDescending(e => e.MuscleGroup) : ordered.ThenBy(e => e.MuscleGroup)),
-
-                ExerciseSortField.DifficultyLevel => ordered == null
-                    ? (desc ? query.OrderByDescending(e => e.DifficultyLevel) : query.OrderBy(e => e.DifficultyLevel))
-                    : (desc ? ordered.ThenByDescending(e => e.DifficultyLevel) : ordered.ThenBy(e => e.DifficultyLevel)),
-
+                ExerciseSortField.Name => Sort(ordered, query, e => e.Name, desc),
+                ExerciseSortField.MuscleGroup => Sort(ordered, query, e => e.MuscleGroup, desc),
+                ExerciseSortField.DifficultyLevel => Sort(ordered, query, e => e.DifficultyLevel, desc),
                 _ => ordered
             };
         }
@@ -49,4 +41,12 @@ public static class ExercisePaginationExtensions
 
     public static IQueryable<Exercise> AddPaging(this IQueryable<Exercise> query, ExercisePaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<Exercise> Sort<TKey>(
+        IOrderedQueryable<Exercise>? ordered,
+        IQueryable<Exercise> query,
+        Expression<Func<Exercise, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }

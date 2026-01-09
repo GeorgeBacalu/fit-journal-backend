@@ -1,12 +1,13 @@
+using FitnessTracker.Core.Dtos.Requests.WorkoutExercises;
 using FitnessTracker.Domain.Entities;
 
 namespace FitnessTracker.Core.Interfaces.Repositories;
 
 public interface IWorkoutExerciseRepository : IBaseRepository<WorkoutExercise>
 {
-    Task<IEnumerable<WorkoutExercise>> GetAllAsync(Guid workoutId, CancellationToken token);
+    IQueryable<WorkoutExercise> GetAllBaseQuery(WorkoutExercisePaginationRequest request, Guid? userId);
 
-    IQueryable<WorkoutExercise> GetAllQuery(Guid workoutId);
+    IQueryable<WorkoutExercise> GetAllQuery(WorkoutExercisePaginationRequest request, Guid? userId);
 
     Task<WorkoutExercise?> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
 

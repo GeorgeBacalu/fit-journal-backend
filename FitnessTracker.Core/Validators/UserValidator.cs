@@ -12,7 +12,7 @@ namespace FitnessTracker.Core.Validators;
 public class UserValidator(IUnitOfWork unitOfWork, IMapper mapper)
     : BusinessService(unitOfWork, mapper), IUserValidator
 {
-    public async Task ValidateAddAsync(RegisterRequest request, CancellationToken token) =>
+    public async Task ValidateRegisterAsync(RegisterRequest request, CancellationToken token) =>
         await ValidateAsync(request, excludeId: null, token);
 
     public async Task ValidateEditAsync(EditUserRequest request, Guid id, CancellationToken token) =>

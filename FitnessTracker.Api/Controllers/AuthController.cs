@@ -16,11 +16,13 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="request">User registration details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPost("register")]
-    public async Task<ActionResult<object>> RegisterAsync(RegisterRequest request, CancellationToken token = default)
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MessageResponse>> RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         await _authService.RegisterAsync(request, token);
 
-        return Created(string.Empty, new { Message = SuccessMessages.Users.Registered });
+        return Created(string.Empty, new MessageResponse(SuccessMessages.Users.Registered));
     }
 
     /// <summary>Login existing user</summary>
@@ -28,6 +30,9 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>Access and refresh tokens</returns>
     [HttpPost("login")]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
         Ok(await _authService.LoginAsync(request, token));
 
@@ -35,10 +40,12 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="token">Cancellation token</param>
     [Authorize]
     [HttpDelete]
-    public async Task<ActionResult<object>> DeleteAsync(CancellationToken token = default)
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> DeleteAsync(CancellationToken token = default)
     {
         await _authService.DeleteAsync(UserId, token);
 
-        return Ok(new { Message = SuccessMessages.Users.AccountDeactivated });
+        return Ok(new MessageResponse(SuccessMessages.Users.AccountDeactivated));
     }
 }

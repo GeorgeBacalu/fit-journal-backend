@@ -1,6 +1,6 @@
 ﻿namespace FitnessTracker.Core.Dtos.Responses.Workouts;
 
-public record WorkoutsResponse
+public record WorkoutsResponse : IWorkoutsResponse
 {
     public IEnumerable<ShortWorkoutResponse> Workouts { get; init; } = [];
     public int TotalCount { get; init; }

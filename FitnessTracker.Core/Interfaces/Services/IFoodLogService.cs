@@ -5,9 +5,9 @@ namespace FitnessTracker.Core.Interfaces.Services;
 
 public interface IFoodLogService : IBusinessService
 {
-    Task<FoodLogsResponse> GetAllAsync(FoodLogPaginationRequest request, Guid userId, CancellationToken token);
+    Task<IFoodLogsResponse> GetAllAsync(FoodLogPaginationRequest request, Guid? userId, CancellationToken token);
 
-    Task<FoodLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token);
+    Task<FoodLogResponse> GetByIdAsync(Guid id, Guid? userId, CancellationToken token);
 
     Task AddAsync(AddFoodLogRequest request, Guid userId, CancellationToken token);
 

@@ -8,36 +8,55 @@ using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using FitnessTracker.Core.Extensions.Pagination;
 
 namespace FitnessTracker.Core.Services;
 
 public class WorkoutExerciseService(IUnitOfWork unitOfWork, IMapper mapper)
     : BusinessService(unitOfWork, mapper), IWorkoutExerciseService
 {
-    public async Task<WorkoutExercisesResponse> GetAllAsync(WorkoutExercisePaginationRequest request, Guid userId, CancellationToken token)
+    public async Task<IWorkoutExercisesResponse> GetAllAsync(WorkoutExercisePaginationRequest request, Guid? userId, CancellationToken token)
     {
         var workout = await _unitOfWork.Workouts.GetByIdAsync(request.WorkoutId, token)
             ?? throw new NotFoundException(BusinessErrors.Workouts.IdNotFound(request.WorkoutId));
 
-        if (workout.UserId != userId)
+        if (userId != null && workout.UserId != userId)
             throw new ForbiddenException(BusinessErrors.WorkoutExercises.UnauthorizedAccess);
 
-        var baseQuery = _unitOfWork.WorkoutExercises.GetAllQuery(request.WorkoutId).AddFilters(request);
+        var totalCount = await _unitOfWork.WorkoutExercises.GetAllBaseQuery(request, userId).CountAsync(token);
 
-        var workoutExercises = await baseQuery
-            .AddSorting(request)
-            .AddPaging(request)
-            .ProjectTo<ShortWorkoutExerciseResponse>(_mapper.ConfigurationProvider)
-            .ToListAsync(token);
-        var totalCount = await baseQuery.CountAsync(token);
+        if (userId != null)
+            return new WorkoutExercisesResponse
+            {
+                TotalCount = totalCount,
+                WorkoutExercises = await _unitOfWork.WorkoutExercises.GetAllQuery(request, userId)
+                    .ProjectTo<ShortWorkoutExerciseResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync(token)
+            };
 
-        return new() { WorkoutExercises = workoutExercises, TotalCount = totalCount };
+        var rows = await _unitOfWork.WorkoutExercises.GetAllQuery(request, userId)
+            .Select(we => new
+            {
+                UserId = we.Workout != null ? we.Workout.UserId : (Guid?)null,
+                UserName = we.Workout != null && we.Workout.User != null ? we.Workout.User.Name : null,
+                WorkoutExercise = _mapper.Map<ShortWorkoutExerciseResponse>(we)
+            }).ToListAsync(token);
+
+        var users = rows.GroupBy(r => new { r.UserId, r.UserName })
+            .Select(g => new UserWorkoutExercisesResponse
+            {
+                UserId = g.Key.UserId,
+                UserName = g.Key.UserName,
+                WorkoutExercises = [.. g.Select(x => x.WorkoutExercise)]
+            }).ToList();
+
+        return new UsersWorkoutExercisesResponse { TotalCount = totalCount, Users = users };
     }
 
-    public async Task<WorkoutExerciseResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
+    public async Task<WorkoutExerciseResponse> GetByIdAsync(Guid id, Guid? userId, CancellationToken token)
     {
-        var workoutExercise = await _unitOfWork.WorkoutExercises.GetByIdAsync(id, userId, token)
+        var workoutExercise = (userId != null
+            ? await _unitOfWork.WorkoutExercises.GetByIdAsync(id, userId.Value, token)
+            : await _unitOfWork.WorkoutExercises.GetByIdAsync(id, token))
             ?? throw new NotFoundException(BusinessErrors.WorkoutExercises.IdNotFound(id));
 
         return _mapper.Map<WorkoutExerciseResponse>(workoutExercise);

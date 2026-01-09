@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace FitnessTracker.Infra.Helpers;
+namespace FitnessTracker.Api.Helpers;
 
 public static class JsonHelper
 {

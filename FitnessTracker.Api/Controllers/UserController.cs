@@ -18,6 +18,7 @@ public class UserController(IUserService userService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>All users</returns>
     [HttpPost("all")]
+    [ProducesResponseType(typeof(UsersResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<UsersResponse>> GetAllAsync(UserPaginationRequest request, CancellationToken token = default) =>
         Ok(await _userService.GetAllAsync(request, token));
 
@@ -26,6 +27,8 @@ public class UserController(IUserService userService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>User with given ID</returns>
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
         Ok(await _userService.GetByIdAsync(id, token));
 
@@ -33,10 +36,13 @@ public class UserController(IUserService userService) : BaseController
     /// <param name="request">Edited current user details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPut]
-    public async Task<ActionResult<object>> EditAsync(EditUserRequest request, CancellationToken token = default)
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> EditAsync(EditUserRequest request, CancellationToken token = default)
     {
         await _userService.EditAsync(request, UserId, token);
 
-        return Ok(new { Message = SuccessMessages.Users.Edited });
+        return Ok(new MessageResponse(SuccessMessages.Users.Edited));
     }
 }

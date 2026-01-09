@@ -4,7 +4,6 @@ using FitnessTracker.Core.Constants;
 using FitnessTracker.Core.Dtos.Requests.FoodLogs;
 using FitnessTracker.Core.Dtos.Responses.FoodLogs;
 using FitnessTracker.Core.Exceptions;
-using FitnessTracker.Core.Extensions.Pagination;
 using FitnessTracker.Core.Interfaces.Repositories;
 using FitnessTracker.Core.Interfaces.Services;
 using FitnessTracker.Core.Interfaces.Validators;
@@ -18,23 +17,43 @@ public class FoodLogService(IUnitOfWork unitOfWork, IMapper mapper, IFoodLogVali
 {
     private readonly IFoodLogValidator _foodLogValidator = foodLogValidator;
 
-    public async Task<FoodLogsResponse> GetAllAsync(FoodLogPaginationRequest request, Guid userId, CancellationToken token)
+    public async Task<IFoodLogsResponse> GetAllAsync(FoodLogPaginationRequest request, Guid? userId, CancellationToken token)
     {
-        var baseQuery = _unitOfWork.FoodLogs.GetAllQuery(userId).AddFilters(request);
+        var totalCount = await _unitOfWork.FoodLogs.GetAllBaseQuery(request, userId).CountAsync(token);
 
-        var foodLogs = await baseQuery
-            .AddSorting(request)
-            .AddPaging(request)
-            .ProjectTo<ShortFoodLogResponse>(_mapper.ConfigurationProvider)
-            .ToListAsync(token);
-        var totalCount = await baseQuery.CountAsync(token);
+        if (userId != null)
+            return new FoodLogsResponse
+            {
+                TotalCount = totalCount,
+                FoodLogs = await _unitOfWork.FoodLogs.GetAllQuery(request, userId)
+                    .ProjectTo<ShortFoodLogResponse>(_mapper.ConfigurationProvider)
+                    .ToListAsync(token)
+            };
 
-        return new() { FoodLogs = foodLogs, TotalCount = totalCount };
+        var rows = await _unitOfWork.FoodLogs.GetAllQuery(request, userId)
+            .Select(fl => new
+            {
+                fl.UserId,
+                UserName = fl.User != null ? fl.User.Name : null,
+                FoodLog = _mapper.Map<ShortFoodLogResponse>(fl)
+            }).ToListAsync(token);
+
+        var users = rows.GroupBy(r => new { r.UserId, r.UserName })
+            .Select(g => new UserFoodLogsResponse
+            {
+                UserId = g.Key.UserId,
+                UserName = g.Key.UserName,
+                FoodLogs = [.. g.Select(x => x.FoodLog)]
+            }).ToList();
+
+        return new UsersFoodLogsResponse { TotalCount = totalCount, Users = users };
     }
 
-    public async Task<FoodLogResponse> GetByIdAsync(Guid id, Guid userId, CancellationToken token)
+    public async Task<FoodLogResponse> GetByIdAsync(Guid id, Guid? userId, CancellationToken token)
     {
-        var foodLog = await _unitOfWork.FoodLogs.GetByIdAsync(id, userId, token)
+        var foodLog = (userId != null
+            ? await _unitOfWork.FoodLogs.GetByIdAsync(id, userId.Value, token)
+            : await _unitOfWork.FoodLogs.GetByIdAsync(id, token))
             ?? throw new NotFoundException(BusinessErrors.FoodLogs.IdNotFound(id));
 
         return _mapper.Map<FoodLogResponse>(foodLog);

@@ -80,10 +80,7 @@ public class LoggingMiddleware : IMiddleware
                 }, default);
                 await unitOfWork.CommitAsync(default);
             }
-            catch
-            {
-                // Logging failure should not impact the main request flow
-            }
+            catch { /* Logging failure should not impact the main request flow} */ }
         }
     }
 

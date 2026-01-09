@@ -25,7 +25,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
 
     public async Task RegisterAsync(RegisterRequest request, CancellationToken token)
     {
-        await _userValidator.ValidateAddAsync(request, token);
+        await _userValidator.ValidateRegisterAsync(request, token);
 
         var user = _mapper.Map<User>(request);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

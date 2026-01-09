@@ -3,6 +3,7 @@ using FitnessTracker.Core.Dtos.Requests.WorkoutExercises;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Domain.Enums.Exercises;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessTracker.Core.Extensions.Pagination;
 
@@ -33,34 +34,11 @@ public static class WorkoutExercisePaginationExtensions
 
             ordered = sort.Field switch
             {
-                WorkoutExerciseSortField.ExerciseName => ordered == null
-                    ? (desc ? query.OrderByDescending(we => we.Exercise != null ? we.Exercise.Name : string.Empty)
-                            : query.OrderBy(we => we.Exercise != null ? we.Exercise.Name : string.Empty))
-                    : (desc ? ordered.ThenByDescending(we => we.Exercise != null ? we.Exercise.Name : string.Empty)
-                            : ordered.ThenBy(we => we.Exercise != null ? we.Exercise.Name : string.Empty)),
-
-                WorkoutExerciseSortField.MuscleGroup => ordered == null
-                    ? (desc ? query.OrderByDescending(we => we.Exercise != null ? we.Exercise.MuscleGroup : MuscleGroup.Unknown)
-                            : query.OrderBy(we => we.Exercise != null ? we.Exercise.MuscleGroup : MuscleGroup.Unknown))
-                    : (desc ? ordered.ThenByDescending(we => we.Exercise != null ? we.Exercise.MuscleGroup : MuscleGroup.Unknown)
-                            : ordered.ThenBy(we => we.Exercise != null ? we.Exercise.MuscleGroup : MuscleGroup.Unknown)),
-
-                WorkoutExerciseSortField.DifficultyLevel => ordered == null
-                    ? (desc ? query.OrderByDescending(we => we.Exercise != null ? we.Exercise.DifficultyLevel : DifficultyLevel.Unknown)
-                            : query.OrderBy(we => we.Exercise != null ? we.Exercise.DifficultyLevel : DifficultyLevel.Unknown))
-                    : (desc ? ordered.ThenByDescending(we => we.Exercise != null ? we.Exercise.DifficultyLevel : DifficultyLevel.Unknown)
-                            : ordered.ThenBy(we => we.Exercise != null ? we.Exercise.DifficultyLevel : DifficultyLevel.Unknown)),
-
-                WorkoutExerciseSortField.WorkoutStartedAt => ordered == null
-                    ? (desc ? query.OrderByDescending(we => we.Workout != null ? we.Workout.StartedAt : DateTime.MinValue)
-                            : query.OrderBy(we => we.Workout != null ? we.Workout.StartedAt : DateTime.MinValue))
-                    : (desc ? ordered.ThenByDescending(we => we.Workout != null ? we.Workout.StartedAt : DateTime.MinValue)
-                            : ordered.ThenBy(we => we.Workout != null ? we.Workout.StartedAt : DateTime.MinValue)),
-
-                WorkoutExerciseSortField.WeightUsed => ordered == null
-                    ? (desc ? query.OrderByDescending(we => we.WeightUsed) : query.OrderBy(we => we.WeightUsed))
-                    : (desc ? ordered.ThenByDescending(we => we.WeightUsed) : ordered.ThenBy(we => we.WeightUsed)),
-
+                WorkoutExerciseSortField.ExerciseName => Sort(ordered, query, we => we.Exercise != null ? we.Exercise.Name : string.Empty, desc),
+                WorkoutExerciseSortField.MuscleGroup => Sort(ordered, query, we => we.Exercise != null ? we.Exercise.MuscleGroup : MuscleGroup.Unknown, desc),
+                WorkoutExerciseSortField.DifficultyLevel => Sort(ordered, query, we => we.Exercise != null ? we.Exercise.DifficultyLevel : DifficultyLevel.Unknown, desc),
+                WorkoutExerciseSortField.WorkoutStartedAt => Sort(ordered, query, we => we.Workout != null ? we.Workout.StartedAt : DateTime.MinValue, desc),
+                WorkoutExerciseSortField.WeightUsed => Sort(ordered, query, we => we.WeightUsed, desc),
                 _ => ordered
             };
         }
@@ -70,4 +48,12 @@ public static class WorkoutExercisePaginationExtensions
 
     public static IQueryable<WorkoutExercise> AddPaging(this IQueryable<WorkoutExercise> query, WorkoutExercisePaginationRequest request) =>
         query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+    private static IOrderedQueryable<WorkoutExercise> Sort<TKey>(
+        IOrderedQueryable<WorkoutExercise>? ordered,
+        IQueryable<WorkoutExercise> query,
+        Expression<Func<WorkoutExercise, TKey>> key,
+        bool desc) => ordered == null
+            ? (desc ? query.OrderByDescending(key) : query.OrderBy(key))
+            : (desc ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
 }
