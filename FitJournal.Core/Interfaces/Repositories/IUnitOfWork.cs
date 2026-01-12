@@ -11,6 +11,7 @@ public interface IUnitOfWork
     IFoodLogRepository FoodLogs { get; }
     IProgressLogRepository ProgressLogs { get; }
     IRequestLogRepository RequestLogs { get; }
+    IResetTokenRepository ResetTokens { get; }
 
     Task<int> CommitAsync(CancellationToken token);
 }

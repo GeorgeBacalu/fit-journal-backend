@@ -14,6 +14,7 @@ public class UnitOfWork(AppDbContext db) : IUnitOfWork
     private IFoodLogRepository? foodLogs;
     private IProgressLogRepository? progressLogs;
     private IRequestLogRepository? requestLogs;
+    private IResetTokenRepository? resetTokens;
 
     public IUserRepository Users => users ??= new UserRepository(db);
     public IWorkoutRepository Workouts => workouts ??= new WorkoutRepository(db);
@@ -24,6 +25,7 @@ public class UnitOfWork(AppDbContext db) : IUnitOfWork
     public IFoodLogRepository FoodLogs => foodLogs ??= new FoodLogRepository(db);
     public IProgressLogRepository ProgressLogs => progressLogs ??= new ProgressLogRepository(db);
     public IRequestLogRepository RequestLogs => requestLogs ??= new RequestLogRepository(db);
+    public IResetTokenRepository ResetTokens => resetTokens ??= new ResetTokenRepository(db);
 
     public async Task<int> CommitAsync(CancellationToken token) =>
         await db.SaveChangesAsync(token);

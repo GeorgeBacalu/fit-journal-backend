@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public virtual DbSet<FoodLog> FoodLogs => Set<FoodLog>();
     public virtual DbSet<ProgressLog> ProgressLogs => Set<ProgressLog>();
     public virtual DbSet<RequestLog> RequestLogs => Set<RequestLog>();
+    public virtual DbSet<ResetToken> ResetTokens => Set<ResetToken>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
