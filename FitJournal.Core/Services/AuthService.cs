@@ -42,7 +42,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
             ?? throw new NotFoundException(BusinessErrors.Users.EmailNotFound(request.Email));
 
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new BadRequestException(BusinessErrors.Users.InvalidCredentials);
+            throw new BadRequestException(BusinessErrors.Auth.InvalidCredentials);
 
         return new()
         {
@@ -53,8 +53,8 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
 
     public async Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token)
     {
-        if (!Guid.TryParse(GetUser(request.RefreshToken, BusinessErrors.Users.InvalidRefreshToken).FindFirstValue("userId"), out var id))
-            throw new UnauthorizedException(BusinessErrors.Users.NoRefreshTokenUserInfo);
+        if (!Guid.TryParse(GetUser(request.RefreshToken, BusinessErrors.Auth.InvalidRefreshToken).FindFirstValue("userId"), out var id))
+            throw new UnauthorizedException(BusinessErrors.Auth.NoRefreshTokenUserInfo);
 
         var user = await _unitOfWork.Users.GetByIdAsync(id, token)
             ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
@@ -64,6 +64,21 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
             AccessToken = GenerateToken(user, TokenType.Access),
             RefreshToken = GenerateToken(user, TokenType.Refresh)
         };
+    }
+
+    public async Task ChangePasswordAsync(ChangePasswordRequest request, Guid id, CancellationToken token)
+    {
+        var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
+
+        if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.PasswordHash))
+            throw new BadRequestException(BusinessErrors.Auth.WrongCurrentPassword);
+
+        if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.PasswordHash))
+            throw new BadRequestException(BusinessErrors.Auth.SamePassword);
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        await _unitOfWork.CommitAsync(token);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken token)

@@ -13,6 +13,6 @@ public class RefreshValidator : AbstractValidator<RefreshRequest>
     public RefreshValidator()
     {
         RuleFor(x => x.RefreshToken)
-            .NotEmpty().WithMessage(ValidationErrors.Users.RefreshTokenRequired.Message);
+            .NotEmpty().WithMessage(ValidationErrors.Auth.RefreshTokenRequired.Message);
     }
 }
