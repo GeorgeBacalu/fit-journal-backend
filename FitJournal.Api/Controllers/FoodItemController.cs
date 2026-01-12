@@ -62,7 +62,7 @@ public class FoodItemController(IFoodItemService foodItemService) : BaseControll
         return Ok(new MessageResponse(SuccessMessages.FoodItems.Edited));
     }
 
-    /// <summary>Delete existing food items</summary>
+    /// <summary>Remove existing food items</summary>
     /// <param name="request">Deleted food items IDs</param>
     /// <param name="token">Cancellation token</param>
     [Authorize(Roles = nameof(Role.Admin))]

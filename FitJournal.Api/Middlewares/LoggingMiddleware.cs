@@ -25,6 +25,7 @@ public class LoggingMiddleware : IMiddleware
         try
         {
             await next(context);
+
             buffer.Position = 0;
             await buffer.CopyToAsync(originalBody);
         }
@@ -80,7 +81,7 @@ public class LoggingMiddleware : IMiddleware
                 }, default);
                 await unitOfWork.CommitAsync(default);
             }
-            catch { /* Logging failure should not impact the main request flow} */ }
+            catch { /* Logging failure should not impact the main request flow */ }
         }
     }
 

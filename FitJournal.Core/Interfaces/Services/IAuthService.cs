@@ -9,5 +9,7 @@ public interface IAuthService : IBusinessService
 
     Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token);
 
+    Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token);
+
     Task DeleteAsync(Guid id, CancellationToken token);
 }

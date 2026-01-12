@@ -13,27 +13,27 @@ public class WorkoutExerciseController(IWorkoutExerciseService workoutExerciseSe
 {
     private readonly IWorkoutExerciseService _workoutExerciseService = workoutExerciseService;
 
-    /// <summary>Get all workout exercises</summary>
-    /// <param name="request">Workout exercise pagination info</param>
+    /// <summary>Get all user workout exercises</summary>
+    /// <param name="request">User workout exercise pagination info</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>All workout exercises from workout</returns>
+    /// <returns>All workout exercises from user's workout</returns>
     [HttpPost("all")]
     [ProducesResponseType(typeof(WorkoutExercisesResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<WorkoutExercisesResponse>> GetAllAsync(WorkoutExercisePaginationRequest request, CancellationToken token = default) =>
         Ok(await _workoutExerciseService.GetAllAsync(request, UserId, token));
 
-    /// <summary>Get workout exercise by ID</summary>
-    /// <param name="id">Given workout exercise ID</param>
+    /// <summary>Get user workout exercise by ID</summary>
+    /// <param name="id">Given user workout exercise ID</param>
     /// <param name="token">Cancellation token</param>
-    /// <returns>Workout exercise with given ID</returns>
+    /// <returns>User workout exercise with given ID</returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(WorkoutExerciseResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<WorkoutExerciseResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
         Ok(await _workoutExerciseService.GetByIdAsync(id, UserId, token));
 
-    /// <summary>Add new workout exercise</summary>
-    /// <param name="request">Added workout exercise details</param>
+    /// <summary>Add new user workout exercise</summary>
+    /// <param name="request">Added user workout exercise details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPost]
     [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
@@ -46,8 +46,8 @@ public class WorkoutExerciseController(IWorkoutExerciseService workoutExerciseSe
         return Created(string.Empty, new MessageResponse(SuccessMessages.WorkoutExercises.Added));
     }
 
-    /// <summary>Edit existing workout exercise</summary>
-    /// <param name="request">Edited workout exercise details</param>
+    /// <summary>Edit existing user workout exercise</summary>
+    /// <param name="request">Edited user workout exercise details</param>
     /// <param name="token">Cancellation token</param>
     [HttpPut]
     [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
@@ -60,8 +60,8 @@ public class WorkoutExerciseController(IWorkoutExerciseService workoutExerciseSe
         return Ok(new MessageResponse(SuccessMessages.WorkoutExercises.Edited));
     }
 
-    /// <summary>Remove existing workout exercises</summary>
-    /// <param name="request">Removed workout exercises IDs</param>
+    /// <summary>Remove existing user workout exercises</summary>
+    /// <param name="request">Removed user workout exercises IDs</param>
     /// <param name="token">Cancellation token</param>
     [HttpDelete]
     [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]

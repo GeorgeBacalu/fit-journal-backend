@@ -46,6 +46,8 @@ public static class ValidationErrors
 
         public static readonly Error GenderRequired = E(nameof(GenderRequired), "Gender is required");
         public static readonly Error InvalidGender = E(nameof(InvalidGender), "Invalid gender");
+
+        public static readonly Error RefreshTokenRequired = E(nameof(RefreshTokenRequired), "Refresh token is required");
     }
 
     public static class Workouts
