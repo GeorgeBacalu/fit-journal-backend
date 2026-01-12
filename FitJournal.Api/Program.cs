@@ -14,8 +14,8 @@ builder.Services
     .AddCorsPolicy()
     .AddAutoMapper()
     .AddSwagger()
-    .AddApiVersions()
     .AddAuth()
+    .AddApiVersions()
     .AddInfra()
     .AddCore()
     .AddValidators()
@@ -30,7 +30,7 @@ app.UseSwagger()
    .UseSwaggerUI(options =>
    {
        var descriptions = app.Services.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions;
-       foreach (var groupName in descriptions.Select(description => description.GroupName))
+       foreach (var groupName in descriptions.Select(d => d.GroupName))
            options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", $"FitJournal API {groupName.ToUpperInvariant()}");
    })
    .UseCors("AllowAll")

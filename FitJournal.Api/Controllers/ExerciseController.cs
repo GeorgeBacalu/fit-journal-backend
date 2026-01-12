@@ -61,7 +61,7 @@ public class ExerciseController(IExerciseService exerciseService) : BaseControll
         return Ok(new MessageResponse(SuccessMessages.Exercises.Edited));
     }
 
-    /// <summary>Delete existing exercises</summary>
+    /// <summary>Remove existing exercises</summary>
     /// <param name="request">Deleted exercises IDs</param>
     /// <param name="token">Cancellation token</param>
     [Authorize(Roles = nameof(Role.Admin))]

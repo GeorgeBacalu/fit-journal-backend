@@ -12,7 +12,7 @@ public class AdminAuthController(IAuthService authService) : BaseController
 {
     private readonly IAuthService _authService = authService;
 
-    /// <summary>Deactivate user account (admin)</summary>
+    /// <summary>Deactivate user account</summary>
     /// <param name="id">Deactivated user ID</param> 
     /// <param name="token">Cancellation token</param>
     [HttpDelete("{id:guid}")]

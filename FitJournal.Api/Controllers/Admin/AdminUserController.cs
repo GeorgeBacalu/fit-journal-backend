@@ -13,7 +13,7 @@ public class AdminUserController(IUserService userService) : BaseController
 {
     private readonly IUserService _userService = userService;
 
-    /// <summary>Edit user (admin)</summary>
+    /// <summary>Edit user</summary>
     /// <param name="request">Edited user details</param>
     /// <param name="id">Edited user ID</param> 
     /// <param name="token">Cancellation token</param>

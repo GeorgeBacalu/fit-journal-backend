@@ -36,6 +36,18 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken token = default) =>
         Ok(await _authService.LoginAsync(request, token));
 
+    /// <summary>Refresh access token using refresh token</summary>
+    /// <param name="request">Refresh token details</param>
+    /// <param name="token">Cancellation token</param>
+    /// <returns>Access and refresh tokens</returns>
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<LoginResponse>> RefreshAsync(RefreshRequest request, CancellationToken token = default) =>
+        Ok(await _authService.RefreshAsync(request, token));
+
     /// <summary>Deactivate current user account</summary>
     /// <param name="token">Cancellation token</param>
     [Authorize]

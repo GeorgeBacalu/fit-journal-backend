@@ -51,22 +51,6 @@ public static class ServicesExtensions
             options.IncludeXmlComments($"{AppContext.BaseDirectory}{Assembly.GetExecutingAssembly().GetName().Name}.xml");
         });
 
-    public static IServiceCollection AddApiVersions(this IServiceCollection services)
-    {
-        services.AddApiVersioning(options =>
-        {
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = new(1, 0);
-            options.ReportApiVersions = true;
-        }).AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
-        return services.ConfigureOptions<SwaggerConfigOptions>();
-    }
-
     public static IServiceCollection AddAuth(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -101,6 +85,22 @@ public static class ServicesExtensions
             });
 
         return services.AddAuthorization();
+    }
+
+    public static IServiceCollection AddApiVersions(this IServiceCollection services)
+    {
+        services.AddApiVersioning(options =>
+        {
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.DefaultApiVersion = new(1, 0);
+            options.ReportApiVersions = true;
+        }).AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+
+        return services.ConfigureOptions<SwaggerConfigOptions>();
     }
 
     public static void AddSerilog(this IHostBuilder host) =>

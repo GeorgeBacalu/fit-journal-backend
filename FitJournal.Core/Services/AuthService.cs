@@ -7,10 +7,12 @@ using FitJournal.Core.Exceptions;
 using FitJournal.Core.Interfaces.Repositories;
 using FitJournal.Core.Interfaces.Services;
 using FitJournal.Core.Interfaces.Validators;
+using FitJournal.Core.Results;
 using FitJournal.Domain.Entities;
 using FitJournal.Domain.Enums.Auth;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace FitJournal.Core.Services;
@@ -49,6 +51,21 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
         };
     }
 
+    public async Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token)
+    {
+        if (!Guid.TryParse(GetUser(request.RefreshToken, BusinessErrors.Users.InvalidRefreshToken).FindFirstValue("userId"), out var id))
+            throw new UnauthorizedException(BusinessErrors.Users.NoRefreshTokenUserInfo);
+
+        var user = await _unitOfWork.Users.GetByIdAsync(id, token)
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
+
+        return new()
+        {
+            AccessToken = GenerateToken(user, TokenType.Access),
+            RefreshToken = GenerateToken(user, TokenType.Refresh)
+        };
+    }
+
     public async Task DeleteAsync(Guid id, CancellationToken token)
     {
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
@@ -71,4 +88,27 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
                 ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
                 : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
         }));
+
+    private static ClaimsPrincipal GetUser(string token, Error error)
+    {
+        try
+        {
+            var principal = _tokenHandler.ValidateToken(token, new()
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = _secret
+            }, out var jwt);
+
+            return jwt is JwtSecurityToken { Header.Alg: SecurityAlgorithms.HmacSha256 }
+                ? principal
+                : throw new UnauthorizedException(error);
+        }
+        catch
+        {
+            throw new UnauthorizedException(error);
+        }
+    }
 }
