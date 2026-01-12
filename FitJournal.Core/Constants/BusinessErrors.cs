@@ -15,6 +15,11 @@ public static class BusinessErrors
 
         public static readonly Error WrongCurrentPassword = E(nameof(WrongCurrentPassword), "Wrong current password");
         public static readonly Error SamePassword = E(nameof(SamePassword), "Same password reused");
+
+        public static readonly Error InvalidResetToken = E(nameof(InvalidResetToken), "Invalid reset token");
+        public static readonly Error ResetTokenNotFound = E(nameof(ResetTokenNotFound), "Reset token not found");
+        public static readonly Error NoResetTokenUserInfo = E(nameof(NoResetTokenUserInfo), "Missing reset token user info");
+        public static readonly Error ResetTokenSpent = E(nameof(ResetTokenSpent), "Reset token expired or used");
     }
 
     public static class Users

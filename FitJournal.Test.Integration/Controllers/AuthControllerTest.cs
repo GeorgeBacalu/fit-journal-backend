@@ -164,7 +164,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = BusinessErrors.Users.InvalidCredentials.Message,
+                Detail = BusinessErrors.Auth.InvalidCredentials.Message,
                 Status = StatusCodes.Status400BadRequest
             });
         });

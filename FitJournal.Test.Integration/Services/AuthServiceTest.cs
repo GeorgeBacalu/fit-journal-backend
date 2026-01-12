@@ -127,6 +127,6 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.LoginAsync(LoginRequests.WrongPassword, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Users.InvalidCredentials.Message);
+            await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Auth.InvalidCredentials.Message);
         });
 }

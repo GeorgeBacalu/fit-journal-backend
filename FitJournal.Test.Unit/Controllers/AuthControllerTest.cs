@@ -79,12 +79,12 @@ public class AuthControllerTest
     {
         // Arrange
         _authServiceMock.Setup(mock => mock.LoginAsync(LoginRequests.WrongPassword, default))
-            .ThrowsAsync(new BadRequestException(BusinessErrors.Users.InvalidCredentials));
+            .ThrowsAsync(new BadRequestException(BusinessErrors.Auth.InvalidCredentials));
 
         // Act
         var action = () => _authController.LoginAsync(LoginRequests.WrongPassword, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Users.InvalidCredentials.Message);
+        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Auth.InvalidCredentials.Message);
     }
 }
