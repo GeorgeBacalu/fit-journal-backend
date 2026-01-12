@@ -48,6 +48,21 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<LoginResponse>> RefreshAsync(RefreshRequest request, CancellationToken token = default) =>
         Ok(await _authService.RefreshAsync(request, token));
 
+    /// <summary>Change current user password</summary>
+    /// <param name="request">Password change details</param>
+    /// <param name="token">Cancellation token</param>
+    [Authorize]
+    [HttpPost("change-password")]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> ChangePasswordAsync(ChangePasswordRequest request, CancellationToken token = default)
+    {
+        await _authService.ChangePasswordAsync(request, UserId, token);
+
+        return Ok(new MessageResponse(SuccessMessages.Users.PasswordChanged));
+    }
+
     /// <summary>Deactivate current user account</summary>
     /// <param name="token">Cancellation token</param>
     [Authorize]

@@ -13,6 +13,17 @@ public static class ValidationErrors
         public static readonly Error NameTaken = E(nameof(NameTaken), "Name already taken");
     }
 
+    public static class Auth
+    {
+        static Error E(string name, string message) => Error.Create(typeof(Auth), name, message);
+
+        public static readonly Error RefreshTokenRequired = E(nameof(RefreshTokenRequired), "Refresh token is required");
+
+        public static readonly Error CurrentPasswordRequired = E(nameof(CurrentPasswordRequired), "Current password is required");
+        public static readonly Error NewPasswordRequired = E(nameof(NewPasswordRequired), "New password is required");
+        public static readonly Error ConfirmPassword = E(nameof(ConfirmPassword), "Confirm your password");
+    }
+
     public static class Users
     {
         static Error E(string name, string message) => Error.Create(typeof(Users), name, message);
@@ -46,8 +57,6 @@ public static class ValidationErrors
 
         public static readonly Error GenderRequired = E(nameof(GenderRequired), "Gender is required");
         public static readonly Error InvalidGender = E(nameof(InvalidGender), "Invalid gender");
-
-        public static readonly Error RefreshTokenRequired = E(nameof(RefreshTokenRequired), "Refresh token is required");
     }
 
     public static class Workouts

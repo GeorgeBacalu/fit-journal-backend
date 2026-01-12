@@ -7,6 +7,7 @@ public static class SuccessMessages
         public const string Registered = "User registered successfully";
         public const string Edited = "User edited successfully";
         public const string AccountDeactivated = "Account deactivated successfully";
+        public const string PasswordChanged = "Password changed successfully";
     }
 
     public static class Workouts

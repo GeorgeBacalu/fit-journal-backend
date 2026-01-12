@@ -4,13 +4,22 @@ namespace FitJournal.Core.Constants;
 
 public static class BusinessErrors
 {
+    public static class Auth
+    {
+        static Error E(string name, string message) => Error.Create(typeof(Auth), name, message);
+
+        public static readonly Error InvalidCredentials = E(nameof(InvalidCredentials), "Invalid credentials");
+
+        public static readonly Error InvalidRefreshToken = E(nameof(InvalidRefreshToken), "Invalid refresh token");
+        public static readonly Error NoRefreshTokenUserInfo = E(nameof(NoRefreshTokenUserInfo), "Missing refresh token user info");
+
+        public static readonly Error WrongCurrentPassword = E(nameof(WrongCurrentPassword), "Wrong current password");
+        public static readonly Error SamePassword = E(nameof(SamePassword), "Same password reused");
+    }
+
     public static class Users
     {
         static Error E(string name, string message) => Error.Create(typeof(Users), name, message);
-
-        public static readonly Error InvalidCredentials = E(nameof(InvalidCredentials), "Invalid credentials");
-        public static readonly Error InvalidRefreshToken = E(nameof(InvalidRefreshToken), "Invalid refresh token");
-        public static readonly Error NoRefreshTokenUserInfo = E(nameof(NoRefreshTokenUserInfo), "Missing refresh token user info");
 
         public static Error IdNotFound(Guid id) => E(nameof(IdNotFound), $"User with id {id} not found");
         public static Error EmailNotFound(string email) => E(nameof(EmailNotFound), $"User with email {email} not found");

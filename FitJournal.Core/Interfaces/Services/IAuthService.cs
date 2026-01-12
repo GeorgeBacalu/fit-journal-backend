@@ -11,5 +11,7 @@ public interface IAuthService : IBusinessService
 
     Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token);
 
+    Task ChangePasswordAsync(ChangePasswordRequest request, Guid id, CancellationToken token);
+
     Task DeleteAsync(Guid id, CancellationToken token);
 }
