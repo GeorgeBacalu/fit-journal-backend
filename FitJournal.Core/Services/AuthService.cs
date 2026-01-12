@@ -17,9 +17,10 @@ using System.Text;
 
 namespace FitJournal.Core.Services;
 
-public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator userValidator)
+public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IUserValidator userValidator)
     : BusinessService(unitOfWork, mapper), IAuthService
 {
+    private readonly IEmailService _emailService = emailService;
     private readonly IUserValidator _userValidator = userValidator;
 
     private static readonly JwtSecurityTokenHandler _tokenHandler = new();
@@ -78,6 +79,55 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserValidator 
             throw new BadRequestException(BusinessErrors.Auth.SamePassword);
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        await _unitOfWork.CommitAsync(token);
+    }
+
+    public async Task ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken token)
+    {
+        var user = await _unitOfWork.Users.GetAsync(u => u.Email == request.Email, token)
+            ?? throw new NotFoundException(BusinessErrors.Users.EmailNotFound(request.Email));
+
+        var resetToken = new ResetToken
+        {
+            UserId = user.Id,
+            Token = GenerateToken(user, TokenType.Access),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes),
+        };
+        await _unitOfWork.ResetTokens.AddAsync(resetToken, token);
+        await _unitOfWork.CommitAsync(token);
+
+        await _emailService.SendAsync(new()
+        {
+            To = user.Email,
+            Subject = "Reset Your Password",
+            Body = _emailService.GeneratePasswordResetEmail(new()
+            {
+                UserName = user.Name,
+                ResetLink = $"{AppConfig.Auth.Audience}/reset-password?token={resetToken.Token}",
+                ExpiresAt = resetToken.ExpiresAt
+            })
+        }, token);
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken token)
+    {
+        if (!Guid.TryParse(GetUser(request.Token, BusinessErrors.Auth.InvalidResetToken).FindFirstValue("userId"), out var id))
+            throw new UnauthorizedException(BusinessErrors.Auth.NoResetTokenUserInfo);
+
+        var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
+            ?? throw new NotFoundException(BusinessErrors.Users.IdNotFound(id));
+
+        var resetToken = await _unitOfWork.ResetTokens.GetLastAsync(id, token)
+            ?? throw new NotFoundException(BusinessErrors.Auth.ResetTokenNotFound);
+
+        if (resetToken.ExpiresAt <= DateTime.UtcNow || resetToken.Used)
+            throw new BadRequestException(BusinessErrors.Auth.ResetTokenSpent);
+
+        if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.PasswordHash))
+            throw new BadRequestException(BusinessErrors.Auth.SamePassword);
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+        resetToken.Used = true;
         await _unitOfWork.CommitAsync(token);
     }
 

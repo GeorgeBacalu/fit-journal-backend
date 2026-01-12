@@ -8,6 +8,8 @@ public static class SuccessMessages
         public const string Edited = "User edited successfully";
         public const string AccountDeactivated = "Account deactivated successfully";
         public const string PasswordChanged = "Password changed successfully";
+        public const string PasswordResetEmailSent = "Password reset email sent";
+        public const string PasswordReset = "Password reset successfully";
     }
 
     public static class Workouts

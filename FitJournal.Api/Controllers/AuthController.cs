@@ -63,6 +63,35 @@ public class AuthController(IAuthService authService) : BaseController
         return Ok(new MessageResponse(SuccessMessages.Users.PasswordChanged));
     }
 
+    /// <summary>Send password reset email</summary>
+    /// <param name="request">Forgot password details</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken token = default)
+    {
+        await _authService.ForgotPasswordAsync(request, token);
+
+        return Ok(new MessageResponse(SuccessMessages.Users.PasswordResetEmailSent));
+    }
+
+    /// <summary>Reset password</summary>
+    /// <param name="request">Reset password token and new password</param>
+    /// <param name="token">Cancellation token</param>
+    [HttpPost("reset-password")]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken token = default)
+    {
+        await _authService.ResetPasswordAsync(request, token);
+
+        return Ok(new MessageResponse(SuccessMessages.Users.PasswordReset));
+    }
+
     /// <summary>Deactivate current user account</summary>
     /// <param name="token">Cancellation token</param>
     [Authorize]

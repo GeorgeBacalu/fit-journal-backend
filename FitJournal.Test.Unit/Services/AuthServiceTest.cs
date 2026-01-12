@@ -2,6 +2,7 @@
 using FitJournal.Core.Constants;
 using FitJournal.Core.Exceptions;
 using FitJournal.Core.Interfaces.Repositories;
+using FitJournal.Core.Interfaces.Services;
 using FitJournal.Core.Interfaces.Validators;
 using FitJournal.Core.Services;
 using FitJournal.Domain.Entities;
@@ -18,6 +19,7 @@ public class AuthServiceTest
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
+    private readonly Mock<IEmailService> _emailServiceMock = new();
     private readonly Mock<IUserValidator> _userValidatorMock = new();
     private readonly Mock<IUserRepository> _userRepositoryMock = new();
     private readonly AuthService _authService;
@@ -25,7 +27,7 @@ public class AuthServiceTest
     public AuthServiceTest()
     {
         _unitOfWorkMock.Setup(mock => mock.Users).Returns(_userRepositoryMock.Object);
-        _authService = new(_unitOfWorkMock.Object, _mapperMock.Object, _userValidatorMock.Object);
+        _authService = new(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object, _userValidatorMock.Object);
     }
 
     [Fact]
@@ -97,6 +99,6 @@ public class AuthServiceTest
         var action = () => _authService.LoginAsync(LoginRequests.WrongPassword, default);
 
         // Assert
-        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Users.InvalidCredentials.Message);
+        await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Auth.InvalidCredentials.Message);
     }
 }

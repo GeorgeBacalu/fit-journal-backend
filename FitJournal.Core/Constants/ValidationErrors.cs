@@ -22,6 +22,15 @@ public static class ValidationErrors
         public static readonly Error CurrentPasswordRequired = E(nameof(CurrentPasswordRequired), "Current password is required");
         public static readonly Error NewPasswordRequired = E(nameof(NewPasswordRequired), "New password is required");
         public static readonly Error ConfirmPassword = E(nameof(ConfirmPassword), "Confirm your password");
+
+        public static readonly Error RecipientEmailRequired = E(nameof(RecipientEmailRequired), "Recipient email is required");
+        public static readonly Error InvalidRecipientEmail = E(nameof(InvalidRecipientEmail), "Invalid recipient email format");
+        public static readonly Error RecipientEmailTooLong = E(nameof(RecipientEmailTooLong), "Recipient email exceeds {MaxLength} characters");
+        public static readonly Error EmailSubjectRequired = E(nameof(EmailSubjectRequired), "Email subject is required");
+        public static readonly Error EmailSubjectTooLong = E(nameof(EmailSubjectTooLong), "Email subject exceeds {MaxLength} characters");
+        public static readonly Error EmailBodyRequired = E(nameof(EmailBodyRequired), "Email body is required");
+
+        public static readonly Error ResetTokenRequired = E(nameof(ResetTokenRequired), "Reset token is required");
     }
 
     public static class Users
