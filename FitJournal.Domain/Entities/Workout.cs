@@ -1,0 +1,15 @@
+﻿namespace FitJournal.Domain.Entities;
+
+public class Workout : BaseEntity, IUserOwnedEntity
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public string? Notes { get; set; }
+    public int DurationMinutes { get; set; }
+    public DateTime StartedAt { get; set; }
+
+    public Guid UserId { get; set; }
+    public User? User { get; set; }
+
+    public ICollection<WorkoutExercise> WorkoutExercises { get; } = [];
+}

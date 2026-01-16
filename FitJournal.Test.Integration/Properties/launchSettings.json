@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FitJournal.Test.Integration": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Test"
+      }
+    }
+  }
+}
