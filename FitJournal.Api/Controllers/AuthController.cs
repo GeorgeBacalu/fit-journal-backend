@@ -41,11 +41,11 @@ public class AuthController(IAuthService authService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>Access and refresh tokens</returns>
     [HttpPost("refresh")]
-    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RefreshResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<LoginResponse>> RefreshAsync(RefreshRequest request, CancellationToken token = default) =>
+    public async Task<ActionResult<RefreshResponse>> RefreshAsync(RefreshRequest request, CancellationToken token = default) =>
         Ok(await _authService.RefreshAsync(request, token));
 
     /// <summary>Change current user password</summary>
