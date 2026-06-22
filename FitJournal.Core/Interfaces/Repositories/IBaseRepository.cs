@@ -7,8 +7,6 @@ public interface IBaseRepository<T> where T : BaseEntity
 {
     Task<IEnumerable<T>> GetAllAsync(CancellationToken token);
 
-    IQueryable<T> GetAllQuery();
-
     Task<T?> GetByIdAsync(Guid id, CancellationToken token);
 
     Task<T?> GetByIdTrackedAsync(Guid id, CancellationToken token);

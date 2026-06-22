@@ -4,7 +4,6 @@ using FitJournal.Core.Config;
 using FitJournal.Core.Interfaces.Repositories;
 using FitJournal.Core.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;

@@ -59,10 +59,10 @@ public static class ValidationErrors
         public static readonly Error AgeRestriction = E(nameof(AgeRestriction), "You must be at least 13 years old");
 
         public static readonly Error HeightRequired = E(nameof(HeightRequired), "Height is required");
-        public static readonly Error HeightOutOfRange = E(nameof(HeightOutOfRange), "Height must be {Min}-{Max} cm");
+        public static readonly Error HeightOutOfRange = E(nameof(HeightOutOfRange), "Height must be {From}-{To} cm");
 
         public static readonly Error WeightRequired = E(nameof(WeightRequired), "Weight is required");
-        public static readonly Error WeightOutOfRange = E(nameof(WeightOutOfRange), "Weight must be {Min}-{Max} kg");
+        public static readonly Error WeightOutOfRange = E(nameof(WeightOutOfRange), "Weight must be {From}-{To} kg");
 
         public static readonly Error GenderRequired = E(nameof(GenderRequired), "Gender is required");
         public static readonly Error InvalidGender = E(nameof(InvalidGender), "Invalid gender");

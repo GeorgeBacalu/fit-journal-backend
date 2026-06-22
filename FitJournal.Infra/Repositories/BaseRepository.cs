@@ -6,15 +6,12 @@ using System.Linq.Expressions;
 
 namespace FitJournal.Infra.Repositories;
 
-public class BaseRepository<T>(AppDbContext db)
-    : IBaseRepository<T> where T : BaseEntity
+public class BaseRepository<T>(AppDbContext db) : IBaseRepository<T> where T : BaseEntity
 {
     protected readonly AppDbContext _db = db;
 
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token) =>
         await _db.Set<T>().AsNoTracking().ToListAsync(token);
-
-    public IQueryable<T> GetAllQuery() => _db.Set<T>().AsNoTracking();
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken token) =>
         await _db.Set<T>().AsNoTracking().FirstOrDefaultAsync(entity => entity.Id == id, token);

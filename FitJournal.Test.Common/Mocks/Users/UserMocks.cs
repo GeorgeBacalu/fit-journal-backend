@@ -5,7 +5,7 @@ namespace FitJournal.Test.Common.Mocks.Users;
 
 public static class UserMocks
 {
-    public static readonly List<User> Users =
+    public static List<User> Users =>
     [
         new()
         {

@@ -9,58 +9,58 @@ public static class UserTestData
 {
     public static IEnumerable<object[]> InvalidRegisterRequests() =>
     [
-        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.Common.NameRequired }],
+        [RegisterRequests.NoName, nameof(RegisterRequest.Name), new[] { ValidationErrors.Common.NameRequired.Message }],
 
-        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { ValidationErrors.Common.NameTooLong }],
+        [RegisterRequests.NameTooLong, nameof(RegisterRequest.Name), new[] { "Name exceeds 50 characters" }],
 
-        [RegisterRequests.NoEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.EmailRequired, ValidationErrors.Users.InvalidEmail }],
+        [RegisterRequests.NoEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.EmailRequired.Message, ValidationErrors.Users.InvalidEmail.Message }],
 
-        [RegisterRequests.InvalidEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.InvalidEmail }],
+        [RegisterRequests.InvalidEmail, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.InvalidEmail.Message }],
 
-        [RegisterRequests.EmailTooLong, nameof(RegisterRequest.Email), new[] { ValidationErrors.Users.EmailTooLong }],
+        [RegisterRequests.EmailTooLong, nameof(RegisterRequest.Email), new[] { "Email exceeds 50 characters" }],
 
-        [RegisterRequests.NoPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.PasswordRequired }],
+        [RegisterRequests.NoPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.PasswordRequired.Message }],
 
-        [RegisterRequests.InvalidPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.InvalidPassword }],
+        [RegisterRequests.InvalidPassword, nameof(RegisterRequest.Password), new[] { ValidationErrors.Users.InvalidPassword.Message }],
 
-        [RegisterRequests.NoConfirmedPassword, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.ConfirmPassword, ValidationErrors.Users.PasswordsMismatch }],
+        [RegisterRequests.NoConfirmedPassword, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.ConfirmPassword.Message, ValidationErrors.Users.PasswordsMismatch.Message }],
 
-        [RegisterRequests.NonMatchingPasswords, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.PasswordsMismatch }],
+        [RegisterRequests.NonMatchingPasswords, nameof(RegisterRequest.ConfirmedPassword), new[] { ValidationErrors.Users.PasswordsMismatch.Message }],
 
-        [RegisterRequests.NoPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.PhoneRequired, ValidationErrors.Users.InvalidPhone }],
+        [RegisterRequests.NoPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.PhoneRequired.Message, ValidationErrors.Users.InvalidPhone.Message }],
 
-        [RegisterRequests.InvalidPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.InvalidPhone }],
+        [RegisterRequests.InvalidPhone, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.InvalidPhone.Message }],
 
-        [RegisterRequests.PhoneTooLong, nameof(RegisterRequest.Phone), new[] { ValidationErrors.Users.PhoneTooLong }],
+        [RegisterRequests.PhoneTooLong, nameof(RegisterRequest.Phone), new[] { "Phone exceeds 20 characters" }],
 
-        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.BirthdayRequired }],
+        [RegisterRequests.NoBirthday, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.BirthdayRequired.Message }],
 
-        [RegisterRequests.BirthdayFuture, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.InvalidBirthday }],
+        [RegisterRequests.BirthdayFuture, nameof(RegisterRequest.Birthday), new[] { ValidationErrors.Users.FutureBirthday.Message }],
 
-        [RegisterRequests.NoHeight, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.HeightRequired }],
+        [RegisterRequests.NoHeight, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.HeightRequired.Message }],
 
-        [RegisterRequests.HeightTooLow, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.HeightOutOfRange }],
+        [RegisterRequests.HeightTooLow, nameof(RegisterRequest.Height), new[] { "Height must be 120-250 cm" }],
 
-        [RegisterRequests.HeightTooHigh, nameof(RegisterRequest.Height), new[] { ValidationErrors.Users.HeightOutOfRange }],
+        [RegisterRequests.HeightTooHigh, nameof(RegisterRequest.Height), new[] { "Height must be 120-250 cm" }],
 
-        [RegisterRequests.NoWeight, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.WeightRequired }],
+        [RegisterRequests.NoWeight, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.WeightRequired.Message }],
 
-        [RegisterRequests.WeightTooLow, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.WeightOutOfRange }],
+        [RegisterRequests.WeightTooLow, nameof(RegisterRequest.Weight), new[] { "Weight must be 25-250 kg" }],
 
-        [RegisterRequests.WeightTooHigh, nameof(RegisterRequest.Weight), new[] { ValidationErrors.Users.WeightOutOfRange }],
+        [RegisterRequests.WeightTooHigh, nameof(RegisterRequest.Weight), new[] { "Weight must be 25-250 kg" }],
 
-        [RegisterRequests.NoGender, nameof(RegisterRequest.Gender), new[] { ValidationErrors.Users.GenderRequired }]
+        [RegisterRequests.NoGender, nameof(RegisterRequest.Gender), new[] { ValidationErrors.Users.GenderRequired.Message }]
     ];
 
     public static IEnumerable<object[]> InvalidLoginRequests() =>
     [
-        [LoginRequests.NoEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.EmailRequired, ValidationErrors.Users.InvalidEmail }],
+        [LoginRequests.NoEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.EmailRequired.Message, ValidationErrors.Users.InvalidEmail.Message }],
 
-        [LoginRequests.InvalidEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.InvalidEmail }],
+        [LoginRequests.InvalidEmail, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.InvalidEmail.Message }],
 
-        [LoginRequests.EmailTooLong, nameof(LoginRequest.Email), new[] { ValidationErrors.Users.EmailTooLong }],
+        [LoginRequests.EmailTooLong, nameof(LoginRequest.Email), new[] { "Email exceeds 50 characters" }],
 
-        [LoginRequests.NoPassword, nameof(LoginRequest.Password), new[] { ValidationErrors.Users.PasswordRequired }]
+        [LoginRequests.NoPassword, nameof(LoginRequest.Password), new[] { ValidationErrors.Users.PasswordRequired.Message }]
     ];
 
     public static IEnumerable<object[]> InvalidAddUsers() =>

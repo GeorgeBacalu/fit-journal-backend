@@ -28,6 +28,8 @@ public class ExceptionMiddleware : IMiddleware
                 ? new() { Title = app.Error.Code, Detail = app.Error.Message }
                 : new() { Title = "Unexpected error", Detail = exception.InnerException?.Message ?? exception.Message };
 
+            problem.Status = context.Response.StatusCode;
+
             await context.Response.WriteAsJsonAsync(problem);
         }
     }

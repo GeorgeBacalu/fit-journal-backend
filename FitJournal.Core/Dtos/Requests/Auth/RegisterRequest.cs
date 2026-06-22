@@ -32,6 +32,7 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
             .MaximumLength(50).WithMessage(ValidationErrors.Users.EmailTooLong.Message);
 
         RuleFor(x => x.Password)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(ValidationErrors.Users.PasswordRequired.Message)
             .Matches(ValidationRules.Users.PasswordRegex).WithMessage(ValidationErrors.Users.InvalidPassword.Message)
             .Length(6, 30).WithMessage(ValidationErrors.Users.InvalidPasswordLength.Message);
@@ -46,19 +47,23 @@ public class RegisterValidator : AbstractValidator<RegisterRequest>
             .MaximumLength(20).WithMessage(ValidationErrors.Users.PhoneTooLong.Message);
 
         RuleFor(x => x.Birthday)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(ValidationErrors.Users.BirthdayRequired.Message)
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ValidationErrors.Users.FutureBirthday.Message)
             .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-13)).WithMessage(ValidationErrors.Users.AgeRestriction.Message);
 
         RuleFor(x => x.Height)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(ValidationErrors.Users.HeightRequired.Message)
             .InclusiveBetween(120, 250).WithMessage(ValidationErrors.Users.HeightOutOfRange.Message);
 
         RuleFor(x => x.Weight)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(ValidationErrors.Users.WeightRequired.Message)
             .InclusiveBetween(25, 250).WithMessage(ValidationErrors.Users.WeightOutOfRange.Message);
 
         RuleFor(x => x.Gender)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(ValidationErrors.Users.GenderRequired.Message)
             .IsInEnum().WithMessage(ValidationErrors.Users.InvalidGender.Message);
     }

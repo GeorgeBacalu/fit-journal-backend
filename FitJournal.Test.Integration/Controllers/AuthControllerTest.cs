@@ -1,6 +1,7 @@
 ﻿using FitJournal.Core.Constants;
 using FitJournal.Core.Dtos.Requests.Auth;
 using FitJournal.Core.Dtos.Responses.Auth;
+using FitJournal.Core.Results;
 using FitJournal.Infra.Context;
 using FitJournal.Test.Common.Constants;
 using FitJournal.Test.Common.Mocks.Auth;
@@ -21,11 +22,7 @@ public class AuthControllerTest
     private readonly WebAppFactory _factory;
     private readonly HttpClient _http;
 
-    public AuthControllerTest(DbFixture fixture)
-    {
-        _factory = new(fixture);
-        _http = _factory.CreateClient();
-    }
+    public AuthControllerTest(DbFixture fixture) => _http = (_factory = new(fixture)).CreateClient();
 
     private async Task RunAsync(Func<Task> run)
     {
@@ -36,23 +33,16 @@ public class AuthControllerTest
 
         await db.Users.AddRangeAsync(UserMocks.Users, default);
         await db.SaveChangesAsync(default);
-
         await run();
-
         await transaction.RollbackAsync(default);
     }
 
     [Fact]
-    public Task RegisterAsync_ShouldAddUser_WhenRequestIsValid() =>
-        RunAsync(async () =>
+    public Task RegisterAsync_ShouldAddUser_WhenRequestIsValid() => RunAsync(async () =>
         {
-            // Arrange
-
-            // Act
             var response = await _http.PostAsJsonAsync(ApiRoutes.Auth.Register, RegisterRequests.Valid, default);
             var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>(default);
 
-            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             responseBody.Should().ContainKey("message").WhoseValue.Should().Be(SuccessMessages.Users.Registered);
         });
@@ -65,15 +55,14 @@ public class AuthControllerTest
 
             // Act
             var response = await _http.PostAsJsonAsync(ApiRoutes.Auth.Register, RegisterRequests.Under13, default);
-            var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
+            var responseBody = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(default);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            responseBody.Should().BeEquivalentTo(new ProblemDetails
-            {
-                Detail = ValidationErrors.Users.AgeRestriction.Message,
-                Status = StatusCodes.Status400BadRequest
-            });
+            responseBody!.Title.Should().Be("One or more validation errors occurred.");
+            responseBody.Status.Should().Be(StatusCodes.Status400BadRequest);
+            responseBody.Errors.Should().ContainKey(nameof(RegisterRequest.Birthday));
+            responseBody.Errors[nameof(RegisterRequest.Birthday)].Should().Contain(ValidationErrors.Users.AgeRestriction.Message);
         });
 
     [Theory]
@@ -97,7 +86,7 @@ public class AuthControllerTest
 
     [Theory]
     [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
-    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string detail) =>
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, Error error) =>
         RunAsync(async () =>
         {
             // Arrange
@@ -107,11 +96,12 @@ public class AuthControllerTest
             var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = detail,
-                Status = StatusCodes.Status409Conflict
+                Title = error.Code,
+                Detail = error.Message,
+                Status = StatusCodes.Status400BadRequest
             });
         });
 
@@ -145,6 +135,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
+                Title = BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Code,
                 Detail = BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Message,
                 Status = StatusCodes.Status404NotFound
             });
@@ -164,6 +155,7 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
+                Title = BusinessErrors.Auth.InvalidCredentials.Code,
                 Detail = BusinessErrors.Auth.InvalidCredentials.Message,
                 Status = StatusCodes.Status400BadRequest
             });

@@ -1,6 +1,7 @@
 using Asp.Versioning.ApiExplorer;
 using FitJournal.Api;
 using FitJournal.Api.Extensions;
+using FitJournal.Api.Middlewares;
 using FitJournal.Core;
 using FitJournal.Core.Config;
 using FitJournal.Infra;
@@ -32,11 +33,14 @@ app.UseSwagger()
        var descriptions = app.Services.GetRequiredService<IApiVersionDescriptionProvider>().ApiVersionDescriptions;
        foreach (var groupName in descriptions.Select(d => d.GroupName))
            options.SwaggerEndpoint($"/swagger/{groupName}/swagger.json", $"FitJournal API {groupName.ToUpperInvariant()}");
+       options.RoutePrefix = "api-docs";
    })
    .UseCors("AllowAll")
    .UseSerilogRequestLogging(options => options.MessageTemplate = "{RequestMethod} {RequestPath} {StatusCode} ({Elapsed:0.00} ms)")
    .UseHttpsRedirection()
-   .UseMiddlewares()
+   .UseMiddleware<ExceptionMiddleware>()
+   .UseMiddleware<CachingMiddleware>()
+    .UseWhen(context => !context.RequestServices.GetRequiredService<IHostEnvironment>().IsEnvironment("Testing"), branch => branch.UseMiddleware<LoggingMiddleware>())
    .UseAuthentication()
    .UseAuthorization();
 

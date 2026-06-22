@@ -25,8 +25,8 @@ internal class UserConfig : IEntityTypeConfiguration<User>
             t.HasCheckConstraint("CK_Users_Email", "[Email] LIKE '%_@__%.__%'");
             t.HasCheckConstraint("CK_Users_Birthday", "[Birthday] <= CURRENT_TIMESTAMP");
             t.HasCheckConstraint("CK_Users_AgeRestriction", "DATEDIFF(year, [Birthday], CURRENT_TIMESTAMP) >= 13");
-            t.HasCheckConstraint("CK_Users_Height", "[Height] BETWEEN 120 AND 250");
-            t.HasCheckConstraint("CK_Users_Weight", "[Weight] BETWEEN 25 AND 250");
+            t.HasCheckConstraint("CK_Users_Height", "CAST([Height] AS NUMERIC) BETWEEN 120 AND 250");
+            t.HasCheckConstraint("CK_Users_Weight", "CAST([Weight] AS NUMERIC) BETWEEN 25 AND 250");
         });
     }
 }
