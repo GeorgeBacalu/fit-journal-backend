@@ -1,0 +1,46 @@
+stages:
+  - test
+  - database
+  - deploy
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "true"
+
+backend:test:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet restore FitJournal.slnx
+    - dotnet build FitJournal.slnx --configuration Release --no-restore
+    - dotnet test FitJournal.slnx --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+    - dotnet publish FitJournal.Api/FitJournal.Api.csproj --configuration Release --no-build --output publish
+  artifacts:
+    when: always
+    reports:
+      junit: "**/TestResults/test-results.trx"
+
+database:migrate:
+  stage: database
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  needs: [backend:test]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: manual
+  script:
+    - dotnet tool install --global dotnet-ef --version 10.*
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - dotnet ef database update --project FitJournal.Infra/FitJournal.Infra.csproj --startup-project FitJournal.Api/FitJournal.Api.csproj --connection "$AZURE_SQL_CONNECTION_STRING"
+
+azure:deploy:
+  stage: deploy
+  image: mcr.microsoft.com/azure-cli:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: manual
+  script:
+    - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID" --output none
+    - az webapp config appsettings set --resource-group "$AZURE_RESOURCE_GROUP" --name "$AZURE_APP_SERVICE_NAME" --settings ConnectionStrings__FitJournalDb="@Microsoft.KeyVault(SecretUri=$AZURE_SQL_SECRET_URI)" Auth__Secret="@Microsoft.KeyVault(SecretUri=$AZURE_AUTH_SECRET_URI)" Auth__Issuer="$AZURE_AUTH_ISSUER" Auth__Audience="$AZURE_AUTH_AUDIENCE" --output none
+    - az webapp deploy --resource-group "$AZURE_RESOURCE_GROUP" --name "$AZURE_APP_SERVICE_NAME" --src-path publish --type zip
+  environment:
+    name: azure-dev
