@@ -22,6 +22,7 @@ builder.Services
     .AddMiddlewares()
     .AddControllers();
 builder.Services.AddScoped<FitJournal.Api.Services.ExerciseMediaStorage>();
+builder.Services.AddHttpClient();
 
 builder.Host.AddSerilog();
 
