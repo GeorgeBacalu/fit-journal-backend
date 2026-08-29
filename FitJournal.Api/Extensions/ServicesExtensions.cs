@@ -4,6 +4,9 @@ using FitJournal.Core.Config;
 using FitJournal.Core.Interfaces.Repositories;
 using FitJournal.Core.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -83,6 +86,14 @@ public static class ServicesExtensions
                     }
                 };
             });
+
+        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
+        var google = configuration.GetSection("ExternalAuth:Google");
+        var microsoft = configuration.GetSection("ExternalAuth:Microsoft");
+        services.AddAuthentication()
+            .AddCookie("External")
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options => { options.SignInScheme = "External"; options.ClientId = google["ClientId"] ?? string.Empty; options.ClientSecret = google["ClientSecret"] ?? string.Empty; })
+            .AddMicrosoftAccount(MicrosoftAccountDefaults.AuthenticationScheme, options => { options.SignInScheme = "External"; options.ClientId = microsoft["ClientId"] ?? string.Empty; options.ClientSecret = microsoft["ClientSecret"] ?? string.Empty; });
 
         return services.AddAuthorization();
     }
