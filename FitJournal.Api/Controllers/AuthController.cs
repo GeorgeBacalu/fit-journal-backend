@@ -8,14 +8,17 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using System.Security.Claims;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace FitJournal.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
-public class AuthController(IAuthService authService, IConfiguration configuration) : BaseController
+public class AuthController(IAuthService authService, IConfiguration configuration, IDistributedCache cache) : BaseController
 {
     private readonly IAuthService _authService = authService;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IDistributedCache _cache = cache;
 
     [HttpGet("external/{provider}")]
     public IActionResult ExternalLogin(string provider) => Challenge(new AuthenticationProperties { RedirectUri = Url.Action(nameof(ExternalCallback)) }, provider.ToLowerInvariant() switch
@@ -34,7 +37,19 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         var tokens = await _authService.ExternalLoginAsync(email, result.Principal?.FindFirstValue(ClaimTypes.Name) ?? string.Empty, token);
         await HttpContext.SignOutAsync("External");
         var frontendUrl = _configuration["ExternalAuth:FrontendUrl"] ?? "https://localhost:4200";
-        return Redirect($"{frontendUrl}/oauth-callback?accessToken={Uri.EscapeDataString(tokens.AccessToken)}&refreshToken={Uri.EscapeDataString(tokens.RefreshToken)}");
+        var code = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
+        await _cache.SetStringAsync($"oauth:{code}", JsonSerializer.Serialize(tokens), new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1) }, token);
+        return Redirect($"{frontendUrl.TrimEnd('/')}/oauth-callback?code={Uri.EscapeDataString(code)}");
+    }
+
+    [HttpPost("external/exchange")]
+    public async Task<ActionResult<LoginResponse>> ExchangeExternalCodeAsync([FromBody] ExternalCodeRequest request, CancellationToken token)
+    {
+        var key = $"oauth:{request.Code}";
+        var value = await _cache.GetStringAsync(key, token);
+        if (value == null) return Unauthorized();
+        await _cache.RemoveAsync(key, token);
+        return Ok(JsonSerializer.Deserialize<LoginResponse>(value));
     }
 
     /// <summary>Register new user</summary>
@@ -130,3 +145,5 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         return Ok(new MessageResponse(SuccessMessages.Users.AccountDeactivated));
     }
 }
+
+public record ExternalCodeRequest(string Code);

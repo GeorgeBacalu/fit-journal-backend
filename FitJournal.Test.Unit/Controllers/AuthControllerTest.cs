@@ -8,7 +8,10 @@ using FitJournal.Test.Common.Mocks.Auth;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Text.Json;
 
 namespace FitJournal.Test.Unit.Controllers;
 
@@ -16,8 +19,22 @@ public class AuthControllerTest
 {
     private readonly Mock<IAuthService> _authServiceMock = new();
     private readonly AuthController _authController;
+    private readonly TestDistributedCache _cache = new();
 
-    public AuthControllerTest() => _authController = new(_authServiceMock.Object);
+    public AuthControllerTest() => _authController = new(_authServiceMock.Object, new ConfigurationBuilder().Build(), _cache);
+
+    [Fact]
+    public async Task ExchangeExternalCodeAsync_ShouldConsumeCodeOnlyOnce()
+    {
+        var tokens = new LoginResponse { AccessToken = "access", RefreshToken = "refresh" };
+        await _cache.SetStringAsync("oauth:one-time", JsonSerializer.Serialize(tokens));
+
+        var first = (await _authController.ExchangeExternalCodeAsync(new("one-time"), default)).Result as OkObjectResult;
+        var second = (await _authController.ExchangeExternalCodeAsync(new("one-time"), default)).Result as UnauthorizedResult;
+
+        first.Should().NotBeNull();
+        second.Should().NotBeNull();
+    }
 
     [Fact]
     public async Task RegisterAsync_ShouldAddUser_WhenRequestIsValid()
@@ -87,4 +104,17 @@ public class AuthControllerTest
         // Assert
         await action.Should().ThrowAsync<BadRequestException>(BusinessErrors.Auth.InvalidCredentials.Message);
     }
+}
+
+internal sealed class TestDistributedCache : IDistributedCache
+{
+    private readonly Dictionary<string, byte[]> _values = [];
+    public byte[]? Get(string key) => _values.GetValueOrDefault(key);
+    public Task<byte[]?> GetAsync(string key, CancellationToken token = default) => Task.FromResult(Get(key));
+    public void Refresh(string key) { }
+    public Task RefreshAsync(string key, CancellationToken token = default) => Task.CompletedTask;
+    public void Remove(string key) => _values.Remove(key);
+    public Task RemoveAsync(string key, CancellationToken token = default) { Remove(key); return Task.CompletedTask; }
+    public void Set(string key, byte[] value, DistributedCacheEntryOptions options) => _values[key] = value;
+    public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default) { Set(key, value, options); return Task.CompletedTask; }
 }
