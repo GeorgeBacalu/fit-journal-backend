@@ -4,4 +4,5 @@ public record ExerciseResponse : ShortExerciseResponse
 {
     public string? Description { get; init; }
     public string? Notes { get; init; }
+    public string? VideoUrl { get; init; }
 }

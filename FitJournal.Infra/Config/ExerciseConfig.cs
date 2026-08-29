@@ -15,6 +15,8 @@ internal class ExerciseConfig : IEntityTypeConfiguration<Exercise>
         builder.Property(e => e.Notes).HasMaxLength(250);
         builder.Property(e => e.MuscleGroup).IsRequired().HasMaxLength(15);
         builder.Property(e => e.DifficultyLevel).IsRequired().HasMaxLength(15);
+        builder.Property(e => e.ThumbnailUrl).HasMaxLength(2048);
+        builder.Property(e => e.VideoUrl).HasMaxLength(2048);
 
         builder.HasQueryFilter(e => e.DeletedAt == null);
     }
