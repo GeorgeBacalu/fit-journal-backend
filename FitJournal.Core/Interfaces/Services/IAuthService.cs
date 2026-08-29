@@ -8,6 +8,7 @@ public interface IAuthService : IBusinessService
     Task RegisterAsync(RegisterRequest request, CancellationToken token);
 
     Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken token);
+    Task<LoginResponse> ExternalLoginAsync(string email, string name, CancellationToken token);
 
     Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token);
 

@@ -10,6 +10,7 @@ using FitJournal.Core.Interfaces.Validators;
 using FitJournal.Core.Results;
 using FitJournal.Domain.Entities;
 using FitJournal.Domain.Enums.Auth;
+using FitJournal.Domain.Enums.Users;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -50,6 +51,30 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
             AccessToken = GenerateToken(user, TokenType.Access),
             RefreshToken = GenerateToken(user, TokenType.Refresh)
         };
+    }
+
+    public async Task<LoginResponse> ExternalLoginAsync(string email, string name, CancellationToken token)
+    {
+        var user = await _unitOfWork.Users.GetAsync(u => u.Email == email, token);
+        if (user == null)
+        {
+            user = new User
+            {
+                Name = string.IsNullOrWhiteSpace(name) ? email.Split('@')[0] : name,
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
+                Phone = string.Empty,
+                Birthday = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-18)),
+                Height = 170,
+                Weight = 70,
+                Gender = Gender.Unknown,
+                Role = Role.User
+            };
+            await _unitOfWork.Users.AddAsync(user, token);
+            await _unitOfWork.CommitAsync(token);
+        }
+
+        return new() { AccessToken = GenerateToken(user, TokenType.Access), RefreshToken = GenerateToken(user, TokenType.Refresh) };
     }
 
     public async Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token)

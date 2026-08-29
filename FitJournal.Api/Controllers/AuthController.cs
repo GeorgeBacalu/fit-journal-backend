@@ -4,13 +4,38 @@ using FitJournal.Core.Dtos.Responses.Auth;
 using FitJournal.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+using System.Security.Claims;
 
 namespace FitJournal.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
-public class AuthController(IAuthService authService) : BaseController
+public class AuthController(IAuthService authService, IConfiguration configuration) : BaseController
 {
     private readonly IAuthService _authService = authService;
+    private readonly IConfiguration _configuration = configuration;
+
+    [HttpGet("external/{provider}")]
+    public IActionResult ExternalLogin(string provider) => Challenge(new AuthenticationProperties { RedirectUri = Url.Action(nameof(ExternalCallback)) }, provider.ToLowerInvariant() switch
+    {
+        "google" => GoogleDefaults.AuthenticationScheme,
+        "microsoft" => MicrosoftAccountDefaults.AuthenticationScheme,
+        _ => throw new BadHttpRequestException("Supported providers are Google and Microsoft.")
+    });
+
+    [HttpGet("external/callback")]
+    public async Task<IActionResult> ExternalCallback(CancellationToken token)
+    {
+        var result = await HttpContext.AuthenticateAsync("External");
+        var email = result.Principal?.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrWhiteSpace(email)) return BadRequest("The provider did not return an email address.");
+        var tokens = await _authService.ExternalLoginAsync(email, result.Principal?.FindFirstValue(ClaimTypes.Name) ?? string.Empty, token);
+        await HttpContext.SignOutAsync("External");
+        var frontendUrl = _configuration["ExternalAuth:FrontendUrl"] ?? "https://localhost:4200";
+        return Redirect($"{frontendUrl}/oauth-callback?accessToken={Uri.EscapeDataString(tokens.AccessToken)}&refreshToken={Uri.EscapeDataString(tokens.RefreshToken)}");
+    }
 
     /// <summary>Register new user</summary>
     /// <param name="request">User registration details</param>
