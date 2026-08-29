@@ -9,6 +9,8 @@ public class Exercise : BaseEntity
     public string? Notes { get; set; }
     public MuscleGroup MuscleGroup { get; set; }
     public DifficultyLevel DifficultyLevel { get; set; }
+    public string? ThumbnailUrl { get; set; }
+    public string? VideoUrl { get; set; }
 
     public ICollection<WorkoutExercise> WorkoutExercises { get; } = [];
 }

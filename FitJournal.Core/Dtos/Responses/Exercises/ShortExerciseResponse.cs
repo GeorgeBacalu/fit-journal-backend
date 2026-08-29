@@ -8,4 +8,5 @@ public record ShortExerciseResponse
     public required string Name { get; init; }
     public MuscleGroup MuscleGroup { get; init; }
     public DifficultyLevel DifficultyLevel { get; init; }
+    public string? ThumbnailUrl { get; init; }
 }
