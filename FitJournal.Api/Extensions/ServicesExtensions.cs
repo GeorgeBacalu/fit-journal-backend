@@ -54,7 +54,7 @@ public static class ServicesExtensions
             options.IncludeXmlComments($"{AppContext.BaseDirectory}{Assembly.GetExecutingAssembly().GetName().Name}.xml");
         });
 
-    public static IServiceCollection AddAuth(this IServiceCollection services)
+    public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -87,11 +87,10 @@ public static class ServicesExtensions
                 };
             });
 
-        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
         var google = configuration.GetSection("ExternalAuth:Google");
         var microsoft = configuration.GetSection("ExternalAuth:Microsoft");
         services.AddAuthentication()
-            .AddCookie("External")
+            .AddCookie("External", options => { options.Cookie.Name = "fitjournal.external"; options.Cookie.HttpOnly = true; options.Cookie.SameSite = SameSiteMode.Lax; options.ExpireTimeSpan = TimeSpan.FromMinutes(5); })
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options => { options.SignInScheme = "External"; options.ClientId = google["ClientId"] ?? string.Empty; options.ClientSecret = google["ClientSecret"] ?? string.Empty; })
             .AddMicrosoftAccount(MicrosoftAccountDefaults.AuthenticationScheme, options => { options.SignInScheme = "External"; options.ClientId = microsoft["ClientId"] ?? string.Empty; options.ClientSecret = microsoft["ClientSecret"] ?? string.Empty; });
 

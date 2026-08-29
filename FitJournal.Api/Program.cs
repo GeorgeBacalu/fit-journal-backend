@@ -14,7 +14,7 @@ builder.Services
     .AddCorsPolicy()
     .AddAutoMapper()
     .AddSwagger()
-    .AddAuth()
+    .AddAuth(builder.Configuration)
     .AddApiVersions()
     .AddInfra()
     .AddCore()
@@ -23,6 +23,7 @@ builder.Services
     .AddControllers();
 builder.Services.AddScoped<FitJournal.Api.Services.ExerciseMediaStorage>();
 builder.Services.AddHttpClient();
+builder.Services.AddDistributedMemoryCache();
 
 builder.Host.AddSerilog();
 
