@@ -1,6 +1,6 @@
 # Azure Deployment Plan
 
-> **Status:** Approved — execution in progress
+> **Status:** Validated
 
 ## Project overview
 
@@ -75,15 +75,42 @@ Quota checks completed before generation: Storage accounts 0/250, Azure OpenAI a
 - [x] Vulnerable backend dependencies upgraded and merged to `dev`
 - [x] Azure infrastructure branch validated and merged to `dev`
 - [x] Backend GitHub Actions OIDC delivery branch implemented and merged to `dev`
-- [ ] Frontend GitHub Actions OIDC delivery/configuration branch implemented and merged to `dev`
-- [ ] Plan updated to `Ready for Validation`
+- [x] Frontend GitHub Actions OIDC delivery/configuration branch implemented and merged to `dev`
+- [x] Plan updated to `Ready for Validation`
 - [ ] `azure-validate` completed
+
+### All validation checks pass
+
+- [x] 1. AZD Installation
+- [x] 2. Schema Validation
+- [x] 3. Environment Setup
+- [x] 4. Authentication Check
+- [x] 5. Subscription/Location Check
+- [ ] 6. Aspire Pre-Provisioning Checks (not applicable)
+- [x] 7. Provision Preview
+- [x] 8. Build Verification
+- [x] 9. Docker Build Context Validation (not applicable)
+- [x] 10. Package Validation
+- [x] 11. Azure Policy Validation
+- [x] 12. Aspire Post-Provisioning Checks (not applicable)
+
+## Section 7: Validation Proof
+
+Validation completed for the local `fitjournal-dev` AZD environment. No Azure resources were created; the next operation is an explicit provisioning request using real provider credentials.
 
 ## Current evidence
 
+- Azure Developer CLI 1.30.0 is installed and authenticated as `george.bacalu@endava.com`.
+- Subscription check: `Visual Studio Professional Subscription` (`3582a367-d2ed-439c-96b6-2fa7ee0f7cf7`) in tenant `0b3fc178-b730-4e8b-9843-e81259237b77`; target location is `swedencentral`.
 - Bicep compilation: pass with no template warnings.
-- ARM subscription-scope validation: `Succeeded` in `swedencentral` using non-secret validation placeholders.
+- ARM subscription-scope validation and what-if: `Succeeded` in `swedencentral` using non-secret validation placeholders; the preview is create-only with no resource modifications or deletions.
 - AZD project discovery: both `api` and sibling `web` projects resolve successfully.
-- Backend Release tests before infrastructure generation: 53 integration and 87 unit tests passed.
+- Azure Policy review: no deny assignment blocks the planned resource types; applicable security policies are audit/deploy-if-not-exists.
+- AZD environment setup: `fitjournal-dev` created with Sweden Central and the confirmed subscription/identity; validation-only provider placeholders are stored locally and must be replaced before provisioning.
+- AZD provision preview: passed with a create-only plan and explicitly reported that no Azure changes were applied.
+- AZD package validation: passed for both `api` and `web`, producing deployable ZIP archives.
+- Final backend verification: zero-warning Release build, 59 integration tests, and 94 unit tests passed.
+- Final frontend verification: 25 test files with 116 tests passed and the Angular production build succeeded.
+- API publish package: succeeded with 88 files. The standalone Windows EF bundle command encountered a host temporary-file lock, while the AZD API package and CI Linux command remain configured for packaging.
 
 No billable resources are created during preparation or validation. Provisioning and deployment require a separate explicit request after real OAuth and SMTP inputs are configured.
