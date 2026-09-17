@@ -11,13 +11,19 @@ namespace FitJournal.Api.Controllers;
 [Route("api/v{version:apiVersion}/exercise/{exerciseId:guid}/media")]
 public class ExerciseMediaController(ExerciseMediaStorage storage, IUnitOfWork unitOfWork) : BaseController
 {
+    private const long MaxThumbnailBytes = 10_000_000;
+    private const long MaxVideoBytes = 200_000_000;
+
     [HttpPost("{mediaType}")]
     [RequestSizeLimit(200_000_000)]
     public async Task<ActionResult<object>> UploadAsync(Guid exerciseId, string mediaType, IFormFile file, CancellationToken token)
     {
         if (mediaType is not ("thumbnail" or "video")) return BadRequest("Media type must be thumbnail or video.");
+        if (file.Length == 0) return BadRequest("The media file is empty.");
         if (mediaType == "thumbnail" && !file.ContentType.StartsWith("image/")) return BadRequest("Thumbnails must be images.");
         if (mediaType == "video" && !file.ContentType.StartsWith("video/")) return BadRequest("Videos must be video files.");
+        if (mediaType == "thumbnail" && file.Length > MaxThumbnailBytes) return BadRequest("Thumbnails cannot exceed 10 MB.");
+        if (mediaType == "video" && file.Length > MaxVideoBytes) return BadRequest("Videos cannot exceed 200 MB.");
         var exercise = await unitOfWork.Exercises.GetByIdTrackedAsync(exerciseId, token)
             ?? throw new NotFoundException(BusinessErrors.Exercises.IdNotFound(exerciseId));
         var uri = await storage.UploadAsync(exerciseId, file, mediaType, token);

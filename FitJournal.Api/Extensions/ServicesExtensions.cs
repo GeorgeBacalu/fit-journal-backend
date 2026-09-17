@@ -14,17 +14,47 @@ using Serilog;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using Azure.Core;
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using FitJournal.Api.Services;
 
 namespace FitJournal.Api.Extensions;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddCorsPolicy(this IServiceCollection services) =>
+    public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
+    {
+        var frontendUrl = configuration["ExternalAuth:FrontendUrl"] ?? "https://localhost:4200";
+        return
         services.AddCors(options =>
-            options.AddPolicy("AllowAll", policy =>
-                policy.AllowAnyOrigin()
+            options.AddPolicy("Frontend", policy =>
+                policy.WithOrigins(frontendUrl.TrimEnd('/'))
                       .AllowAnyMethod()
-                      .AllowAnyHeader()));
+                      .AllowAnyHeader()
+                      .AllowCredentials()));
+    }
+
+    public static IServiceCollection AddAzureRuntime(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<TokenCredential>(_ => new DefaultAzureCredential());
+        services.AddSingleton(provider =>
+        {
+            var connectionString = configuration["AzureStorage:ConnectionString"];
+            if (!string.IsNullOrWhiteSpace(connectionString) && !connectionString.StartsWith('<'))
+                return new BlobServiceClient(connectionString);
+
+            var serviceUri = configuration["AzureStorage:ServiceUri"]
+                ?? throw new InvalidOperationException("AzureStorage:ServiceUri is not configured.");
+            return new BlobServiceClient(new Uri(serviceUri), provider.GetRequiredService<TokenCredential>());
+        });
+
+        services.AddScoped<ExerciseMediaStorage>();
+        services.AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
+        services.AddHttpClient("athlete-advice", client => client.Timeout = TimeSpan.FromSeconds(30));
+        return services;
+    }
 
     public static IServiceCollection AddAutoMapper(this IServiceCollection services) =>
         services.AddAutoMapper(_ => { }, typeof(UserMapper).Assembly);

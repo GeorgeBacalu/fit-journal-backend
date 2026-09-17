@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public virtual DbSet<ProgressLog> ProgressLogs => Set<ProgressLog>();
     public virtual DbSet<RequestLog> RequestLogs => Set<RequestLog>();
     public virtual DbSet<ResetToken> ResetTokens => Set<ResetToken>();
+    public virtual DbSet<OAuthExchangeCode> OAuthExchangeCodes => Set<OAuthExchangeCode>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
