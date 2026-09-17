@@ -6,4 +6,7 @@ public record ShortProgressLogResponse
     public DateOnly Date { get; init; }
     public decimal Weight { get; init; }
     public decimal BodyFat { get; init; }
+    public decimal WaistCm { get; init; }
+    public decimal ChestCm { get; init; }
+    public decimal ArmsCm { get; init; }
 }
