@@ -65,15 +65,12 @@ public class AuthControllerTest
 
             // Act
             var response = await _http.PostAsJsonAsync(ApiRoutes.Auth.Register, RegisterRequests.Under13, default);
-            var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
+            var responseBody = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(default);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            responseBody.Should().BeEquivalentTo(new ProblemDetails
-            {
-                Detail = ValidationErrors.Users.AgeRestriction.Message,
-                Status = StatusCodes.Status400BadRequest
-            });
+            responseBody!.Errors[nameof(RegisterRequest.Birthday)]
+                .Should().Contain(ValidationErrors.Users.AgeRestriction.Message);
         });
 
     [Theory]
@@ -97,7 +94,7 @@ public class AuthControllerTest
 
     [Theory]
     [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
-    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string detail) =>
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, FitJournal.Core.Results.Error detail) =>
         RunAsync(async () =>
         {
             // Arrange
@@ -107,12 +104,12 @@ public class AuthControllerTest
             var responseBody = await response.Content.ReadFromJsonAsync<ProblemDetails>(default);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             responseBody.Should().BeEquivalentTo(new ProblemDetails
             {
-                Detail = detail,
-                Status = StatusCodes.Status409Conflict
-            });
+                Title = detail.Code,
+                Detail = detail.Message,
+            }, options => options.Excluding(problem => problem.Status));
         });
 
     [Fact]
@@ -143,11 +140,8 @@ public class AuthControllerTest
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            responseBody.Should().BeEquivalentTo(new ProblemDetails
-            {
-                Detail = BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Message,
-                Status = StatusCodes.Status404NotFound
-            });
+            responseBody!.Title.Should().Be(BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Code);
+            responseBody.Detail.Should().Be(BusinessErrors.Users.EmailNotFound(ValidationSamples.Users.NonExistingEmail).Message);
         });
 
     [Fact]
@@ -162,11 +156,8 @@ public class AuthControllerTest
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            responseBody.Should().BeEquivalentTo(new ProblemDetails
-            {
-                Detail = BusinessErrors.Auth.InvalidCredentials.Message,
-                Status = StatusCodes.Status400BadRequest
-            });
+            responseBody!.Title.Should().Be(BusinessErrors.Auth.InvalidCredentials.Code);
+            responseBody.Detail.Should().Be(BusinessErrors.Auth.InvalidCredentials.Message);
         });
 
     [Theory]

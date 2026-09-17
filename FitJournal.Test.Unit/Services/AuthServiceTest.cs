@@ -12,6 +12,7 @@ using FitJournal.Test.Common.Mocks.Auth;
 using FitJournal.Test.Common.Mocks.Users;
 using FluentAssertions;
 using Moq;
+using System.Linq.Expressions;
 
 namespace FitJournal.Test.Unit.Services;
 
@@ -26,6 +27,7 @@ public class AuthServiceTest
 
     public AuthServiceTest()
     {
+        AuthConfig.EnsureInitialized();
         _unitOfWorkMock.Setup(mock => mock.Users).Returns(_userRepositoryMock.Object);
         _authService = new(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object, _userValidatorMock.Object);
     }
@@ -49,6 +51,8 @@ public class AuthServiceTest
     public async Task RegisterAsync_ShouldThrowBadRequest_WhenUserIsUnder13()
     {
         // Arrange
+        _userValidatorMock.Setup(mock => mock.ValidateRegisterAsync(RegisterRequests.Under13, default))
+            .ThrowsAsync(new BadRequestException(ValidationErrors.Users.AgeRestriction));
 
         // Act
         var action = () => _authService.RegisterAsync(RegisterRequests.Under13, default);
@@ -64,9 +68,7 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldReturnTokens_WhenCredentialsAreValid()
     {
         // Arrange
-        AuthConfig.EnsureInitialized();
-
-        _userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.Users.ValidEmail, default)).ReturnsAsync(UserMocks.Users[0]);
+        _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<Expression<Func<User, bool>>>(), default)).ReturnsAsync(UserMocks.Users[0]);
 
         // Act
         var result = await _authService.LoginAsync(LoginRequests.Valid, default);
@@ -80,7 +82,7 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldThrowNotFound_WhenEmailDoesNotExist()
     {
         // Arrange
-        _userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.Users.NonExistingEmail, default)).ReturnsAsync((User?)null);
+        _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<Expression<Func<User, bool>>>(), default)).ReturnsAsync((User?)null);
 
         // Act
         var action = () => _authService.LoginAsync(LoginRequests.NonExistingEmail, default);
@@ -93,7 +95,7 @@ public class AuthServiceTest
     public async Task LoginAsync_ShouldThrowBadRequest_WhenPasswordIsIncorrect()
     {
         // Arrange
-        _userRepositoryMock.Setup(mock => mock.GetAsync(user => user.Email == ValidationSamples.Users.ValidEmail, default)).ReturnsAsync(UserMocks.Users[0]);
+        _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<Expression<Func<User, bool>>>(), default)).ReturnsAsync(UserMocks.Users[0]);
 
         // Act
         var action = () => _authService.LoginAsync(LoginRequests.WrongPassword, default);
