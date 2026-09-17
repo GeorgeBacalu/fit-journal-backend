@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "${AZURE_ENV_NAME}" },
+    "location": { "value": "${AZURE_LOCATION}" },
+    "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
+    "principalName": { "value": "${AZURE_PRINCIPAL_NAME}" },
+    "principalType": { "value": "${AZURE_PRINCIPAL_TYPE=User}" },
+    "jwtSecret": { "value": "${JWT_SECRET}" },
+    "googleClientId": { "value": "${GOOGLE_CLIENT_ID}" },
+    "googleClientSecret": { "value": "${GOOGLE_CLIENT_SECRET}" },
+    "microsoftClientId": { "value": "${MICROSOFT_CLIENT_ID}" },
+    "microsoftClientSecret": { "value": "${MICROSOFT_CLIENT_SECRET}" },
+    "smtpUser": { "value": "${SMTP_USER}" },
+    "smtpPassword": { "value": "${SMTP_PASSWORD}" },
+    "smtpMailboxName": { "value": "${SMTP_MAILBOX_NAME}" },
+    "gitLabOidcSubject": { "value": "${GITLAB_OIDC_SUBJECT}" },
+    "gitLabOidcIssuer": { "value": "${GITLAB_OIDC_ISSUER=https://gitlab.com}" }
+  }
+}

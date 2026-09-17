@@ -23,7 +23,7 @@ builder.Services
     .AddCore()
     .AddValidators()
     .AddMiddlewares()
-    .AddAzureRuntime(builder.Configuration)
+    .AddAzureRuntime(builder.Configuration, builder.Environment)
     .AddControllers();
 
 builder.Host.AddSerilog();
