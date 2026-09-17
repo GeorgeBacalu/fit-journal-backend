@@ -1,6 +1,6 @@
 # Azure Deployment Plan
 
-> **Status:** Approved — execution in progress
+> **Status:** Ready for Validation
 
 ## Project overview
 
@@ -75,9 +75,28 @@ Quota checks completed before generation: Storage accounts 0/250, Azure OpenAI a
 - [x] Vulnerable backend dependencies upgraded and merged to `dev`
 - [x] Azure infrastructure branch validated and merged to `dev`
 - [x] Backend GitHub Actions OIDC delivery branch implemented and merged to `dev`
-- [ ] Frontend GitHub Actions OIDC delivery/configuration branch implemented and merged to `dev`
-- [ ] Plan updated to `Ready for Validation`
+- [x] Frontend GitHub Actions OIDC delivery/configuration branch implemented and merged to `dev`
+- [x] Plan updated to `Ready for Validation`
 - [ ] `azure-validate` completed
+
+### All validation checks pass
+
+- [ ] 1. AZD Installation
+- [ ] 2. Schema Validation
+- [ ] 3. Environment Setup
+- [ ] 4. Authentication Check
+- [ ] 5. Subscription/Location Check
+- [ ] 6. Aspire Pre-Provisioning Checks (not applicable)
+- [ ] 7. Provision Preview
+- [ ] 8. Build Verification
+- [ ] 9. Docker Build Context Validation (not applicable)
+- [ ] 10. Package Validation
+- [ ] 11. Azure Policy Validation
+- [ ] 12. Aspire Post-Provisioning Checks (not applicable)
+
+## Section 7: Validation Proof
+
+Validation is in progress. Commands and results will be recorded here before the status is changed to `Validated`.
 
 ## Current evidence
 
