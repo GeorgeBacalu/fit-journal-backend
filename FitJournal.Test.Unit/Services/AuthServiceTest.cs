@@ -14,6 +14,7 @@ using FitJournal.Test.Common.Mocks.Users;
 using FluentAssertions;
 using Moq;
 using System.Linq.Expressions;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FitJournal.Test.Unit.Services;
 
@@ -79,6 +80,23 @@ public class AuthServiceTest
         // Assert
         result.AccessToken.Should().NotBeNullOrWhiteSpace();
         result.RefreshToken.Should().NotBeNullOrWhiteSpace();
+        new JwtSecurityTokenHandler().ReadJwtToken(result.AccessToken).Claims
+            .Should().ContainSingle(claim => claim.Type == "token_type" && claim.Value == "Access");
+        new JwtSecurityTokenHandler().ReadJwtToken(result.RefreshToken).Claims
+            .Should().ContainSingle(claim => claim.Type == "token_type" && claim.Value == "Refresh");
+    }
+
+    [Fact]
+    public async Task RefreshAsync_ShouldRejectAccessToken()
+    {
+        _userRepositoryMock.Setup(mock => mock.GetAsync(It.IsAny<Expression<Func<User, bool>>>(), default)).ReturnsAsync(UserMocks.Users[0]);
+        var tokens = await _authService.ExternalLoginAsync(UserMocks.Users[0].Email, UserMocks.Users[0].Name, default);
+
+        var action = () => _authService.RefreshAsync(
+            new FitJournal.Core.Dtos.Requests.Auth.RefreshRequest { RefreshToken = tokens.AccessToken },
+            default);
+
+        await action.Should().ThrowAsync<UnauthorizedException>();
     }
 
     [Fact]
@@ -129,5 +147,38 @@ public class AuthServiceTest
         _emailServiceMock.Verify(mock => mock.SendAsync(
             It.Is<SendEmailRequest>(email => email.To == UserMocks.Users[0].Email && email.Body == "reset email"),
             default));
+    }
+
+    [Fact]
+    public async Task ResetPasswordAsync_ShouldRejectSupersededResetToken()
+    {
+        var resetTokens = new List<ResetToken>();
+        _userRepositoryMock
+            .Setup(mock => mock.GetAsync(It.IsAny<Expression<Func<User, bool>>>(), default))
+            .ReturnsAsync(UserMocks.Users[0]);
+        _userRepositoryMock
+            .Setup(mock => mock.GetByIdTrackedAsync(UserMocks.Users[0].Id, default))
+            .ReturnsAsync(UserMocks.Users[0]);
+        _resetTokenRepositoryMock
+            .Setup(mock => mock.AddAsync(It.IsAny<ResetToken>(), default))
+            .Callback<ResetToken, CancellationToken>((reset, _) => resetTokens.Add(reset));
+
+        var request = new FitJournal.Core.Dtos.Requests.Auth.ForgotPasswordRequest { Email = UserMocks.Users[0].Email };
+        await _authService.ForgotPasswordAsync(request, default);
+        await _authService.ForgotPasswordAsync(request, default);
+        _resetTokenRepositoryMock
+            .Setup(mock => mock.GetLastAsync(UserMocks.Users[0].Id, default))
+            .ReturnsAsync(resetTokens[1]);
+
+        var action = () => _authService.ResetPasswordAsync(
+            new FitJournal.Core.Dtos.Requests.Auth.ResetPasswordRequest
+            {
+                Token = resetTokens[0].Token,
+                NewPassword = "A-different-password-123!",
+                ConfirmedPassword = "A-different-password-123!"
+            },
+            default);
+
+        await action.Should().ThrowAsync<BadRequestException>();
     }
 }

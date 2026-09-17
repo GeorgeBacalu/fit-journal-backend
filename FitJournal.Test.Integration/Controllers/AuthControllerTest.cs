@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace FitJournal.Test.Integration.Controllers;
 
@@ -126,6 +127,22 @@ public class AuthControllerTest
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             responseBody?.AccessToken.Should().NotBeNullOrWhiteSpace();
             responseBody?.RefreshToken.Should().NotBeNullOrWhiteSpace();
+        });
+
+    [Fact]
+    public Task RefreshToken_ShouldNotAuthorizeApiRequests() =>
+        RunAsync(async () =>
+        {
+            var loginResponse = await _http.PostAsJsonAsync(ApiRoutes.Auth.Login, LoginRequests.Valid, default);
+            var tokens = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>(default);
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"{ApiRoutes.Users.Base}/{UserMocks.Users[0].Id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens!.RefreshToken);
+
+            var response = await _http.SendAsync(request, default);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         });
 
     [Fact]

@@ -18,6 +18,7 @@ using Azure.Core;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using FitJournal.Api.Services;
+using FitJournal.Domain.Enums.Auth;
 
 namespace FitJournal.Api.Extensions;
 
@@ -109,6 +110,12 @@ public static class ServicesExtensions
                 {
                     OnTokenValidated = async context =>
                     {
+                        if (context.Principal?.FindFirstValue("token_type") != TokenType.Access.ToString())
+                        {
+                            context.Fail("Invalid token purpose");
+                            return;
+                        }
+
                         if (!Guid.TryParse(context.Principal?.FindFirstValue("userId"), out var id))
                         {
                             context.Fail("Invalid token");
