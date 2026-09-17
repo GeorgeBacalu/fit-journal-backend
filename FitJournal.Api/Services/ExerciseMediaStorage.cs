@@ -3,15 +3,12 @@ using Azure.Storage.Blobs.Models;
 
 namespace FitJournal.Api.Services;
 
-public class ExerciseMediaStorage(IConfiguration configuration)
+public class ExerciseMediaStorage(BlobServiceClient blobServiceClient)
 {
-    private readonly IConfiguration _configuration = configuration;
-
     public async Task<Uri> UploadAsync(Guid exerciseId, IFormFile file, string mediaType, CancellationToken token)
     {
         if (file.Length == 0) throw new BadHttpRequestException("The media file is empty.");
-        var connectionString = _configuration["AzureStorage:ConnectionString"] ?? throw new InvalidOperationException("AzureStorage:ConnectionString is not configured.");
-        var container = new BlobContainerClient(connectionString, "exercise-media");
+        var container = blobServiceClient.GetBlobContainerClient("exercise-media");
         await container.CreateIfNotExistsAsync(PublicAccessType.Blob, cancellationToken: token);
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
         var blob = container.GetBlobClient($"{exerciseId}/{mediaType}-{Guid.NewGuid():N}{extension}");
