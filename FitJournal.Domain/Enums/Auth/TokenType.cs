@@ -3,5 +3,6 @@
 public enum TokenType
 {
     Access,
-    Refresh
+    Refresh,
+    Reset
 }

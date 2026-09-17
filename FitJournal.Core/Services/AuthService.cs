@@ -14,6 +14,7 @@ using FitJournal.Domain.Enums.Users;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace FitJournal.Core.Services;
@@ -79,7 +80,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
 
     public async Task<RefreshResponse> RefreshAsync(RefreshRequest request, CancellationToken token)
     {
-        if (!Guid.TryParse(GetUser(request.RefreshToken, BusinessErrors.Auth.InvalidRefreshToken).FindFirstValue("userId"), out var id))
+        if (!Guid.TryParse(GetUser(request.RefreshToken, TokenType.Refresh, BusinessErrors.Auth.InvalidRefreshToken).FindFirstValue("userId"), out var id))
             throw new UnauthorizedException(BusinessErrors.Auth.NoRefreshTokenUserInfo);
 
         var user = await _unitOfWork.Users.GetByIdAsync(id, token)
@@ -115,7 +116,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
         var resetToken = new ResetToken
         {
             UserId = user.Id,
-            Token = GenerateToken(user, TokenType.Access),
+            Token = GenerateToken(user, TokenType.Reset),
             ExpiresAt = DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes),
         };
         await _unitOfWork.ResetTokens.AddAsync(resetToken, token);
@@ -136,7 +137,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
 
     public async Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken token)
     {
-        if (!Guid.TryParse(GetUser(request.Token, BusinessErrors.Auth.InvalidResetToken).FindFirstValue("userId"), out var id))
+        if (!Guid.TryParse(GetUser(request.Token, TokenType.Reset, BusinessErrors.Auth.InvalidResetToken).FindFirstValue("userId"), out var id))
             throw new UnauthorizedException(BusinessErrors.Auth.NoResetTokenUserInfo);
 
         var user = await _unitOfWork.Users.GetByIdTrackedAsync(id, token)
@@ -145,7 +146,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
         var resetToken = await _unitOfWork.ResetTokens.GetLastAsync(id, token)
             ?? throw new NotFoundException(BusinessErrors.Auth.ResetTokenNotFound);
 
-        if (resetToken.ExpiresAt <= DateTime.UtcNow || resetToken.Used)
+        if (resetToken.ExpiresAt <= DateTime.UtcNow || resetToken.Used || !TokensMatch(request.Token, resetToken.Token))
             throw new BadRequestException(BusinessErrors.Auth.ResetTokenSpent);
 
         if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.PasswordHash))
@@ -172,27 +173,34 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
             Audience = AppConfig.Auth.Audience,
             Subject = new([
                 new("userId", $"{user.Id}"),
-                new("role", $"{user.Role}")]),
+                new("role", $"{user.Role}"),
+                new("token_type", type.ToString()),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))]),
             SigningCredentials = new(_secret, SecurityAlgorithms.HmacSha256),
-            Expires = type == TokenType.Access
-                ? DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
-                : DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays)
+            Expires = type switch
+            {
+                TokenType.Refresh => DateTime.UtcNow.AddDays(AppConfig.Auth.RefreshTokenLifetimeDays),
+                _ => DateTime.UtcNow.AddMinutes(AppConfig.Auth.AccessTokenLifetimeMinutes)
+            }
         }));
 
-    private static ClaimsPrincipal GetUser(string token, Error error)
+    private static ClaimsPrincipal GetUser(string token, TokenType expectedType, Error error)
     {
         try
         {
             var principal = _tokenHandler.ValidateToken(token, new()
             {
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                ValidIssuer = AppConfig.Auth.Issuer,
+                ValidAudience = AppConfig.Auth.Audience,
                 IssuerSigningKey = _secret
             }, out var jwt);
 
             return jwt is JwtSecurityToken { Header.Alg: SecurityAlgorithms.HmacSha256 }
+                && principal.FindFirstValue("token_type") == expectedType.ToString()
                 ? principal
                 : throw new UnauthorizedException(error);
         }
@@ -201,4 +209,9 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
             throw new UnauthorizedException(error);
         }
     }
+
+    private static bool TokensMatch(string submitted, string stored) =>
+        CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(submitted),
+            Encoding.UTF8.GetBytes(stored));
 }
