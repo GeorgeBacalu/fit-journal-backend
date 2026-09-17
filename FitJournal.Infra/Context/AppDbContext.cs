@@ -30,6 +30,33 @@ public class AppDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+        // The production model targets SQL Server, while integration tests use SQLite.
+        // Keep equivalent constraints in both providers so EnsureCreated can build a
+        // faithful test database instead of evaluating SQL Server-only functions.
+        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+        {
+            var decimalConverter = new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<decimal, double>(
+                value => Convert.ToDouble(value),
+                value => Convert.ToDecimal(value));
+            foreach (var property in modelBuilder.Model.GetEntityTypes()
+                         .SelectMany(entity => entity.GetProperties())
+                         .Where(property => property.ClrType == typeof(decimal)))
+                property.SetValueConverter(decimalConverter);
+
+            modelBuilder.Entity<User>().ToTable(t =>
+                t.HasCheckConstraint(
+                    "CK_Users_AgeRestriction",
+                    "date([Birthday], '+13 years') <= CURRENT_TIMESTAMP"));
+            modelBuilder.Entity<ResetToken>().ToTable(t =>
+                t.HasCheckConstraint(
+                    "CK_ResetTokens_Token_Length",
+                    "length([Token]) BETWEEN 100 AND 512 AND [Token] LIKE '%.%.%'"));
+            modelBuilder.Entity<RequestLog>().Property(x => x.ExceptionStackTrace).HasColumnType("TEXT");
+            modelBuilder.Entity<RequestLog>().Property(x => x.InnerExceptionStackTrace).HasColumnType("TEXT");
+            modelBuilder.Entity<RequestLog>().Property(x => x.RequestHeader).HasColumnType("TEXT");
+            modelBuilder.Entity<RequestLog>().Property(x => x.ResponseHeader).HasColumnType("TEXT");
+        }
+
         foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(entity => entity.GetForeignKeys()))
             foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
     }

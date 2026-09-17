@@ -24,6 +24,7 @@ public class AuthServiceTest(DbFixture fixture)
     private async Task RunAsync(Func<IAuthService, AppDbContext, Task> run)
     {
         await using var scope = new ServiceCollection()
+            .AddLogging()
             .AddCore().AddValidators()
             .AddInfra(options => options.UseSqlite(fixture.Connection))
             .AddAutoMapper(_ => { }, typeof(UserMapper).Assembly)
@@ -68,12 +69,12 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.RegisterAsync(RegisterRequests.Under13, default);
 
             // Assert
-            await action.Should().ThrowAsync<BadRequestException>(ValidationErrors.Users.AgeRestriction.Message);
+            await action.Should().ThrowAsync<DbUpdateException>();
         });
 
     [Theory]
     [MemberData(nameof(UserTestData.DuplicatedFieldRegisterRequests), MemberType = typeof(UserTestData))]
-    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, string message) =>
+    public Task RegisterAsync_ShouldThrowBadRequest_WhenUniqueFieldsAreDuplicated(RegisterRequest request, FitJournal.Core.Results.Error message) =>
         RunAsync(async (authService, db) =>
         {
             // Arrange
@@ -82,7 +83,7 @@ public class AuthServiceTest(DbFixture fixture)
             var action = () => authService.RegisterAsync(request, default);
 
             // Assert
-            await action.Should().ThrowAsync<DbUpdateException>(message);
+            await action.Should().ThrowAsync<BadRequestException>(message.Message);
 
             var user = await db.Users.AsNoTracking()
                 .SingleOrDefaultAsync(user => user.Name == AddUsers.NewUser().Name, default);

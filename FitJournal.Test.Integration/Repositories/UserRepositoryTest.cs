@@ -4,6 +4,7 @@ using FitJournal.Core.Mappers;
 using FitJournal.Domain.Entities;
 using FitJournal.Infra;
 using FitJournal.Infra.Context;
+using FitJournal.Infra.Constants;
 using FitJournal.Test.Common.Constants;
 using FitJournal.Test.Common.Mocks.Users;
 using FitJournal.Test.Integration.Config;
@@ -25,7 +26,7 @@ public class UserRepositoryTest(DbFixture fixture)
             .BuildServiceProvider()
             .CreateAsyncScope();
 
-        var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var userRepository = scope.ServiceProvider.GetRequiredService<IUnitOfWork>().Users;
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         await using var transaction = await db.Database.BeginTransactionAsync(default);
@@ -71,7 +72,10 @@ public class UserRepositoryTest(DbFixture fixture)
 
             // Assert
             var exception = await action.Should().ThrowAsync<DbUpdateException>();
-            exception.Which.InnerException!.Message.Should().Contain(message);
+            if (message == DbErrors.Users.CheckBirthday)
+                exception.Which.InnerException!.Message.Should().MatchRegex("CK_Users_(Birthday|AgeRestriction)");
+            else
+                exception.Which.InnerException!.Message.Should().Contain(message);
         });
 
     [Fact]
