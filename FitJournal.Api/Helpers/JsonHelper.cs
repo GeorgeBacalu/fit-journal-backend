@@ -4,6 +4,11 @@ namespace FitJournal.Api.Helpers;
 
 public static class JsonHelper
 {
+    private static readonly string[] SensitiveFieldFragments =
+    [
+        "password", "token", "secret", "authorization", "cookie", "apikey", "api-key"
+    ];
+
     public static string RemoveSensitiveFields(string body)
     {
         try
@@ -25,7 +30,8 @@ public static class JsonHelper
         if (node is JsonObject jsonObject)
         {
             foreach (var (key, value) in jsonObject.ToList())
-                if (key.Contains("password", StringComparison.OrdinalIgnoreCase))
+                if (SensitiveFieldFragments.Any(fragment =>
+                        key.Contains(fragment, StringComparison.OrdinalIgnoreCase)))
                     jsonObject[key] = "HIDDEN";
                 else if (value != null)
                     HideNode(value);

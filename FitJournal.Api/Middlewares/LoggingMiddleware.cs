@@ -2,7 +2,6 @@
 using FitJournal.Core.Interfaces.Repositories;
 using FitJournal.Domain.Enums.Logging;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Sockets;
 using System.Text;
 
@@ -70,11 +69,11 @@ public class LoggingMiddleware : IMiddleware
 
                     RequestBody = requestBody.Length <= MaxPayloadSize ? requestBody : requestBody[..MaxPayloadSize] + "...(truncated)",
                     RequestBodySize = Encoding.UTF8.GetByteCount(requestBody),
-                    RequestHeader = string.Join('\n', context.Request.Headers.Select(h => $"{h.Key}: {h.Value}")),
+                    RequestHeader = SanitizeHeaders(context.Request.Headers),
 
-                    ResponseBody = responseBody.Length <= MaxPayloadSize ? responseBody : responseBody[..MaxPayloadSize] + "...(truncated)",
+                    ResponseBody = SanitizeBody(responseBody),
                     ResponseBodySize = Encoding.UTF8.GetByteCount(responseBody),
-                    ResponseHeader = string.Join('\n', context.Response.Headers.Select(h => $"{h.Key}: {h.Value}")),
+                    ResponseHeader = SanitizeHeaders(context.Response.Headers),
                     ResponseStatus = context.Response.StatusCode,
 
                     UserId = TryGetUserId(context)
@@ -115,19 +114,23 @@ public class LoggingMiddleware : IMiddleware
 
     private static Guid? TryGetUserId(HttpContext context)
     {
-        if (!context.Request.Headers.TryGetValue("Authorization", out var header)) return null;
+        if (context.User.Identity?.IsAuthenticated != true) return null;
 
-        var auth = header.ToString();
-        if (!auth.StartsWith("Bearer ")) return null;
-
-        try
-        {
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(auth["Bearer ".Length..].Trim());
-            return Guid.TryParse(jwt.Claims.FirstOrDefault(c => c.Type == "userId")?.Value, out var id) ? id : null;
-        }
-        catch
-        {
-            return null;
-        }
+        return Guid.TryParse(context.User.FindFirst("userId")?.Value, out var id) ? id : null;
     }
+
+    private static string SanitizeBody(string body)
+    {
+        var sanitized = string.IsNullOrWhiteSpace(body) ? string.Empty : JsonHelper.RemoveSensitiveFields(body);
+        return sanitized.Length <= MaxPayloadSize ? sanitized : sanitized[..MaxPayloadSize] + "...(truncated)";
+    }
+
+    private static string SanitizeHeaders(IHeaderDictionary headers) => string.Join('\n', headers.Select(header =>
+        header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) ||
+        header.Key.Equals("Cookie", StringComparison.OrdinalIgnoreCase) ||
+        header.Key.Equals("Set-Cookie", StringComparison.OrdinalIgnoreCase) ||
+        header.Key.Equals("X-Api-Key", StringComparison.OrdinalIgnoreCase) ||
+        header.Key.Equals("Api-Key", StringComparison.OrdinalIgnoreCase)
+            ? $"{header.Key}: HIDDEN"
+            : $"{header.Key}: {header.Value}"));
 }
