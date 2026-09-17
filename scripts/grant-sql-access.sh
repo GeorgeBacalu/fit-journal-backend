@@ -17,8 +17,7 @@
 #   SQL_SERVER           - SQL server name (without .database.windows.net)
 #   SQL_DATABASE         - Database name
 #   AZURE_RESOURCE_GROUP - Resource group name
-#   SERVICE_WEB_NAME     - App Service name (used when set, takes priority)
-#   SERVICE_API_NAME     - API service name (fallback when SERVICE_WEB_NAME is not set)
+#   SERVICE_API_NAME     - API App Service name whose managed identity accesses SQL
 #   SQL_GRANT_DDLADMIN   - Set to "true" to also grant db_ddladmin (needed for EF migrations)
 
 set -e
@@ -35,11 +34,11 @@ while IFS= read -r line; do
   export "$key=$value"
 done < <(azd env get-values)
 
-# Determine app identity name (App Service uses SERVICE_WEB_NAME, APIs use SERVICE_API_NAME)
-APP_NAME=${SERVICE_WEB_NAME:-$SERVICE_API_NAME}
+# Only the API has a managed identity and accesses Azure SQL.
+APP_NAME=${SERVICE_API_NAME:-}
 
 if [ -z "$APP_NAME" ]; then
-  echo "ERROR: Neither SERVICE_WEB_NAME nor SERVICE_API_NAME is set in azd environment." >&2
+  echo "ERROR: SERVICE_API_NAME is not set in the azd environment." >&2
   exit 1
 fi
 
