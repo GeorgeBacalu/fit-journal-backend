@@ -81,28 +81,33 @@ Quota checks completed before generation: Storage accounts 0/250, Azure OpenAI a
 
 ### All validation checks pass
 
-- [ ] 1. AZD Installation
-- [ ] 2. Schema Validation
+- [x] 1. AZD Installation
+- [x] 2. Schema Validation
 - [ ] 3. Environment Setup
-- [ ] 4. Authentication Check
-- [ ] 5. Subscription/Location Check
+- [x] 4. Authentication Check
+- [x] 5. Subscription/Location Check
 - [ ] 6. Aspire Pre-Provisioning Checks (not applicable)
 - [ ] 7. Provision Preview
-- [ ] 8. Build Verification
+- [x] 8. Build Verification
 - [ ] 9. Docker Build Context Validation (not applicable)
 - [ ] 10. Package Validation
-- [ ] 11. Azure Policy Validation
+- [x] 11. Azure Policy Validation
 - [ ] 12. Aspire Post-Provisioning Checks (not applicable)
 
 ## Section 7: Validation Proof
 
-Validation is in progress. Commands and results will be recorded here before the status is changed to `Validated`.
+Validation is in progress. AZD environment creation, AZD provision preview, and final package validation remain open and require the confirmed environment name. The status will not change to `Validated` until those checks pass.
 
 ## Current evidence
 
+- Azure Developer CLI 1.30.0 is installed and authenticated as `george.bacalu@endava.com`.
+- Subscription check: `Visual Studio Professional Subscription` (`3582a367-d2ed-439c-96b6-2fa7ee0f7cf7`) in tenant `0b3fc178-b730-4e8b-9843-e81259237b77`; target location is `swedencentral`.
 - Bicep compilation: pass with no template warnings.
-- ARM subscription-scope validation: `Succeeded` in `swedencentral` using non-secret validation placeholders.
+- ARM subscription-scope validation and what-if: `Succeeded` in `swedencentral` using non-secret validation placeholders; the preview is create-only with no resource modifications or deletions.
 - AZD project discovery: both `api` and sibling `web` projects resolve successfully.
-- Backend Release tests before infrastructure generation: 53 integration and 87 unit tests passed.
+- Azure Policy review: no deny assignment blocks the planned resource types; applicable security policies are audit/deploy-if-not-exists.
+- Final backend verification: zero-warning Release build, 59 integration tests, and 94 unit tests passed.
+- Final frontend verification: 25 test files with 116 tests passed and the Angular production build succeeded.
+- API publish package: succeeded with 88 files. EF migration bundle verification is still open because the Windows host locked the tool's temporary directory during cleanup; the CI command runs on Ubuntu.
 
 No billable resources are created during preparation or validation. Provisioning and deployment require a separate explicit request after real OAuth and SMTP inputs are configured.
