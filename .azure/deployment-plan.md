@@ -74,7 +74,7 @@ Quota checks completed before generation: Storage accounts 0/250, Azure OpenAI a
 - [x] Managed-identity runtime, SQL OAuth exchange store, health checks, and media validation merged to `dev`
 - [x] Vulnerable backend dependencies upgraded and merged to `dev`
 - [x] Azure infrastructure branch validated and merged to `dev`
-- [ ] Backend GitHub Actions OIDC delivery branch implemented and merged to `dev`
+- [x] Backend GitHub Actions OIDC delivery branch implemented and merged to `dev`
 - [ ] Frontend GitHub Actions OIDC delivery/configuration branch implemented and merged to `dev`
 - [ ] Plan updated to `Ready for Validation`
 - [ ] `azure-validate` completed

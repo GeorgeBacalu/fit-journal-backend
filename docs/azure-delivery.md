@@ -15,6 +15,7 @@ Create an `azure-dev` environment in both repositories, protect it as appropriat
 | `AZURE_SUBSCRIPTION_ID` | Azure subscription ID |
 | `AZURE_RESOURCE_GROUP` | AZD resource group output |
 | `SERVICE_API_NAME` | API App Service name output |
+| `SERVICE_WEB_NAME` | Frontend App Service name output |
 | `API_URL` | API URL output |
 
 The infrastructure creates audience `api://AzureADTokenExchange` credentials scoped to each repository's `azure-dev` environment:

@@ -124,6 +124,7 @@ output SQL_SERVER string = data.outputs.sqlServerName
 output SQL_DATABASE string = data.outputs.sqlDatabaseName
 output SQL_GRANT_DDLADMIN string = 'true'
 output SERVICE_API_NAME string = hosting.outputs.apiAppName
+output SERVICE_WEB_NAME string = hosting.outputs.webAppName
 output API_URL string = hosting.outputs.apiUrl
 output WEB_URL string = hosting.outputs.webUrl
 output AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
