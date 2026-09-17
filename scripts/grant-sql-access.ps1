@@ -16,8 +16,7 @@
 #   SQL_SERVER           - SQL server name (without .database.windows.net)
 #   SQL_DATABASE         - Database name
 #   AZURE_RESOURCE_GROUP - Resource group name
-#   SERVICE_WEB_NAME     - App Service name (used when set, takes priority)
-#   SERVICE_API_NAME     - API service name (fallback when SERVICE_WEB_NAME is not set)
+#   SERVICE_API_NAME     - API App Service name whose managed identity accesses SQL
 #   SQL_GRANT_DDLADMIN   - Set to "true" to also grant db_ddladmin (needed for EF migrations)
 
 $ErrorActionPreference = 'Stop'
@@ -28,11 +27,11 @@ azd env get-values | ForEach-Object {
     Set-Item "env:$name" $value.Trim('"')
 }
 
-# Determine app identity name (App Service uses SERVICE_WEB_NAME, APIs use SERVICE_API_NAME)
-$AppName = if ($env:SERVICE_WEB_NAME) { $env:SERVICE_WEB_NAME } else { $env:SERVICE_API_NAME }
+# Only the API has a managed identity and accesses Azure SQL.
+$AppName = $env:SERVICE_API_NAME
 
 if (-not $AppName) {
-    throw "ERROR: Neither SERVICE_WEB_NAME nor SERVICE_API_NAME is set in azd environment."
+    throw "ERROR: SERVICE_API_NAME is not set in the azd environment."
 }
 
 Write-Host "Granting SQL data-plane access to managed identity: $AppName"
