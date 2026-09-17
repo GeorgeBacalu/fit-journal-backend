@@ -35,9 +35,14 @@ public static class ServicesExtensions
                       .AllowCredentials()));
     }
 
-    public static IServiceCollection AddAzureRuntime(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAzureRuntime(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
-        services.AddSingleton<TokenCredential>(_ => new DefaultAzureCredential());
+        services.AddSingleton<TokenCredential>(_ => environment.IsDevelopment()
+            ? new DefaultAzureCredential()
+            : new ManagedIdentityCredential(ManagedIdentityId.SystemAssigned));
         services.AddSingleton(provider =>
         {
             var connectionString = configuration["AzureStorage:ConnectionString"];
