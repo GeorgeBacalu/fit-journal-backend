@@ -2,6 +2,7 @@
 using FitJournal.Core.Dtos.Requests.Users;
 using FitJournal.Core.Dtos.Responses.Users;
 using FitJournal.Core.Interfaces.Services;
+using FitJournal.Domain.Enums.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ public class UserController(IUserService userService) : BaseController
     /// <param name="token">Cancellation token</param>
     /// <returns>All users</returns>
     [HttpPost("all")]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ProducesResponseType(typeof(UsersResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<UsersResponse>> GetAllAsync(UserPaginationRequest request, CancellationToken token = default) =>
         Ok(await _userService.GetAllAsync(request, token));
@@ -29,8 +31,12 @@ public class UserController(IUserService userService) : BaseController
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserResponse>> GetByIdAsync(Guid id, CancellationToken token = default) =>
-        Ok(await _userService.GetByIdAsync(id, token));
+    public async Task<ActionResult<UserResponse>> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        if (id != UserId && !User.IsInRole(nameof(Role.Admin))) return Forbid();
+
+        return Ok(await _userService.GetByIdAsync(id, token));
+    }
 
     /// <summary>Edit current user</summary>
     /// <param name="request">Edited current user details</param>
