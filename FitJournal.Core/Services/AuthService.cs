@@ -128,7 +128,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService e
             Body = _emailService.GeneratePasswordResetEmail(new()
             {
                 UserName = user.Name,
-                ResetLink = $"{AppConfig.Auth.Audience}/reset-password?token={resetToken.Token}",
+                ResetLink = $"{AppConfig.ExternalAuth.FrontendUrl.TrimEnd('/')}/reset-password?token={Uri.EscapeDataString(resetToken.Token)}",
                 ExpiresAt = resetToken.ExpiresAt
             })
         }, token);
