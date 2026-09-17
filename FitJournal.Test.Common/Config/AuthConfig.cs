@@ -23,7 +23,8 @@ public static class AuthConfig
                 ["Email:Password"] = "test-password",
                 ["Email:MailBoxName"] = "FitJournal Tests",
                 ["Email:SmtpHost"] = "localhost",
-                ["Email:SmtpPort"] = "2525"
+                ["Email:SmtpPort"] = "2525",
+                ["ExternalAuth:FrontendUrl"] = "https://app.fitjournal.test"
             }).Build());
     }
 }
