@@ -118,7 +118,7 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
       minTlsVersion: '1.2'
       http20Enabled: true
       healthCheckPath: '/'
-      appCommandLine: 'pm2 serve /home/site/wwwroot/dist/fit-journal-frontend/browser --no-daemon --spa'
+      appCommandLine: 'pm2 serve /home/site/wwwroot --no-daemon --spa'
       appSettings: [
         { name: 'NODE_ENV', value: 'production' }
         { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value: 'true' }

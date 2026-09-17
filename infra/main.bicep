@@ -24,8 +24,8 @@ param smtpUser string
 param smtpPassword string
 @secure()
 param smtpMailboxName string
-param gitLabOidcSubject string
-param gitLabOidcIssuer string = 'https://gitlab.com'
+param githubBackendSubject string
+param githubFrontendSubject string
 
 var resourceSuffix = take(uniqueString(subscription().id, environmentName, location), 6)
 var resourceGroupName = 'rg-${environmentName}'
@@ -110,8 +110,8 @@ module delivery './modules/delivery.bicep' = {
     tags: tags
     apiAppName: hosting.outputs.apiAppName
     webAppName: hosting.outputs.webAppName
-    gitLabOidcSubject: gitLabOidcSubject
-    gitLabOidcIssuer: gitLabOidcIssuer
+    githubBackendSubject: githubBackendSubject
+    githubFrontendSubject: githubFrontendSubject
   }
 }
 

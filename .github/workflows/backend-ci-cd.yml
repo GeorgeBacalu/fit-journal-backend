@@ -1,0 +1,156 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "true"
+
+jobs:
+  quality:
+    name: Audit, build, and test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.303
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Restore locked dependencies
+        run: dotnet restore FitJournal.slnx --locked-mode -m:1
+
+      - name: Audit runtime dependency graph
+        run: |
+          dotnet list FitJournal.Api/FitJournal.Api.csproj package --vulnerable --include-transitive
+          dotnet list FitJournal.Test.Integration/FitJournal.Test.Integration.csproj package --vulnerable --include-transitive
+
+      - name: Build without warnings
+        run: dotnet build FitJournal.slnx --configuration Release --no-restore -m:1 --nologo --warnaserror
+
+      - name: Run unit and integration tests
+        run: >-
+          dotnet test FitJournal.slnx
+          --configuration Release
+          --no-build
+          --no-restore
+          -m:1
+          --logger:"junit;LogFilePath=${{ github.workspace }}/artifacts/test-results/{assembly}-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
+          --collect:"XPlat Code Coverage"
+          --results-directory "${{ github.workspace }}/artifacts/test-results"
+
+      - name: Retain test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-test-results
+          path: artifacts/test-results/
+          retention-days: 14
+          if-no-files-found: error
+
+  package:
+    name: Package deployable API
+    if: github.event_name != 'pull_request'
+    needs: quality
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.303
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - name: Restore locked dependencies and tools
+        run: |
+          dotnet restore FitJournal.slnx --locked-mode -m:1
+          dotnet tool restore
+
+      - name: Publish API and migration recovery bundle
+        run: |
+          dotnet publish FitJournal.Api/FitJournal.Api.csproj --configuration Release --no-restore --output "${{ github.workspace }}/artifacts/publish" -m:1 --nologo
+          dotnet ef migrations bundle --project FitJournal.Infra/FitJournal.Infra.csproj --startup-project FitJournal.Api/FitJournal.Api.csproj --configuration Release --no-build --output "${{ github.workspace }}/artifacts/efbundle"
+          cd "${{ github.workspace }}/artifacts/publish"
+          zip -q -r "${{ github.workspace }}/artifacts/fitjournal-api.zip" .
+
+      - name: Retain deployment package
+        uses: actions/upload-artifact@v7
+        with:
+          name: fitjournal-backend-package
+          path: |
+            artifacts/fitjournal-api.zip
+            artifacts/efbundle
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy API to Azure
+    if: github.ref == 'refs/heads/dev' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: package
+    runs-on: ubuntu-24.04
+    environment:
+      name: azure-dev
+      url: ${{ vars.API_URL }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: fitjournal-backend-package
+          path: artifacts
+
+      - name: Sign in to Azure with OIDC
+        uses: azure/login@v3
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy tested API package
+        run: >-
+          az webapp deploy
+          --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}"
+          --name "${{ vars.SERVICE_API_NAME }}"
+          --src-path artifacts/fitjournal-api.zip
+          --type zip
+          --clean true
+          --restart true
+          --async false
+          --output none
+
+      - name: Require API readiness
+        env:
+          HEALTH_URL: ${{ vars.API_URL }}/health/ready
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 10 "$HEALTH_URL" > /dev/null; then
+              echo "API readiness check passed at $HEALTH_URL"
+              exit 0
+            fi
+            echo "Readiness attempt ${attempt}/30 failed; retrying in 10 seconds."
+            sleep 10
+          done
+          az webapp log deployment show --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" --name "${{ vars.SERVICE_API_NAME }}" --output table || true
+          echo "API readiness check failed at $HEALTH_URL" >&2
+          exit 1
+
+      - name: Sign out of Azure
+        if: always()
+        run: az logout

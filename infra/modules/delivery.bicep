@@ -6,8 +6,8 @@ param location string = resourceGroup().location
 param tags object = {}
 param apiAppName string
 param webAppName string
-param gitLabOidcSubject string
-param gitLabOidcIssuer string = 'https://gitlab.com'
+param githubBackendSubject string
+param githubFrontendSubject string
 
 var suffix = take(uniqueString(subscription().id, resourceGroup().id, name), 6)
 var websiteContributorRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'de139f84-1756-47ae-9be6-808fbbe84772')
@@ -21,20 +21,32 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' existing = {
 }
 
 resource deliveryIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: 'id-${name}-gitlab-${suffix}'
+  name: 'id-${name}-github-${suffix}'
   location: location
   tags: tags
 }
 
-resource gitLabFederation 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = {
+resource githubBackendFederation 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = {
   parent: deliveryIdentity
-  name: 'gitlab-dev'
+  name: 'github-backend'
   properties: {
     audiences: [
       'api://AzureADTokenExchange'
     ]
-    issuer: gitLabOidcIssuer
-    subject: gitLabOidcSubject
+    issuer: 'https://token.actions.githubusercontent.com'
+    subject: githubBackendSubject
+  }
+}
+
+resource githubFrontendFederation 'Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials@2023-01-31' = {
+  parent: deliveryIdentity
+  name: 'github-frontend'
+  properties: {
+    audiences: [
+      'api://AzureADTokenExchange'
+    ]
+    issuer: 'https://token.actions.githubusercontent.com'
+    subject: githubFrontendSubject
   }
 }
 

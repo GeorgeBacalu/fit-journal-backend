@@ -1,6 +1,6 @@
 # FitJournal Azure infrastructure
 
-This folder contains the AZD/Bicep definition for the two App Services, Azure SQL, Blob Storage, Key Vault, Application Insights, Log Analytics, Azure OpenAI, managed identities, GitLab workload federation, and least-privilege role assignments.
+This folder contains the AZD/Bicep definition for the two App Services, Azure SQL, Blob Storage, Key Vault, Application Insights, Log Analytics, Azure OpenAI, managed identities, GitHub Actions workload federation, and least-privilege role assignments.
 
 ## Required AZD environment values
 
@@ -26,15 +26,13 @@ azd env set MICROSOFT_CLIENT_SECRET <microsoft-client-secret>
 azd env set SMTP_USER <smtp-user>
 azd env set SMTP_PASSWORD <smtp-app-password>
 azd env set SMTP_MAILBOX_NAME <sender-display-name>
-azd env set GITLAB_OIDC_ISSUER https://gitlab.com
-azd env set GITLAB_OIDC_SUBJECT <gitlab-project-ref-subject>
+azd env set GITHUB_BACKEND_SUBJECT repo:GeorgeBacalu/fit-journal-backend:environment:azure-dev
+azd env set GITHUB_FRONTEND_SUBJECT repo:GeorgeBacalu/fit-journal-frontend:environment:azure-dev
 ```
 
-For GitLab.com on the protected `dev` branch, the subject normally has this shape:
+The subjects above bind the delivery identity to the protected `azure-dev` GitHub environment in each repository. If either repository is moved or renamed, update its subject before provisioning.
 
-```text
-project_path:<group>/<project>:ref_type:branch:ref:dev
-```
+After provisioning, copy the non-secret deployment outputs into environment variables for the `azure-dev` GitHub environment in each repository as described in `docs/azure-delivery.md`.
 
 ## Provisioning and deployment
 

@@ -15,7 +15,7 @@
     "smtpUser": { "value": "${SMTP_USER}" },
     "smtpPassword": { "value": "${SMTP_PASSWORD}" },
     "smtpMailboxName": { "value": "${SMTP_MAILBOX_NAME}" },
-    "gitLabOidcSubject": { "value": "${GITLAB_OIDC_SUBJECT}" },
-    "gitLabOidcIssuer": { "value": "${GITLAB_OIDC_ISSUER=https://gitlab.com}" }
+    "githubBackendSubject": { "value": "${GITHUB_BACKEND_SUBJECT=repo:GeorgeBacalu/fit-journal-backend:environment:azure-dev}" },
+    "githubFrontendSubject": { "value": "${GITHUB_FRONTEND_SUBJECT=repo:GeorgeBacalu/fit-journal-frontend:environment:azure-dev}" }
   }
 }
