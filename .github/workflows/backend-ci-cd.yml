@@ -101,7 +101,7 @@ jobs:
 
   deploy:
     name: Deploy API to Azure
-    if: github.ref == 'refs/heads/dev' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: vars.AZURE_DEPLOY_ENABLED == 'true' && github.ref == 'refs/heads/dev' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: package
     runs-on: ubuntu-24.04
     environment:

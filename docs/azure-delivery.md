@@ -17,6 +17,7 @@ Create an `azure-dev` environment in both repositories, protect it as appropriat
 | `SERVICE_API_NAME` | API App Service name output |
 | `SERVICE_WEB_NAME` | Frontend App Service name output |
 | `API_URL` | API URL output |
+| `AZURE_DEPLOY_ENABLED` | Set to `true` only after infrastructure and variables are ready |
 
 The infrastructure creates audience `api://AzureADTokenExchange` credentials scoped to each repository's `azure-dev` environment:
 
@@ -26,6 +27,8 @@ repo:GeorgeBacalu/fit-journal-frontend:environment:azure-dev
 ```
 
 Protect the `dev` branch and add deployment reviewers to the environment if approval is required. The delivery identity has Website Contributor only on the API and frontend App Services; it cannot read Key Vault secrets, Storage data, Azure SQL data, or Azure OpenAI content.
+
+Until provisioning has completed, leave `AZURE_DEPLOY_ENABLED` unset or `false`. Quality and packaging still run, but the deployment job is skipped instead of failing against missing infrastructure.
 
 ## Deployment behavior
 
