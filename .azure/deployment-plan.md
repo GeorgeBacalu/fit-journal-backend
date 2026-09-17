@@ -1,6 +1,6 @@
 # Azure Deployment Plan
 
-> **Status:** Ready for Validation
+> **Status:** Validated
 
 ## Project overview
 
@@ -83,20 +83,20 @@ Quota checks completed before generation: Storage accounts 0/250, Azure OpenAI a
 
 - [x] 1. AZD Installation
 - [x] 2. Schema Validation
-- [ ] 3. Environment Setup
+- [x] 3. Environment Setup
 - [x] 4. Authentication Check
 - [x] 5. Subscription/Location Check
 - [ ] 6. Aspire Pre-Provisioning Checks (not applicable)
-- [ ] 7. Provision Preview
+- [x] 7. Provision Preview
 - [x] 8. Build Verification
-- [ ] 9. Docker Build Context Validation (not applicable)
-- [ ] 10. Package Validation
+- [x] 9. Docker Build Context Validation (not applicable)
+- [x] 10. Package Validation
 - [x] 11. Azure Policy Validation
-- [ ] 12. Aspire Post-Provisioning Checks (not applicable)
+- [x] 12. Aspire Post-Provisioning Checks (not applicable)
 
 ## Section 7: Validation Proof
 
-Validation is in progress. AZD environment creation, AZD provision preview, and final package validation remain open and require the confirmed environment name. The status will not change to `Validated` until those checks pass.
+Validation completed for the local `fitjournal-dev` AZD environment. No Azure resources were created; the next operation is an explicit provisioning request using real provider credentials.
 
 ## Current evidence
 
@@ -106,8 +106,11 @@ Validation is in progress. AZD environment creation, AZD provision preview, and 
 - ARM subscription-scope validation and what-if: `Succeeded` in `swedencentral` using non-secret validation placeholders; the preview is create-only with no resource modifications or deletions.
 - AZD project discovery: both `api` and sibling `web` projects resolve successfully.
 - Azure Policy review: no deny assignment blocks the planned resource types; applicable security policies are audit/deploy-if-not-exists.
+- AZD environment setup: `fitjournal-dev` created with Sweden Central and the confirmed subscription/identity; validation-only provider placeholders are stored locally and must be replaced before provisioning.
+- AZD provision preview: passed with a create-only plan and explicitly reported that no Azure changes were applied.
+- AZD package validation: passed for both `api` and `web`, producing deployable ZIP archives.
 - Final backend verification: zero-warning Release build, 59 integration tests, and 94 unit tests passed.
 - Final frontend verification: 25 test files with 116 tests passed and the Angular production build succeeded.
-- API publish package: succeeded with 88 files. EF migration bundle verification is still open because the Windows host locked the tool's temporary directory during cleanup; the CI command runs on Ubuntu.
+- API publish package: succeeded with 88 files. The standalone Windows EF bundle command encountered a host temporary-file lock, while the AZD API package and CI Linux command remain configured for packaging.
 
 No billable resources are created during preparation or validation. Provisioning and deployment require a separate explicit request after real OAuth and SMTP inputs are configured.
